@@ -3,7 +3,9 @@
 export default function Page() {
   return (
     <>
-    <h1>This is the landing page</h1>
+      <h1>hi</h1>
+      <h2> bye</h2>
     </>
+    
   )
 }
