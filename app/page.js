@@ -1,6 +1,7 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 import AuthButton from "./auth-button";
+import { Landing } from "./pages/Landing";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies })
@@ -12,7 +13,7 @@ export default async function Home() {
     <>
       <AuthButton />
       <pre>{JSON.stringify(sessions, null, 2)}</pre>
-
+      <Landing />
     </>
   );
 }
