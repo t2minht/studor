@@ -2,7 +2,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 import AuthButton from "./auth-button";
 import { MantineProvider } from '@mantine/core'
-import App from "./App";
+// import App from "./ui/navbar";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies })
@@ -12,11 +12,6 @@ export default async function Home() {
 
   return (
     <>
-      <MantineProvider>
-        <App />
-      </MantineProvider>
-
-
       {/* <AuthButton />
       <pre>{JSON.stringify(sessions, null, 2)}</pre> */}
 

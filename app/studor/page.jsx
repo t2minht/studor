@@ -1,12 +1,10 @@
 // Landing page
-import { Calendar } from '@mantine/dates'
-import { MantineProvider } from '@mantine/core'
+import { MantineProvider } from "@mantine/core"
+import Navbar from "../ui/navbar"
 
 export default function Page() {
   return (
-    <MantineProvider>
-        <Calendar />
-    </MantineProvider>
+    <></>
   ) 
 }
 
