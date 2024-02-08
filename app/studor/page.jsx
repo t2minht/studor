@@ -1,11 +1,12 @@
 // Landing page
+import { Calendar } from '@mantine/dates'
+import { MantineProvider } from '@mantine/core'
 
 export default function Page() {
   return (
-    <>
-      <h1>hi</h1>
-      <h2> bye</h2>
-    </>
-    
-  )
+    <MantineProvider>
+        <Calendar />
+    </MantineProvider>
+  ) 
 }
+
