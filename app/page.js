@@ -3,7 +3,6 @@ import { cookies } from 'next/headers'
 import AuthButton from "./auth-button";
 import { MantineProvider } from '@mantine/core'
 import App from "./App";
-import Page from "../app/studor/page"
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies })
