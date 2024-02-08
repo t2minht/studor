@@ -27,10 +27,10 @@ import {
   IconChartPie3,
   IconFingerprint,
   IconCoin,
-  IconChevronDown,
-  IconBrandMantine
+  IconChevronDown
 } from '@tabler/icons-react';
-import classes from './HeaderMegaMenu.module.css';
+import classes from './navbar.module.css';
+import LightOrDarkMode from './lightordarkmode';
 
 const mockdata = [
   {
@@ -92,8 +92,8 @@ export default function Navbar() {
     <Box pb={120}>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-        <IconBrandMantine
-          style={{ width: rem(80), height: rem(80) }}
+        <IconBook
+          size={38}
           stroke={1.5}
           color="var(--mantine-color-blue-filled)"
         />
@@ -157,6 +157,7 @@ export default function Navbar() {
           <Group visibleFrom="sm">
             <Button variant="default">Log in</Button>
             <Button>Sign up</Button>
+            <LightOrDarkMode />
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
@@ -203,6 +204,10 @@ export default function Navbar() {
             <Button variant="default">Log in</Button>
             <Button>Sign up</Button>
           </Group>
+
+          <Center>
+            <LightOrDarkMode />
+          </Center> 
         </ScrollArea>
       </Drawer>
     </Box>
