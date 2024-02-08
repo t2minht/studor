@@ -26,6 +26,7 @@ import {
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import LightOrDarkMode from './lightordarkmode';
+import AuthButton from './auth-button-client';
 
 export default function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -55,7 +56,8 @@ export default function Navbar() {
           </Group>
 
           <Group visibleFrom="sm">
-            <Button variant="default">Log in</Button>
+            {/* <Button variant="default">Log in</Button> */}
+            <AuthButton />
             <Button>Sign up</Button>
             <LightOrDarkMode />
           </Group>
