@@ -43,7 +43,7 @@ export default function Navbar() {
         />
 
           <Group h="100%" gap={0} visibleFrom="sm">
-            <a href="/studor" className={classes.link}>
+            <a href="/" className={classes.link}>
               Home
             </a>
             <a href="/studor/studygroup" className={classes.link}>
@@ -76,13 +76,13 @@ export default function Navbar() {
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
           <Divider my="sm" />
 
-          <a href="#" className={classes.link}>
+          <a href="/" className={classes.link}>
             Home
           </a>
-          <a href="#" className={classes.link}>
+          <a href="/studor/studygroup" className={classes.link}>
             Study Group
           </a>
-          <a href="#" className={classes.link}>
+          <a href="/studor/tutoring" className={classes.link}>
             Tutoring
           </a>
 
