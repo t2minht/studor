@@ -51,9 +51,11 @@ export default function Navbar() {
 
           <Group visibleFrom="sm">
             <Button variant="outline" color="rgba(255, 255, 255, 1)" radius="xl">Log in</Button>
-            <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-              <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
-            </ActionIcon>
+            <a href='/studor/profile'>
+              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
+                <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
+              </ActionIcon>
+            </a>
             <LightOrDarkMode />
           </Group>
 
@@ -90,12 +92,15 @@ export default function Navbar() {
             <Button radius="xl" color="rgba(255, 255, 255, 1)" variant="outline">Log in</Button>
           </Group>
 
-          <Group justify="center" grow pb="xl" px="md">
-            <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-              <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
-            </ActionIcon>
-          </Group>
 
+          <a href='/studor/profile'>
+            <Group justify="center" grow pb="xl" px="md">
+              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
+                <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
+              </ActionIcon>
+            </Group>
+          </a>
+        
           <Group justify="center" grow pb="xl" px="md">
             <LightOrDarkMode />
           </Group> 
