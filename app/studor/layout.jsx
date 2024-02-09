@@ -4,9 +4,9 @@ import Navbar from '../ui/navbar'
 export default function Layout({ children }) {
   return (
     <>
-      <main>{children}</main>
       <MantineProvider>
         <Navbar />
+        <main>{children}</main>
       </MantineProvider>
     </>
   )

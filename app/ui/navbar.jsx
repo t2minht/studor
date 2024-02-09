@@ -28,7 +28,7 @@ export default function Navbar() {
   const theme = useMantineTheme();
 
   return (
-    <Box pb={120}>
+    <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <IconBook
