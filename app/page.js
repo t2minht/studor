@@ -1,7 +1,7 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 import AuthButton from "./auth-button";
-import { MantineProvider } from "@mantine/core";
+import { Center, MantineProvider } from "@mantine/core";
 // import App from "./ui/navbar";
 import Navbar from "./ui/navbar";
 
@@ -18,6 +18,9 @@ export default async function Home() {
       <pre>{JSON.stringify(sessions, null, 2)}</pre> */}
       <MantineProvider>
         <Navbar />
+        <Center>
+          <h1>My Landing Page</h1>
+        </Center>
       </MantineProvider>
 
     </>
