@@ -24,7 +24,6 @@ export default async function Home() {
       <MantineProvider>
         <Navbar />
         <Center>
-          <AuthButtonServer />
           <h1>My Landing Page</h1>
           <pre>{JSON.stringify(study_sessions, null, 2)}</pre>
         </Center>

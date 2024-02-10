@@ -5,7 +5,9 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
+import { submitSessionData } from '../../backend/newSession';
 
+let values = {};
 
 export default function Page() {
   const [titleValue, setTitleValue] = useState('');
@@ -15,6 +17,7 @@ export default function Page() {
   var mm = String(today.getMonth());
   var yyyy = today.getFullYear();
   const dateTimeRegex = /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (0[1-9]|[1-2][0-9]|3[01]) \d{4} (0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT[+-]\d{4} \([A-Za-z ]+\)$/;
+  
 
   const departmentData = Array(100)
   .fill(0)
@@ -46,8 +49,9 @@ export default function Page() {
       return console.log('Form is invalid');
     }
 
-    const values = form.values; // Get form values
-    console.log('Form values:', values); // Log form values
+    values = form.values; // Get form values
+    // console.log('Form values:', values); // Log form values
+    submitSessionData(values);    
   
     notifications.show({
       withBorder: true,
