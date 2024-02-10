@@ -1,7 +1,7 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
-import AuthButtonServer from './ui/auth-button-server';
 import { redirect } from 'next/navigation';
+import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 // import App from "./ui/navbar";
 import Navbar from "./ui/navbar";
