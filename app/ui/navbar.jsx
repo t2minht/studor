@@ -31,11 +31,15 @@ export default function Navbar() {
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <IconBook
-            size={38}
-            stroke={1.5}
-            color="white"
-          />
+          <a href='/'>
+            <ActionIcon size="xl" variant="transparent" aria-label="Home">
+              <IconBook
+                size={38}
+                stroke={1.5}
+                color="white"
+              />
+            </ActionIcon>
+          </a>
 
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="/" className={classes.link} style={{color:'white'}}>

@@ -9,9 +9,11 @@ import { MantineProvider,
   Table,
   ScrollArea,
   Space,
-  Text} from "@mantine/core";
+  Text,
+  FileButton} from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+
 
 const elements = [
   { topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
@@ -24,8 +26,15 @@ const elements = [
   { topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
 ];
 
+
 export default function Page() {
-  const openRef = useRef(null);
+  const [file, setFile] = useState(null);
+  const resetRef = useRef(null);
+
+  const clearFile = () => {
+    setFile(null);
+    resetRef.current?.();
+  };
 
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
@@ -68,9 +77,19 @@ export default function Page() {
                 placeholder="Your Phone Number"
                 disabled
               />
-              <Button color='#800000' leftSection={<IconUpload size={16} />} onClick={() => openRef.current?.()}>
-                Upload Transcript
-              </Button>
+              <Group justify="center">
+                <FileButton color='#800000' leftSection={<IconUpload size={16} />} resetRef={resetRef} onChange={setFile} accept="application/pdf">
+                  {(props) => <Button {...props}>Upload Transcript</Button>}
+                </FileButton>
+                <Button disabled={!file} color="red" onClick={clearFile}>
+                  Reset
+                </Button>
+              </Group>
+              {file && (
+                <Text size="sm" ta="center" mt="sm">
+                  Picked file: {file.name}
+                </Text>
+              )}
             </Stack> 
           </Group> 
         </Center>  
