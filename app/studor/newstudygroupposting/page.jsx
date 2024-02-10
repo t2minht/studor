@@ -7,11 +7,9 @@ import { IconCircleCheck, IconVolume, IconVolume2, IconVolumeOff } from '@tabler
 import { useForm } from '@mantine/form';
 import { submitSessionData } from '../../backend/newSession';
 
-let values = {};
+let formValues = {};
 
 export default function Page() {
-  const [titleValue, setTitleValue] = useState('');
-  const [locationValue, setLocationValue] = useState('');
   var today = new Date();
   var dd = String(today.getDate());
   var mm = String(today.getMonth());
@@ -32,31 +30,42 @@ export default function Page() {
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:'', dateAndTime:today, noiseLevel:'1'},
+    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, dateAndTime:new Date(), noiseLevel:'1'},
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
-      department: (value) => ((value.length != 4 || /^[^a-zA-Z]*$/.test(value)) ? 'Invalid Department' : null),
-      courseNumber: (value) => ((value.length != 3 || !(/^\d*$/.test(value))) ? 'Invalid Course Number' : null),
-      courseSection: (value) => ((value.length != 3 || !(/^\d*$/.test(value))) ? 'Invalid Course Section' : null),
+      department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
+      courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
+      courseSection: (value, allValues) => (
+        allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
+      ),
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
-      groupSize: (value) => ((value > 1 || value < 20) ? null : 'Invalid Group Size'),
+      groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
       dateAndTime: (value) => (dateTimeRegex.test(value) ? null : 'Invalid date and time'),
-      noiseLevel: (value) => ((value.length != 1 || !(/^\d*$/.test(value)) || value > 5 || value < 1) ? 'Invalid Noise Level' : null),
+      noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
     },
   });
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
-  
-    const checkingValues = event.target;
-    if (!checkingValues.checkValidity()) {
-      return console.log('Form is invalid');
+
+    if (!form.isValid()) {
+      console.log(form.values)
+      console.log('Form is invalid');
+      notifications.show({
+        withBorder: true,
+        color: "red",
+        radius: "md",
+        icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
+        title: "Incorrect Inputs",
+        message: "Please make sure all inputs are correctly formatted",
+      });
+      return;
     }
 
-    values = form.values; // Get form values
+    formValues = form.values; // Get form values
     // console.log('Form values:', values); // Log form values
-    submitSessionData(values);    
+    submitSessionData(formValues);    
   
     notifications.show({
       withBorder: true,
@@ -85,16 +94,6 @@ export default function Page() {
             <TextInput
               label="Title"
               placeholder="Title of Session"
-              value={titleValue}
-              onChange={(event) => setTitleValue(event.currentTarget.value)}
-              rightSectionPointerEvents="all"
-              rightSection={
-                <CloseButton
-                  aria-label="Clear input"
-                  onClick={() => setTitleValue('')}
-                  style={{ display: titleValue ? undefined : 'none' }}
-                />
-              }
               required
               {...form.getInputProps('title')}
             />
@@ -132,17 +131,7 @@ export default function Page() {
             <TextInput
               label="Location"
               placeholder="Location of Session"
-              value={locationValue}
               mt={15}
-              onChange={(event) => setLocationValue(event.currentTarget.value)}
-              rightSectionPointerEvents="all"
-              rightSection={
-                <CloseButton
-                  aria-label="Clear input"
-                  onClick={() => setLocationValue('')}
-                  style={{ display: locationValue ? undefined : 'none' }}
-                />
-              }
               required
               {...form.getInputProps('location')}
             />
