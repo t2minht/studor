@@ -15,15 +15,15 @@ import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState } from 'react';
 
 
-const elements = [
-  { topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
-  { topic: "I can't read...", course: "ENGL 210", date: "January 21, 2024" },
-  { topic: "Data Structs", course: "CSCE 221", date: "January 25, 2024" },
-  { topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
-  { topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
-  { topic: "I can't read...", course: "ENGL 210", date: "January 21, 2024" },
-  { topic: "Data Structs", course: "CSCE 221", date: "January 25, 2024" },
-  { topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
+const sessions = [
+  { id: 1, topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
+  { id: 2, topic: "I can't read...", course: "ENGL 210", date: "January 21, 2024" },
+  { id: 3, topic: "Data Structs", course: "CSCE 221", date: "January 25, 2024" },
+  { id: 4, topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
+  { id: 5, topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
+  { id: 6, topic: "I can't read...", course: "ENGL 210", date: "January 21, 2024" },
+  { id: 7, topic: "Data Structs", course: "CSCE 221", date: "January 25, 2024" },
+  { id: 8, topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
 ];
 
 
@@ -36,11 +36,11 @@ export default function Page() {
     resetRef.current?.();
   };
 
-  const rows = elements.map((element) => (
-    <Table.Tr key={element.name}>
-      <Table.Td>{element.topic}</Table.Td>
-      <Table.Td>{element.course}</Table.Td>
-      <Table.Td>{element.date}</Table.Td>
+  const rows = sessions.map((session) => (
+    <Table.Tr key={session.id}>
+      <Table.Td>{session.topic}</Table.Td>
+      <Table.Td>{session.course}</Table.Td>
+      <Table.Td>{session.date}</Table.Td>
     </Table.Tr>
   ));
 
@@ -59,24 +59,18 @@ export default function Page() {
               />
             </Stack>
             <Stack>
-              <Input
-                leftSection={<IconPencil size={16} />}
-                variant="unstyled"
-                placeholder="Your Name"
-                disabled
-              />
-              <Input
-                leftSection={<IconAt size={16} />}
-                variant="unstyled"
-                placeholder="Your Email"
-                disabled
-              />
-              <Input
-                leftSection={<IconPhone size={16} />}
-                variant="unstyled"
-                placeholder="Your Phone Number"
-                disabled
-              />
+              <Group justify="center">
+                <IconPencil size={16} />
+                <Text fw={700}>Jane Doe</Text>
+              </Group>
+              <Group justify="center">
+                <IconAt size={16} />
+                <Text>janedoe@tamu.edu</Text>
+              </Group>
+              <Group justify="center">
+                <IconPhone size={16} />
+                <Text>(123) 456-7890</Text>
+              </Group>
               <Group justify="center">
                 <FileButton color='#800000' leftSection={<IconUpload size={16} />} resetRef={resetRef} onChange={setFile} accept="application/pdf">
                   {(props) => <Button {...props}>Upload Transcript</Button>}
