@@ -21,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import LightOrDarkMode from './lightordarkmode';
+import LogoutButtonClient from './logout-button-client';
 
 export default function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -54,7 +55,7 @@ export default function Navbar() {
           </Group>
 
           <Group visibleFrom="sm">
-            <Button variant="outline" color="rgba(255, 255, 255, 1)" radius="xl">Log in</Button>
+            <LogoutButtonClient />
             <a href='/studor/profile'>
               <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
                 <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
@@ -93,7 +94,7 @@ export default function Navbar() {
           <Divider my="sm" color="rgba(255, 255, 255, 1)"/>
 
           <Group justify="center" grow pb="xl" color="rgba(255, 255, 255, 1)" px="md">
-            <Button radius="xl" color="rgba(255, 255, 255, 1)" variant="outline">Log in</Button>
+            <LogoutButtonClient />
           </Group>
 
 
