@@ -16,7 +16,7 @@
     "@mantine/dates": "^7.5.1",
     "@mantine/dropzone": "^7.5.1",
     "@mantine/form": "^7.5.1",
-    "@mantine/hooks": "^7.5.1",
+    "@mantine/hooks": "^7.5.2",
     "@mantine/modals": "^7.5.1",
     "@mantine/notifications": "^7.5.1",
     "@mantine/nprogress": "^7.5.1",
