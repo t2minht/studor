@@ -1,7 +1,12 @@
+'use client'
+import { Center, MantineProvider } from "@mantine/core"
+
 export default function Page() {
     return (
-      <div>
-      <h1>This is the study group page</h1>
-      </div>
+      <MantineProvider>
+        <Center>
+          <h1>Study Groups</h1>
+        </Center>
+      </MantineProvider>
     )
   }
