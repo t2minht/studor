@@ -10,8 +10,10 @@ export default function LightOrDarkMode() {
   return (
     <ActionIcon
       onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
-      variant="default"
-      size="xl"
+      variant="subtle"
+      size="lg"
+      radius="xl"
+      color="rgba(255, 255, 255, 1)"
       aria-label="Toggle color scheme"
     >
       <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
