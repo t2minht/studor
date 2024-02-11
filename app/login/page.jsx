@@ -18,12 +18,13 @@ export default function Login() {
     // };
 
     const form = useForm({
+        validateInputOnChange: true,
         initialValues: {
         email: '',
         },
 
         validate: {
-            email: (val) => (/\b\S+@tamu\.edu\b/.test(val) ? null : 'Invalid email, must end with @tamu.edu'),
+            email: (val) => (!(/\b\S+@tamu\.edu\b/.test(val)) ? 'Invalid email, must end with @tamu.edu' : null),
         },
     });
 
@@ -56,12 +57,11 @@ export default function Login() {
 
     return (
         <MantineProvider>
-            <Notifications position="top-right" zIndex={1000} />
+            <Notifications position="top-right" />
             {/* <AuthButtonClient session={session} /> */}
             <BackgroundImage
                 src="https://i.ytimg.com/vi/9L0haqIcUmQ/maxresdefault.jpg"
                 radius="sm"
-                zIndex={0}
             > 
                 <Center style={{ height: '100vh' }}> 
                     <Paper mx={50} shadow="lg" radius="md" p="xl" withBorder style={{ maxWidth: '500px' }}>
