@@ -18,8 +18,8 @@ export default async function Layout({ children }) {
   return (
     <>
       <MantineProvider>
-        <Notifications zIndex={1000}/>
         <Navbar />
+        <Notifications />
         <main>{children}</main>
       </MantineProvider>
     </>
