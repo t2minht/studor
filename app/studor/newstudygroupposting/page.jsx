@@ -3,7 +3,7 @@ import { Center, Group, MantineProvider, Stack, TextInput, CloseButton, Autocomp
 import { DateTimePicker } from '@mantine/dates';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { IconCircleCheck, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
+import { IconCircleCheck, IconCircleX, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitSessionData } from '../../backend/newSession';
 
@@ -56,7 +56,7 @@ export default function Page() {
         withBorder: true,
         color: "red",
         radius: "md",
-        icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
+        icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
         title: "Incorrect Inputs",
         message: "Please make sure all inputs are correctly formatted",
       });
