@@ -23,6 +23,6 @@ export default function LoginButtonClient() {
     };
 
     return (
-        <Button color="#800000" type="submit" radius="xl" leftSection={<IconBrandGoogle style={{ width: rem(18) }} />} onClick={handleSignIn}> Gmail</Button>
+        <Button color="#800000" radius="xl" leftSection={<IconBrandGoogle style={{ width: rem(18) }} />} onClick={handleSignIn}> Gmail</Button>
     )
 }
