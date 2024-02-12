@@ -1,6 +1,7 @@
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 export async function GET(request) {
     const requestUrl = new URL(request.url);
@@ -13,3 +14,5 @@ export async function GET(request) {
 
     return NextResponse.redirect(requestUrl.origin);
 }
+
+

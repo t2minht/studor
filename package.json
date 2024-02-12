@@ -9,17 +9,40 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/carousel": "^7.5.1",
+    "@mantine/charts": "^7.5.1",
+    "@mantine/code-highlight": "^7.5.1",
+    "@mantine/core": "^7.5.1",
+    "@mantine/dates": "^7.5.1",
+    "@mantine/dropzone": "^7.5.1",
+    "@mantine/form": "^7.5.1",
+    "@mantine/hooks": "^7.5.2",
+    "@mantine/modals": "^7.5.1",
+    "@mantine/notifications": "^7.5.1",
+    "@mantine/nprogress": "^7.5.1",
+    "@mantine/spotlight": "^7.5.1",
+    "@mantine/tiptap": "^7.5.1",
     "@supabase/auth-helpers-nextjs": "^0.9.0",
     "@supabase/supabase-js": "^2.39.3",
+    "@tabler/icons-react": "^2.47.0",
+    "@tiptap/extension-link": "^2.2.2",
+    "@tiptap/react": "^2.2.2",
+    "@tiptap/starter-kit": "^2.2.2",
+    "dayjs": "^1.11.10",
+    "embla-carousel-react": "^7.1.0",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-router-dom": "^6.22.0",
+    "recharts": "^2.11.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
-    "postcss": "^8",
+    "postcss": "^8.4.35",
+    "postcss-preset-mantine": "^1.13.0",
+    "postcss-simple-vars": "^7.0.1",
     "tailwindcss": "^3.3.0"
   }
 }
