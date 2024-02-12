@@ -6,6 +6,8 @@ import { Center, MantineProvider } from "@mantine/core";
 // import App from "./ui/navbar";
 import Navbar from "./ui/navbar";
 
+// export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies })
 

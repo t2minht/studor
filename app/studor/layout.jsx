@@ -3,8 +3,10 @@ import Navbar from '../ui/navbar'
 import { Notifications } from "@mantine/notifications"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'; 
- 
+import { redirect } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
+
 export default async function Layout({ children }) {
 
   const supabase = createServerComponentClient({ cookies })
