@@ -19,7 +19,7 @@ export default function LoginButtonClient() {
             provider: "google",
             //         provider: "github",
             options: {
-                redirectTo: `${location.origin}/api/auth/callback`
+                redirectTo: `${location.origin}/auth/callback`
 
             }
         })
