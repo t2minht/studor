@@ -53,6 +53,7 @@ export default function Login() {
             title: 'Login Successful!',
             message: "Now redirecting to Landing Page",
         });
+        window.location.href = '/';
     }
 
     return (
