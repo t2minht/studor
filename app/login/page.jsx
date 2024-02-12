@@ -1,11 +1,9 @@
-// import { BackgroundImage, Button, Center, Group, MantineProvider, Notification, Paper, Space, Stack, Text, TextInput, rem } from '@mantine/core'; // put this in layout.js???
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { redirect } from "next/navigation";
 import { cookies } from 'next/headers'
 import { MantineProvider } from "@mantine/core";
 import ClientPage from './client-page'
 
-// export const dynamic = 'force-dynamic';
 
 export default async function Login() {
     const supabase = createServerComponentClient({ cookies });
