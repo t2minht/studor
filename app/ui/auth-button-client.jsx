@@ -19,14 +19,15 @@ export default function AuthButtonClient({ session }) {
     };
 
     const handleSignIn = async () => {
-        const redirectPath = '/auth/callback'; // Adjust the path as needed
+        const redirectPath = 'api/auth/callback';
         const redirectTo = `${window.location.origin}${redirectPath}`;
+        console.log('redirecting', redirectTo)
 
         await supabase.auth.signInWithOAuth({
             provider: "google",
             //         provider: "github",
             options: {
-                redirectTo: redirectTo
+                redirectTo: 'http://localhost:3000/auth/callback'
             }
         })
     };

@@ -1,7 +1,7 @@
 'use client'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from 'next/navigation';
-import { IconArrowRight } from '@tabler/icons-react';
+import { IconArrowRight, IconBrandGoogle } from '@tabler/icons-react';
 import { Button, rem } from '@mantine/core';
 
 
@@ -14,19 +14,17 @@ export default function LoginButtonClient() {
 
 
     const handleSignIn = async () => {
-        const redirectPath = '/auth/callback'; // Adjust the path as needed
-        const redirectTo = `${window.location.origin}${redirectPath}`;
 
         await supabase.auth.signInWithOAuth({
             provider: "google",
             //         provider: "github",
             options: {
-                redirectTo: redirectTo
+                redirectTo: `${window.location.origin}/api/auth/callback`
             }
         })
     };
 
     return (
-        <Button color="#800000" radius="xl" leftSection={<IconArrowRight style={{ width: rem(18) }} />} onClick={handleSignIn}> Login</Button>
+        <Button color="#800000" radius="xl" leftSection={<IconBrandGoogle style={{ width: rem(18) }} />} onClick={handleSignIn}> Gmail</Button>
     )
 }
