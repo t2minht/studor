@@ -14,10 +14,14 @@ export default function LoginButtonClient() {
 
 
     const handleSignIn = async () => {
+        const redirectPath = '/auth/callback'; // Adjust the path as needed
+        const redirectTo = `${window.location.origin}${redirectPath}`;
+
         await supabase.auth.signInWithOAuth({
             provider: "google",
+            //         provider: "github",
             options: {
-                redirectTo: 'http://localhost:3000/auth/callback'
+                redirectTo: redirectTo
             }
         })
     };
