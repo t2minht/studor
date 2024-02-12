@@ -20,6 +20,7 @@ export default function LoginButtonClient() {
             //         provider: "github",
             options: {
                 redirectTo: `${window.location.origin}/api/auth/callback`
+
             }
         })
     };
