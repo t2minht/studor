@@ -1,7 +1,7 @@
 'use client'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from 'next/navigation';
-import { IconArrowRight, IconBrandGoogle } from '@tabler/icons-react';
+import { IconArrowRight } from '@tabler/icons-react';
 import { Button, rem } from '@mantine/core';
 
 
@@ -23,6 +23,6 @@ export default function LoginButtonClient() {
     };
 
     return (
-        <Button color="#800000" radius="xl" leftSection={<IconBrandGoogle style={{ width: rem(18) }} />} onClick={handleSignIn}> Gmail</Button>
+        <Button color="#800000" radius="xl" leftSection={<IconArrowRight style={{ width: rem(18) }} />} onClick={handleSignIn}> Login</Button>
     )
 }
