@@ -15,7 +15,7 @@ export default function LoginButtonClient() {
 
     const handleSignIn = async () => {
         await supabase.auth.signInWithOAuth({
-            provider: "github",
+            provider: "google",
             options: {
                 redirectTo: 'http://localhost:3000/auth/callback'
             }
