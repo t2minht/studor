@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitStudyGroupSessionData } from '../../backend/newSession';
+import { submitTutorSessionData } from '../../backend/newSession';
 
 let formValues = {};
 
@@ -30,7 +30,7 @@ export default function Page() {
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, dateAndTime:new Date(), noiseLevel:'1'},
+    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, dateAndTime:new Date() },
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -42,7 +42,6 @@ export default function Page() {
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
       dateAndTime: (value) => (dateTimeRegex.test(value) ? null : 'Invalid date and time'),
-      noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
     },
   });
 
@@ -65,7 +64,7 @@ export default function Page() {
 
     formValues = form.values; // Get form values
     // console.log('Form values:', values); // Log form values
-    submitStudyGroupSessionData(formValues);    
+    submitTutorSessionData(formValues);    
   
     notifications.show({
       withBorder: true,
@@ -85,7 +84,7 @@ export default function Page() {
   return (
     <MantineProvider>
       <Center>
-        <h1>Create a Study Group Session</h1>
+        <h1>Create a Tutoring Session</h1>
       </Center>
 
       <Center mx={25}>
@@ -156,55 +155,6 @@ export default function Page() {
                 {...form.getInputProps('dateAndTime')}
               />
             </Group>
-            <Stack mt={20}>
-              <Text mb={-15} ta="center" size="sm" fw={500}>Noise Level</Text>
-              <SegmentedControl color="#800000" data={[
-                  {
-                    value: '1',
-                    label: (
-                      <Center style={{ gap: 10 }}>
-                        <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                        <span>1</span>
-                      </Center>
-                    ),
-                  },
-                  {
-                    value: '2',
-                    label: (
-                      <Center style={{ gap: 10 }}>
-                        <span>2</span>
-                      </Center>
-                    ),
-                  },
-                  {
-                    value: '3',
-                    label: (
-                      <Center style={{ gap: 10 }}>
-                        <IconVolume2 style={{ width: rem(16), height: rem(16) }} />
-                        <span>3</span>
-                      </Center>
-                    ),
-                  },
-                  {
-                    value: '4',
-                    label: (
-                      <Center style={{ gap: 10 }}>
-                        <span>4</span>
-                      </Center>
-                    ),
-                  },
-                  {
-                    value: '5',
-                    label: (
-                      <Center style={{ gap: 10 }}>
-                        <IconVolume style={{ width: rem(16), height: rem(16) }} />
-                        <span>5</span>
-                      </Center>
-                    ),
-                  },
-                ]}
-                {...form.getInputProps('noiseLevel')} />
-            </Stack>
             <Stack align="center" mt={20}>
               <Button 
                 type='submit'
