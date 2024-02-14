@@ -10,6 +10,7 @@ import { submitSessionData } from '../../backend/newSession';
 let formValues = {};
 
 export default function Page() {
+
   var today = new Date();
   var dd = String(today.getDate());
   var mm = String(today.getMonth());
@@ -50,6 +51,7 @@ export default function Page() {
     event.preventDefault(); // Prevent default form submission
 
     if (!form.isValid()) {
+     
       console.log(form.values)
       console.log('Form is invalid');
       notifications.show({
@@ -77,9 +79,9 @@ export default function Page() {
     });
     
     // Redirect to the new page after a short delay
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 5000);
+    // setTimeout(() => {
+    //   window.location.href = '/';
+    // }, 5000);
   };
 
   return (
