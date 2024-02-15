@@ -12,29 +12,24 @@ import { MantineProvider,
   Text,
   FileButton} from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
-import React, { useRef, useState } from 'react';
-
-
-const sessions = [
-  { id: 1, topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
-  { id: 2, topic: "I can't read...", course: "ENGL 210", date: "January 21, 2024" },
-  { id: 3, topic: "Data Structs", course: "CSCE 221", date: "January 25, 2024" },
-  { id: 4, topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
-  { id: 5, topic: "430 Cry - Session", course: "CSCE 430", date: "January 18. 2024" },
-  { id: 6, topic: "I can't read...", course: "ENGL 210", date: "January 21, 2024" },
-  { id: 7, topic: "Data Structs", course: "CSCE 221", date: "January 25, 2024" },
-  { id: 8, topic: "151 HELP on HW", course: "MATH 152", date: "January 29, 2024" },
-];
+import React, { useRef, useState, useEffect } from 'react';
+import { retrieveExistingSessions } from "@/app/backend/newSession";
 
 
 export default function Page() {
-  const [file, setFile] = useState(null);
-  const resetRef = useRef(null);
+  const [studySessions, setStudySessions] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sessions = await retrieveExistingSessions();
+        setStudySessions(sessions);
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+      }
+    };
 
-  const clearFile = () => {
-    setFile(null);
-    resetRef.current?.();
-  };
+    fetchData();
+  }, []);
 
   const rows = sessions.map((session) => (
     <Table.Tr key={session.id}>
@@ -43,6 +38,15 @@ export default function Page() {
       <Table.Td>{session.date}</Table.Td>
     </Table.Tr>
   ));
+
+
+  const [file, setFile] = useState(null);
+  const resetRef = useRef(null);
+
+  const clearFile = () => {
+    setFile(null);
+    resetRef.current?.();
+  };
 
   return (
     <>
