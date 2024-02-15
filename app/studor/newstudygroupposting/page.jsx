@@ -1,9 +1,9 @@
 'use client'
 import { Center, Group, MantineProvider, Stack, TextInput, CloseButton, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text } from '@mantine/core'
-import { DateTimePicker } from '@mantine/dates';
+import { DatePickerInput, DateTimePicker, TimeInput } from '@mantine/dates';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { IconCircleCheck, IconCircleX, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
+import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/newSession';
 
@@ -30,7 +30,7 @@ export default function Page() {
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, dateAndTime:new Date(), noiseLevel:'1'},
+    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, date:new Date(), startTime:'', endTime:'', noiseLevel:'1'},
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -41,7 +41,6 @@ export default function Page() {
       ),
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
-      dateAndTime: (value) => (dateTimeRegex.test(value) ? null : 'Invalid date and time'),
       noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
     },
   });
@@ -62,6 +61,10 @@ export default function Page() {
       });
       return;
     }
+
+    form.values.date = form.values.date.toJSON().substring(0,10);
+    form.values.startTime = form.values.startTime + ':00';
+    form.values.endTime = form.values.endTime + ':00';
 
     formValues = form.values; // Get form values
     // console.log('Form values:', values); // Log form values
@@ -145,16 +148,34 @@ export default function Page() {
                   required
                   {...form.getInputProps('groupSize')}
                 />
-              <DateTimePicker
+              <DatePickerInput
                 allowDeselect
-                valueFormat="DD MMM YYYY hh:mm A"
-                label="Date and Time"
-                description="Include if AM or PM"
-                placeholder="Select a Date and Time"
-                minDate={new Date(yyyy, mm, dd)}
+                valueFormat="YYYY MMM DD"
+                label="Date"
+                description="Select Date"
+                defaultValue={new Date()}
+                minDate={new Date()}
                 required
-                {...form.getInputProps('dateAndTime')}
+                {...form.getInputProps('date')}
               />
+            </Group >
+            <Group grow mt={15}>
+              <TimeInput
+                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                  label="Start Time"
+                  withAsterisk
+                  description="Enter AM or PM"
+                  required
+                  {...form.getInputProps('startTime')}
+                />
+                <TimeInput
+                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                  label="End Time"
+                  withAsterisk
+                  description="Enter AM or PM"
+                  required
+                  {...form.getInputProps('endTime')}
+                />
             </Group>
             <Stack mt={20}>
               <Text mb={-15} ta="center" size="sm" fw={500}>Noise Level</Text>
