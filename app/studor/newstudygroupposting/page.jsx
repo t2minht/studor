@@ -4,7 +4,7 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitStudyGroupSessionData } from '../../backend/newSession';
+import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
 
 let formValues = {};
 
@@ -25,7 +25,7 @@ export default function Page() {
   const form = useForm({
     validateInputOnChange: true,
 
-    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, date:new Date(), startTime:'', endTime:'', noiseLevel:'1'},
+    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 1, date: new Date(), startTime: '', endTime: '', noiseLevel: '1' },
 
 
     validate: {
@@ -38,7 +38,7 @@ export default function Page() {
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
 
-      noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
+      noiseLevel: (value) => ((value > 5 || value < 1) ? 'Invalid Noise Level' : null),
       endTime: (value, allValues) => (
         allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
       ),
@@ -65,13 +65,13 @@ export default function Page() {
     }
 
 
-    form.values.date = form.values.date.toJSON().substring(0,10);
+    form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
 
-    formValues = form.values; 
-    submitStudyGroupSessionData(formValues);    
-  
+    formValues = form.values;
+    submitStudyGroupSessionData(formValues);
+
     notifications.show({
       withBorder: true,
       color: "green",
@@ -143,14 +143,14 @@ export default function Page() {
             <Group grow mt={15}>
               <NumberInput
 
-                  label="Group Size"
-                  placeholder="Enter a Value 1-20"
-                  description="Don't include yourself"
-                  min={1}
-                  max={20}
-                  required
-                  {...form.getInputProps('groupSize')}
-                />
+                label="Group Size"
+                placeholder="Enter a Value 1-20"
+                description="Don't include yourself"
+                min={1}
+                max={20}
+                required
+                {...form.getInputProps('groupSize')}
+              />
               <DatePickerInput
                 allowDeselect
                 valueFormat="YYYY MMM DD"
@@ -166,21 +166,21 @@ export default function Page() {
             </Group >
             <Group grow mt={15}>
               <TimeInput
-                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                  label="Start Time"
-                  withAsterisk
-                  description="Enter AM or PM"
-                  required
-                  {...form.getInputProps('startTime')}
-                />
-                <TimeInput
-                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                  label="End Time"
-                  withAsterisk
-                  description="Enter AM or PM"
-                  required
-                  {...form.getInputProps('endTime')}
-                />
+                leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                label="Start Time"
+                withAsterisk
+                description="Enter AM or PM"
+                required
+                {...form.getInputProps('startTime')}
+              />
+              <TimeInput
+                leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                label="End Time"
+                withAsterisk
+                description="Enter AM or PM"
+                required
+                {...form.getInputProps('endTime')}
+              />
             </Group>
             <Stack mt={20}>
               <Text mb={-15} ta="center" size="sm" fw={500}>Noise Level</Text>

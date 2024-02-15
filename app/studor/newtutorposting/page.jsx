@@ -5,27 +5,27 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitTutorSessionData } from '../../backend/newSession';
+import { submitTutorSessionData } from '../../backend/study-session-backend';
 
 let formValues = {};
 
 export default function Page() {
 
   const departmentData = Array(100)
-  .fill(0)
-  .map((_, index) => `Option ${index}`);
+    .fill(0)
+    .map((_, index) => `Option ${index}`);
 
   const courseNumberData = Array(100)
-  .fill(0)
-  .map((_, index) => `Option ${index}`);
+    .fill(0)
+    .map((_, index) => `Option ${index}`);
 
   const courseSectionData = Array(100)
-  .fill(0)
-  .map((_, index) => `Option ${index}`);
+    .fill(0)
+    .map((_, index) => `Option ${index}`);
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, date:new Date(), startTime:'', endTime:''},
+    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 1, date: new Date(), startTime: '', endTime: '' },
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -60,14 +60,14 @@ export default function Page() {
       return;
     }
 
-    form.values.date = form.values.date.toJSON().substring(0,10);
+    form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
 
 
     formValues = form.values;
-    submitTutorSessionData(formValues);    
-  
+    submitTutorSessionData(formValues);
+
     notifications.show({
       withBorder: true,
       color: "green",
@@ -76,7 +76,7 @@ export default function Page() {
       title: 'New Session Created! Redirecting...',
       message: "Now redirecting to Landing Page",
     });
-    
+
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';
@@ -138,14 +138,14 @@ export default function Page() {
             />
             <Group grow mt={15}>
               <NumberInput
-                  label="Group Size"
-                  placeholder="Enter a Value 1-20"
-                  description="Don't include yourself"
-                  min={1}
-                  max={20}
-                  required
-                  {...form.getInputProps('groupSize')}
-                />
+                label="Group Size"
+                placeholder="Enter a Value 1-20"
+                description="Don't include yourself"
+                min={1}
+                max={20}
+                required
+                {...form.getInputProps('groupSize')}
+              />
               <DatePickerInput
                 allowDeselect
                 valueFormat="YYYY MMM DD"
@@ -159,37 +159,37 @@ export default function Page() {
             </Group >
             <Group grow mt={15}>
               <TimeInput
-                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                  label="Start Time"
-                  withAsterisk
-                  description="Enter AM or PM"
-                  required
-                  {...form.getInputProps('startTime')}
-                />
-                <TimeInput
-                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                  label="End Time"
-                  withAsterisk
-                  description="Enter AM or PM"
-                  required
-                  {...form.getInputProps('endTime')}
-                />
+                leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                label="Start Time"
+                withAsterisk
+                description="Enter AM or PM"
+                required
+                {...form.getInputProps('startTime')}
+              />
+              <TimeInput
+                leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                label="End Time"
+                withAsterisk
+                description="Enter AM or PM"
+                required
+                {...form.getInputProps('endTime')}
+              />
             </Group>
             <Stack align="center" mt={20}>
-              <Button 
+              <Button
                 type='submit'
-                mt="md" 
-                variant="filled" 
-                color='#800000' 
+                mt="md"
+                variant="filled"
+                color='#800000'
                 radius="xl"
-                >
+              >
                 Post Session
               </Button>
             </Stack>
           </form>
         </Stack>
       </Center>
-      <Space h='xl'/>
+      <Space h='xl' />
     </MantineProvider>
   )
 }

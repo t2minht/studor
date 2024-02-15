@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
-import { retrieveExistingSessions } from "@/app/backend/newSession";
+import { retrieveExistingSessions } from "@/app/backend/study-session-backend";
 
 
 export default function Page() {

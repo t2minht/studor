@@ -1,5 +1,5 @@
 'use client'
-import { retrieveExistingSessions } from "@/app/backend/newSession";
+import { retrieveExistingSessions } from "@/app/backend/study-session-backend";
 import { Center, MantineProvider } from "@mantine/core"
 import { useEffect, useState } from "react";
 
