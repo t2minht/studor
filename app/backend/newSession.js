@@ -9,8 +9,9 @@ export async function submitStudyGroupSessionData(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
-
-  const { returned_data, error } = await supabase.from('study_sessions').insert([
+  const { data : returned_session, error : error1 } = await supabase
+  .from('study_sessions')
+  .insert([
     {
       topic: data.title,
       department: data.department,
@@ -24,13 +25,15 @@ export async function submitStudyGroupSessionData(data) {
       noise_level: data.noiseLevel,
       host_user_id: user.id
     }
-  ]).select();
-  console.log('error', error);
-  console.log('returned_data', returned_data);
-
-
+  ])
+  .select();
+  
+  // TODO: put into new function???
+  const { data : returned_participant, data : error2 } = await supabase.from('participants_in_study_session')
+  .insert([
+    {
+      user_id: user.id,
+      study_session_id: returned_session[0].id
+    }
+  ])
 }
-
-// export function submitTutorSessionData(data) {
-//   console.log(data);
-// }
