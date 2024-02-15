@@ -1,7 +1,6 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, CloseButton, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text } from '@mantine/core'
-import { DatePickerInput, DateTimePicker, TimeInput } from '@mantine/dates';
-import { useState } from 'react';
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text } from '@mantine/core'
+import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
@@ -10,12 +9,6 @@ import { submitStudyGroupSessionData } from '../../backend/newSession';
 let formValues = {};
 
 export default function Page() {
-  var today = new Date();
-  var dd = String(today.getDate());
-  var mm = String(today.getMonth());
-  var yyyy = today.getFullYear();
-  const dateTimeRegex = /^(Sun|Mon|Tue|Wed|Thu|Fri|Sat) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (0[1-9]|[1-2][0-9]|3[01]) \d{4} (0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT[+-]\d{4} \([A-Za-z ]+\)$/;
-  
   const departmentData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
@@ -42,6 +35,9 @@ export default function Page() {
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
       noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
+      endTime: (value, allValues) => (
+        allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
+      ),
     },
   });
 
@@ -66,8 +62,7 @@ export default function Page() {
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
 
-    formValues = form.values; // Get form values
-    // console.log('Form values:', values); // Log form values
+    formValues = form.values; 
     submitStudyGroupSessionData(formValues);    
   
     notifications.show({
