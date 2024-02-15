@@ -1,4 +1,5 @@
 'use client'
+
 import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
@@ -9,6 +10,7 @@ import { submitTutorSessionData } from '../../backend/newSession';
 let formValues = {};
 
 export default function Page() {
+
   const departmentData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
@@ -34,6 +36,7 @@ export default function Page() {
       ),
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
+
       endTime: (value, allValues) => (
         allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
       ),
@@ -60,6 +63,7 @@ export default function Page() {
     form.values.date = form.values.date.toJSON().substring(0,10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
+
 
     formValues = form.values;
     submitTutorSessionData(formValues);    
