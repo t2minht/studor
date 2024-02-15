@@ -82,9 +82,9 @@ export default function Page() {
     });
 
     // Redirect to the new page after a short delay
-    // setTimeout(() => {
-    //   window.location.href = '/';
-    // }, 5000);
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 5000);
   };
 
   return (
