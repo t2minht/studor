@@ -4,6 +4,7 @@ import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
 
+
 export async function submitStudyGroupSessionData(data) {
 
   const supabase = createServerActionClient({ cookies })
@@ -84,3 +85,4 @@ export async function joinSession(session) {
     }
   ])
 }
+
