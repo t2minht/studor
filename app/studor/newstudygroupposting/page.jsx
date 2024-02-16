@@ -5,10 +5,12 @@ import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/newSession';
+import { useEffect } from 'react';
 
 let formValues = {};
 
 export default function Page() {
+  var today = new Date();
   const departmentData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
@@ -21,9 +23,12 @@ export default function Page() {
   .fill(0)
   .map((_, index) => `Option ${index}`);
 
+
   const form = useForm({
     validateInputOnChange: true,
+    validateOnChange: true,
     initialValues: { title: '', description: '', department: '', courseNumber:'', courseSection:'', location:'', groupSize:1, date:new Date(), startTime:'', endTime:'', noiseLevel:'1'},
+    
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -35,6 +40,25 @@ export default function Page() {
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
       noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
+      date: (value) => {
+
+        const currentDate = new Date();
+        const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
+        
+        if (value < today){
+          return 'Date must be in the future';
+        }
+        return null;
+      },
+      startTime: (value, allValues) => {
+        const selectedDate = new Date(allValues.date);
+        const selectedTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), ...value.split(':').map(Number));
+        // Construct Date object for the selected time
+        if (selectedTime < new Date()) { // Check if selected time is in the past
+            return 'Start time must be in the future'; // Return error message if it is
+        }
+        return null; // Return null if start time is valid
+    },
       endTime: (value, allValues) => (
         allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
       ),
