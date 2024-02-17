@@ -3,6 +3,22 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
+export async function retrieveProfileStudySession() {
+  const supabase = createServerActionClient({ cookies })
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from('study_sessions')
+    .select()
+    .eq('host_user_id', user.id)
+
+  if (error) {
+    console.error(error);
+    throw new Error("Error fetching study sessions");
+  }
+
+  return data;
+}
 
 export async function submitStudyGroupSessionData(data) {
 

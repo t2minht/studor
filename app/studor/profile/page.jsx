@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
-import { retrieveExistingSessions } from "@/app/backend/study-session-backend";
+import { retrieveProfileStudySession } from "@/app/backend/study-session-backend";
 
 
 export default function Page() {
@@ -23,7 +23,7 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessions = await retrieveExistingSessions();
+        const sessions = await retrieveProfileStudySession();
         setStudySessions(sessions);
       } catch (error) {
         console.error('Error fetching sessions:', error);
