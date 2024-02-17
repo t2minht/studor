@@ -28,7 +28,7 @@ export default function Page() {
     <MantineProvider>
       <Center>
         <h1>Study Groups</h1>
-      </Center>
+       </Center>
       
       <Grid overflow="hidden">
         <Grid.Col span="content">

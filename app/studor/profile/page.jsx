@@ -1,19 +1,21 @@
 'use client'
-import { MantineProvider, 
-  Group, 
-  Center, 
-  Stack, 
-  Avatar, 
+import {
+  MantineProvider,
+  Group,
+  Center,
+  Stack,
+  Avatar,
   Input,
   Button,
   Table,
   ScrollArea,
   Space,
   Text,
-  FileButton} from "@mantine/core";
+  FileButton
+} from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
-import { retrieveExistingSessions } from "@/app/backend/newSession";
+import { retrieveProfileStudySession } from "@/app/backend/study-session-backend";
 
 
 export default function Page() {
@@ -21,7 +23,7 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessions = await retrieveExistingSessions();
+        const sessions = await retrieveProfileStudySession();
         setStudySessions(sessions);
       } catch (error) {
         console.error('Error fetching sessions:', error);
@@ -31,10 +33,10 @@ export default function Page() {
     fetchData();
   }, []);
 
-  const rows = sessions.map((session) => (
+  const rows = studySessions.map((session) => (
     <Table.Tr key={session.id}>
       <Table.Td>{session.topic}</Table.Td>
-      <Table.Td>{session.course}</Table.Td>
+      <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
       <Table.Td>{session.date}</Table.Td>
     </Table.Tr>
   ));
@@ -88,14 +90,14 @@ export default function Page() {
                   Picked file: {file.name}
                 </Text>
               )}
-            </Stack> 
-          </Group> 
-        </Center>  
+            </Stack>
+          </Group>
+        </Center>
         <Stack mt={75} mx={50}>
           <Text ta="center" size="lg" fw={700}>Session History</Text>
           <ScrollArea h={250}>
             <Table stickyHeader striped withTableBorder highlightOnHover>
-              <Table.Thead style={{color:'white'}} bg='#800000'>
+              <Table.Thead style={{ color: 'white' }} bg='#800000'>
                 <Table.Tr>
                   <Table.Th>Topic</Table.Th>
                   <Table.Th>Course</Table.Th>
@@ -105,8 +107,8 @@ export default function Page() {
               <Table.Tbody>{rows}</Table.Tbody>
             </Table>
           </ScrollArea>
-        </Stack>  
-        <Space h='xl'/>
+        </Stack>
+        <Space h='xl' />
       </MantineProvider>
     </>
   )

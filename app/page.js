@@ -5,6 +5,7 @@ import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 // import App from "./ui/navbar";
 import Navbar from "./ui/navbar";
+import { retrieveExistingSessions } from "./backend/study-session-backend";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies })
@@ -15,7 +16,10 @@ export default async function Home() {
     redirect("/login")
   }
 
-  const { data: study_sessions } = await supabase.from("study_sessions").select();
+  // const { data: study_sessions1 } = await supabase.from("study_sessions").select();
+  const study_sessions = await retrieveExistingSessions();
+
+
 
 
 
