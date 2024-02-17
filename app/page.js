@@ -1,27 +1,20 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from 'next/headers'
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
-// import App from "./ui/navbar";
 import Navbar from "./ui/navbar";
 import { retrieveExistingSessions } from "./backend/study-session-backend";
 
 export default async function Home() {
-  const supabase = createServerComponentClient({ cookies })
-
+  const supabase = createServerComponentClient({ cookies });
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
-    redirect("/login")
+    redirect("/login");
   }
 
-  // const { data: study_sessions1 } = await supabase.from("study_sessions").select();
   const study_sessions = await retrieveExistingSessions();
-
-
-
-
 
   return (
     <>
@@ -29,10 +22,28 @@ export default async function Home() {
         <Navbar />
         <Center>
           <h1>My Landing Page</h1>
-          <pre>{JSON.stringify(study_sessions, null, 2)}</pre>
+          {study_sessions.length > 0 ? (
+            <pre>{JSON.stringify(study_sessions, null, 2)}</pre>
+          ) : (
+            <>
+              <a
+                href="/studor/newstudygroupposting"
+                style={{
+                  display: 'block',  // Set to block to place it on a new line
+                  marginTop: '10px', // Add top margin for spacing
+                  padding: '10px 20px',
+                  border: '1px solid #800000',
+                  borderRadius: '12px',
+                  color: '#800000',
+                  textDecoration: 'none',
+                }}
+              >
+                New Study Session
+              </a>
+            </>
+          )}
         </Center>
       </MantineProvider>
-
     </>
   );
 }
