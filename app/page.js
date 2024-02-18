@@ -34,8 +34,10 @@ export default async function Home() {
                   padding: '10px 20px',
                   border: '1px solid #800000',
                   borderRadius: '12px',
-                  color: '#800000',
+                  color: 'white',
                   textDecoration: 'none',
+                  background: "#800000",
+                  marginLeft: '2em'
                 }}
               >
                 New Study Session
