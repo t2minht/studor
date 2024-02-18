@@ -7,44 +7,6 @@ import { Notifications, notifications } from '@mantine/notifications';
 import LoginButtonClient from '../ui/login-button-client';
 
 export default function ClientPage() {
-    const form = useForm({
-        validateInputOnChange: true,
-        initialValues: {
-            email: '',
-        },
-
-        validate: {
-            email: (val) => (!(/\b\S+@tamu\.edu\b/.test(val)) ? 'Invalid email, must end with @tamu.edu' : null),
-        },
-    });
-
-    const handleSubmitEmail = (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        if (!form.isValid()) {
-            console.log(form.values)
-            console.log('Form is invalid');
-            notifications.show({
-                withBorder: true,
-                color: "red",
-                radius: "md",
-                icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-                title: "Incorrect Email",
-                message: "Please make sure email is correctly formatted",
-            });
-            return;
-        }
-
-        notifications.show({
-            withBorder: true,
-            color: "green",
-            radius: "md",
-            icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-            title: 'Login Successful!',
-            message: "Now redirecting to Landing Page",
-        });
-        window.location.href = '/';
-    }
 
     return (
         <MantineProvider>
@@ -60,29 +22,9 @@ export default function ClientPage() {
                             Welcome to TAMU Studor!
                         </Text>
                         <Space h="md" />
-                        <form onSubmit={handleSubmitEmail}>
-                            <Stack>
-                                <TextInput
-                                    required
-                                    label="Email"
-                                    description="Please log in with your TAMU email"
-                                    placeholder="yourNetID@tamu.edu"
-                                    value={form.values.email}
-                                    onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
-                                    error={form.errors.email && 'Invalid email'}
-                                    radius="md"
-                                />
-                            </Stack>
-
-                            <Group justify="center" mt="md">
-                                <Button color="#800000" type="submit" radius="xl" rightSection={<IconArrowRight style={{ width: rem(18) }} />}
-                                    {...form.getInputProps('email')}
-                                >
-                                    Login
-                                </Button>
-                                <LoginButtonClient />
-                            </Group>
-                        </form>
+                         <Group justify="center" mt="md">
+                             <LoginButtonClient />
+                         </Group>
                     </Paper>
                 </Center>
             </BackgroundImage>
