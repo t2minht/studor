@@ -20,6 +20,15 @@ export async function retrieveProfileStudySession() {
   return data;
 }
 
+export async function retrieveUserProfileInfo() {
+  const supabase = createServerActionClient({ cookies })
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  let metadata = user.user_metadata
+  return metadata
+}
+
 export async function submitStudyGroupSessionData(data) {
 
   const supabase = createServerActionClient({ cookies })

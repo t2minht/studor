@@ -15,16 +15,19 @@ import {
 } from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
-import { retrieveProfileStudySession } from "@/app/backend/study-session-backend";
+import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/backend/study-session-backend";
 
 
 export default function Page() {
   const [studySessions, setStudySessions] = useState([]);
+  const [userData, setUserData] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessions = await retrieveProfileStudySession();
+        const user = await retrieveUserProfileInfo();
         setStudySessions(sessions);
+        setUserData(user)
       } catch (error) {
         console.error('Error fetching sessions:', error);
       }
@@ -42,6 +45,7 @@ export default function Page() {
   ));
 
 
+
   const [file, setFile] = useState(null);
   const resetRef = useRef(null);
 
@@ -55,6 +59,7 @@ export default function Page() {
       <MantineProvider>
         <Center>
           <h1>Profile</h1>
+
         </Center>
 
         <Center>
@@ -67,11 +72,11 @@ export default function Page() {
             <Stack>
               <Group justify="center">
                 <IconPencil size={16} />
-                <Text fw={700}>Jane Doe</Text>
+                <Text fw={700}>{userData.name}</Text>
               </Group>
               <Group justify="center">
                 <IconAt size={16} />
-                <Text>janedoe@tamu.edu</Text>
+                <Text>{userData.email}</Text>
               </Group>
               <Group justify="center">
                 <IconPhone size={16} />
