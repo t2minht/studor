@@ -28,7 +28,6 @@ export default function Page() {
         const user = await retrieveUserProfileInfo();
         setStudySessions(sessions);
         setUserData(user)
-        console.log(user.avatar_url)
       } catch (error) {
         console.error('Error fetching sessions:', error);
       }
