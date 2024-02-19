@@ -28,6 +28,7 @@ export default function Page() {
         const user = await retrieveUserProfileInfo();
         setStudySessions(sessions);
         setUserData(user)
+        console.log(user.avatar_url)
       } catch (error) {
         console.error('Error fetching sessions:', error);
       }
@@ -65,9 +66,7 @@ export default function Page() {
         <Center>
           <Group gap="xl" justify="center">
             <Stack>
-              <Avatar
-                size={200}
-              />
+              <Avatar size={200} src={userData.avatar_url} alt={userData.name} />
             </Stack>
             <Stack>
               <Group justify="center">
