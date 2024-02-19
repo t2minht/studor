@@ -15,16 +15,20 @@ import {
 } from "@mantine/core";
 import { IconAt, IconPencil, IconPhone, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
-import { retrieveProfileStudySession } from "@/app/backend/study-session-backend";
+import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/backend/study-session-backend";
 
 
 export default function Page() {
   const [studySessions, setStudySessions] = useState([]);
+  const [userData, setUserData] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessions = await retrieveProfileStudySession();
+        const user = await retrieveUserProfileInfo();
         setStudySessions(sessions);
+        setUserData(user)
+        console.log(user.avatar_url)
       } catch (error) {
         console.error('Error fetching sessions:', error);
       }
@@ -42,6 +46,7 @@ export default function Page() {
   ));
 
 
+
   const [file, setFile] = useState(null);
   const resetRef = useRef(null);
 
@@ -55,28 +60,24 @@ export default function Page() {
       <MantineProvider>
         <Center>
           <h1>Profile</h1>
+
         </Center>
 
         <Center>
           <Group gap="xl" justify="center">
             <Stack>
-              <Avatar
-                size={200}
-              />
+              <Avatar size={200} src={userData.avatar_url} alt={userData.name} />
             </Stack>
             <Stack>
               <Group justify="center">
                 <IconPencil size={16} />
-                <Text fw={700}>Jane Doe</Text>
+                <Text fw={700}>{userData.name}</Text>
               </Group>
               <Group justify="center">
                 <IconAt size={16} />
-                <Text>janedoe@tamu.edu</Text>
+                <Text>{userData.email}</Text>
               </Group>
-              <Group justify="center">
-                <IconPhone size={16} />
-                <Text>(123) 456-7890</Text>
-              </Group>
+
               <Group justify="center">
                 <FileButton color='#800000' leftSection={<IconUpload size={16} />} resetRef={resetRef} onChange={setFile} accept="application/pdf">
                   {(props) => <Button {...props}>Upload Transcript</Button>}
