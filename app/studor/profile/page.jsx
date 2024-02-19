@@ -233,7 +233,7 @@ export default function Page() {
                 <Text>janedoe@tamu.edu</Text>
               </Group>
               <Group justify="center">
-                <FileButton color='#800000' leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
+                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
                   {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
                 </FileButton>
                 <Button disabled={!schedule} color="red" onClick={clearSchedule}>
@@ -246,7 +246,7 @@ export default function Page() {
                 </Text>
               )}
               <Group justify="center">
-                <FileButton color='#800000' leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
+                <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
                   {(props) => <Button {...props}>Upload Transcript</Button>}
                 </FileButton>
                 <Button disabled={!transcript} color="red" onClick={clearTranscript}>
@@ -261,7 +261,7 @@ export default function Page() {
             </Stack>
           </Group>
         </Center>
-        <Stack mt={75} mx={50}>
+        <Stack mt={60} mx={50}>
           <Text ta="center" size="lg" fw={700}>My Courses</Text>
           <form onSubmit={handleSubmit}>
             <Group grow mt={0}>
@@ -323,10 +323,11 @@ export default function Page() {
                     <Table.Tbody>{coursesRows}</Table.Tbody>
                   </Table>
                 </ScrollArea>
-                <Stack mt={10} align="center">
+                <Stack align="center">
                   <Button
                     variant="filled"
                     color='#800000'
+                    mt="md"
                     radius="xl"
                     disabled={(selection == undefined || selection.length == 0) ? true:false}
                   >
