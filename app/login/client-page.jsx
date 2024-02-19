@@ -11,7 +11,7 @@ export default function ClientPage() {
     return (
         <MantineProvider>
             <Notifications position="top-right" />
-            {/* <AuthButtonClient session={session} /> */}
+
             <BackgroundImage
                 src="https://i.ytimg.com/vi/9L0haqIcUmQ/maxresdefault.jpg"
                 radius="sm"
@@ -22,9 +22,9 @@ export default function ClientPage() {
                             Welcome to TAMU Studor!
                         </Text>
                         <Space h="md" />
-                         <Group justify="center" mt="md">
-                             <LoginButtonClient />
-                         </Group>
+                        <Group justify="center" mt="md">
+                            <LoginButtonClient />
+                        </Group>
                     </Paper>
                 </Center>
             </BackgroundImage>
