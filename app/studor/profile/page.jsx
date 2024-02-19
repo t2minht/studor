@@ -78,10 +78,7 @@ export default function Page() {
                 <IconAt size={16} />
                 <Text>{userData.email}</Text>
               </Group>
-              <Group justify="center">
-                <IconPhone size={16} />
-                <Text>(123) 456-7890</Text>
-              </Group>
+
               <Group justify="center">
                 <FileButton color='#800000' leftSection={<IconUpload size={16} />} resetRef={resetRef} onChange={setFile} accept="application/pdf">
                   {(props) => <Button {...props}>Upload Transcript</Button>}
