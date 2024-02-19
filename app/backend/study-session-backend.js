@@ -73,10 +73,6 @@ export async function retrieveExistingSessions() {
       .order('date')
       .order('end_time');
 
-    if (error) {
-      console.error(error);
-      throw new Error("Error fetching study sessions");
-    }
 
     return data;
 
