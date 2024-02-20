@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingSessions } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions } from "./backend/study-session-backend";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
@@ -13,7 +13,7 @@ export default async function Home() {
     redirect("/login");
   }
 
-  const study_sessions = await retrieveExistingSessions();
+  const study_sessions = await retrieveExistingJoinedSessions();
 
   return (
     <>
@@ -21,7 +21,7 @@ export default async function Home() {
         <Navbar />
         <Center>
           <h1>My Landing Page</h1>
-          {study_sessions.length > 0 ? (
+          {study_sessions ? (
             <pre>{JSON.stringify(study_sessions, null, 2)}</pre>
           ) : (
             <>

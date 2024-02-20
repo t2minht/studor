@@ -63,9 +63,39 @@ export async function submitStudyGroupSessionData(data) {
     ])
 }
 
-export async function retrieveExistingSessions() {
+// export async function retrieveExistingNotJoinedSessions1() {
 
-  const supabase = createServerActionClient({ cookies })
+//   const supabase = createServerActionClient({ cookies })
+//   const { data: { user } } = await supabase.auth.getUser();
+
+//   const currentDateTime = new Date();
+//   const currentDate = currentDateTime.toISOString().split('T')[0];
+//   const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+
+
+//   try {
+//     const { data, error } = await supabase
+//       .from('study_sessions')
+//       .select()
+//       .gte('date', currentDate)
+//       .gte('end_time', currentTime)
+//       .not('id', 'in', supabase.from('participants_in_study_session').select('study_session_id').eq('user_id', user.id))
+//       .order('date')
+//       .order('end_time');
+
+//     return data;
+
+//   }
+//   catch (error) {
+//     console.log('error', error);
+//     throw error;
+//   }
+// }
+
+export async function retrieveExistingNotJoinedSessions() {
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
   const currentDate = currentDateTime.toISOString().split('T')[0];
@@ -74,23 +104,92 @@ export async function retrieveExistingSessions() {
 
 
   try {
-    const { data, error } = await supabase
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .neq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+    const participantSessionIds = participantSessionsData.map(entry => entry.study_session_id);
+
+
+    const { data: futureData, error: error1 } = await supabase
       .from('study_sessions')
       .select()
-      .gte('date', currentDate)
-      .gte('end_time', currentTime)
+      .gt('date', currentDate)
+      .in('id', participantSessionIds)
       .order('date')
       .order('end_time');
 
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .in('id', participantSessionIds)
+      .order('date')
+      .order('end_time');
 
+    const data = todaysData.concat(futureData);
+    console.log(data)
     return data;
 
-  }
-  catch (error) {
+
+  } catch (error) {
     console.log('error', error);
     throw error;
   }
 }
+
+export async function retrieveExistingJoinedSessions() {
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+  try {
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+    if (participantSessionsError) {
+      throw participantSessionsError;
+    }
+
+    const participantSessionIds = participantSessionsData.map(entry => entry.study_session_id);
+
+    const { data: futureData, error: error1 } = await supabase
+      .from('study_sessions')
+      .select()
+      .gt('date', currentDate)
+      .in('id', participantSessionIds)
+      .order('date')
+      .order('end_time');
+
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .in('id', participantSessionIds)
+      .order('date')
+      .order('end_time');
+
+    const data = todaysData.concat(futureData);
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+}
+
+
 
 export async function joinSession(session) {
 
