@@ -92,7 +92,7 @@ export async function retrieveExistingSessions() {
   }
 }
 
-export async function joinSession(session) {
+export async function joinSession(data) {
 
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
@@ -101,7 +101,7 @@ export async function joinSession(session) {
     .insert([
       {
         user_id: user.id,
-        study_session_id: session.id
+        study_session_id: data.session_id
       }
     ])
 }
