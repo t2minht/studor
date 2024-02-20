@@ -3,6 +3,15 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
+function setDifference(setA, setB) {
+  const difference = new Set(setA);
+  for (const item of setB) {
+    difference.delete(item);
+  }
+  return difference;
+}
+
+
 export async function retrieveProfileStudySession() {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
@@ -63,36 +72,6 @@ export async function submitStudyGroupSessionData(data) {
     ])
 }
 
-// export async function retrieveExistingNotJoinedSessions1() {
-
-//   const supabase = createServerActionClient({ cookies })
-//   const { data: { user } } = await supabase.auth.getUser();
-
-//   const currentDateTime = new Date();
-//   const currentDate = currentDateTime.toISOString().split('T')[0];
-//   const currentTime = currentDateTime.toTimeString().split(' ')[0];
-
-
-
-//   try {
-//     const { data, error } = await supabase
-//       .from('study_sessions')
-//       .select()
-//       .gte('date', currentDate)
-//       .gte('end_time', currentTime)
-//       .not('id', 'in', supabase.from('participants_in_study_session').select('study_session_id').eq('user_id', user.id))
-//       .order('date')
-//       .order('end_time');
-
-//     return data;
-
-//   }
-//   catch (error) {
-//     console.log('error', error);
-//     throw error;
-//   }
-// }
-
 export async function retrieveExistingNotJoinedSessions() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
@@ -104,20 +83,31 @@ export async function retrieveExistingNotJoinedSessions() {
 
 
   try {
-    const participantSessionsQuery = supabase
+    const notParticipantSessionsQuery = supabase
       .from('participants_in_study_session')
       .select('study_session_id')
       .neq('user_id', user.id);
 
+    const { data: notParticipantSessionsData, error: notParticipantSessionsError } = await notParticipantSessionsQuery;
+    const notParticipantSessionIdsSet = new Set(notParticipantSessionsData.map(entry => entry.study_session_id));
+
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
     const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
-    const participantSessionIds = participantSessionsData.map(entry => entry.study_session_id);
+    const participantSessionIdsSet = new Set(participantSessionsData.map(entry => entry.study_session_id));
+
+    const notInSessionsSet = setDifference(notParticipantSessionIdsSet, participantSessionIdsSet);
+    const notInSessionsArray = Array.from(notInSessionsSet);
 
 
     const { data: futureData, error: error1 } = await supabase
       .from('study_sessions')
       .select()
       .gt('date', currentDate)
-      .in('id', participantSessionIds)
+      .in('id', notInSessionsArray)
       .order('date')
       .order('end_time');
 
@@ -126,12 +116,11 @@ export async function retrieveExistingNotJoinedSessions() {
       .select()
       .eq('date', currentDate)
       .gte('end_time', currentTime)
-      .in('id', participantSessionIds)
+      .in('id', notInSessionsArray)
       .order('date')
       .order('end_time');
 
     const data = todaysData.concat(futureData);
-    console.log(data)
     return data;
 
 
