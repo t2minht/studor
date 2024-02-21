@@ -7,7 +7,6 @@ export default function JoinSessionButton(session_id) {
 
     const joinHandler = async () => {
         await joinSession(session_id);
-        console.log("handler finished");
     }
 
     return (

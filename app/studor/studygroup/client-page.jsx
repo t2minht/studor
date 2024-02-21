@@ -25,8 +25,6 @@ export default function ClientPage(data) {
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(true);
 
-    // console.log(data.data[0].id);
-
     if (data.study_sessions === null) {
       return (
 
