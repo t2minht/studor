@@ -22,7 +22,7 @@ import {
   IconStarHalfFilled,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import Modalview from "../ui/modalview";
+import Modaltutor from "../ui/Modaltutor";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 
@@ -62,7 +62,7 @@ export default function Landingsg() {
                   >
                     Join
                   </Button>
-                  <Modalview />
+                  <Modaltutor />
                 </Group>
               </Stack>
             </Group>
@@ -95,7 +95,7 @@ export default function Landingsg() {
                   >
                     Join
                   </Button>
-                  <Modalview />
+                  <Modaltutor />
                 </Group>
               </Stack>
             </Group>

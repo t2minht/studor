@@ -22,7 +22,6 @@ import {
   IconStarHalfFilled,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import Modalview from "../../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 
@@ -113,7 +112,7 @@ export default function Page() {
                         <IconStar />
                       </Group>
                     </Stack>
-                    <Group align="center">
+                    <Group justify="center">
                       <Button
                         variant="filled"
                         size="sm"
@@ -122,7 +121,6 @@ export default function Page() {
                       >
                         Join
                       </Button>
-                      <Modalview />
                     </Group>
                   </Stack>
                 </Group>
@@ -155,7 +153,7 @@ export default function Page() {
                         <IconStar />
                       </Group>
                     </Stack>
-                    <Group align="center">
+                    <Group justify="center">
                       <Button
                         variant="filled"
                         size="sm"
@@ -164,7 +162,6 @@ export default function Page() {
                       >
                         Join
                       </Button>
-                      <Modalview />
                     </Group>
                   </Stack>
                 </Group>
@@ -197,7 +194,7 @@ export default function Page() {
                         <IconStar />
                       </Group>
                     </Stack>
-                    <Group align="center">
+                    <Group justify="center">
                       <Button
                         variant="filled"
                         size="sm"
@@ -206,7 +203,6 @@ export default function Page() {
                       >
                         Join
                       </Button>
-                      <Modalview />
                     </Group>
                   </Stack>
                 </Group>
