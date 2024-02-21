@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingSessions } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions } from "./backend/study-session-backend";
 import Landing from "./ui/landing";
 
 export default async function Home() {
@@ -15,7 +15,7 @@ export default async function Home() {
     redirect("/login");
   }
 
-  const study_sessions = await retrieveExistingSessions();
+  const study_sessions = await retrieveExistingJoinedSessions();
 
   return (
     <>
