@@ -13,20 +13,40 @@ function setDifference(setA, setB) {
 
 
 export async function retrieveProfileStudySession() {
-  const supabase = createServerActionClient({ cookies })
+  const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
-    .from('study_sessions')
-    .select()
-    .eq('host_user_id', user.id)
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
-  if (error) {
-    console.error(error);
-    throw new Error("Error fetching study sessions");
+  try {
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+    if (participantSessionsError) {
+      throw participantSessionsError;
+    }
+
+    const participantSessionIds = participantSessionsData.map(entry => entry.study_session_id);
+
+    const { data, error } = await supabase
+      .from('study_sessions')
+      .select()
+      .in('id', participantSessionIds)
+      .order('date', { ascending: false })
+      .order('end_time', { ascending: false });
+
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
   }
-
-  return data;
 }
 
 export async function retrieveUserProfileInfo() {
