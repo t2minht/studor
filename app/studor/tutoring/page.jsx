@@ -19,7 +19,7 @@ import {
   IconDiscountCheckFilled,
   IconStar,
   IconStarFilled,
-  IconStarHalfFilled
+  IconStarHalfFilled,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../../ui/modalview";
@@ -65,7 +65,18 @@ export default function Page() {
               defaultChecked
               color="#800000"
               label="Show calendar"
+              mb={20}
             />
+            <Group>
+              <Button
+                variant="filled"
+                component="a"
+                href="/studor/newtutorposting"
+                color="#800000"
+              >
+                New Tutor Post
+              </Button>
+            </Group>
           </Stack>
         </Grid.Col>
 
@@ -95,11 +106,11 @@ export default function Page() {
                       </Group>
                       <Group mt={-15}>
                         <Text>Tutor Rating: 3.2</Text>
-                        <IconStarFilled/>
-                        <IconStarFilled/>
-                        <IconStarFilled/>
-                        <IconStarHalfFilled/>
-                        <IconStar/>
+                        <IconStarFilled />
+                        <IconStarFilled />
+                        <IconStarFilled />
+                        <IconStarHalfFilled />
+                        <IconStar />
                       </Group>
                     </Stack>
                     <Group align="center">
@@ -120,7 +131,7 @@ export default function Page() {
                     <Avatar size={100} />
                   </Stack>
                   <Stack>
-                  <Stack>
+                    <Stack>
                       <Text fw={700} size="xl">
                         312 One-on-One Tutor Session
                       </Text>
@@ -137,11 +148,11 @@ export default function Page() {
                       </Group>
                       <Group mt={-15}>
                         <Text>Tutor Rating: 3.2</Text>
-                        <IconStarFilled/>
-                        <IconStarFilled/>
-                        <IconStarFilled/>
-                        <IconStarHalfFilled/>
-                        <IconStar/>
+                        <IconStarFilled />
+                        <IconStarFilled />
+                        <IconStarFilled />
+                        <IconStarHalfFilled />
+                        <IconStar />
                       </Group>
                     </Stack>
                     <Group align="center">
@@ -162,7 +173,7 @@ export default function Page() {
                     <Avatar size={100} />
                   </Stack>
                   <Stack>
-                  <Stack>
+                    <Stack>
                       <Text fw={700} size="xl">
                         312 One-on-One Tutor Session
                       </Text>
@@ -179,11 +190,11 @@ export default function Page() {
                       </Group>
                       <Group mt={-15}>
                         <Text>Tutor Rating: 3.2</Text>
-                        <IconStarFilled/>
-                        <IconStarFilled/>
-                        <IconStarFilled/>
-                        <IconStarHalfFilled/>
-                        <IconStar/>
+                        <IconStarFilled />
+                        <IconStarFilled />
+                        <IconStarFilled />
+                        <IconStarHalfFilled />
+                        <IconStar />
                       </Group>
                     </Stack>
                     <Group align="center">
