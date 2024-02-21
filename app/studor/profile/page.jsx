@@ -18,10 +18,10 @@ import {
 } from "@mantine/core";
 import { IconAt, IconCalendarPlus, IconCircleCheck, IconCircleX, IconPencil, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
+import { retrieveProfileStudySession } from "@/app/backend/study-session-backend";
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
-import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/backend/study-session-backend";
 
 let formValues = {};
 
@@ -110,14 +110,11 @@ export default function Page() {
     setSelection((current) => (current.length === data.length ? [] : data.map((item) => item.id)));
 
   const [studySessions, setStudySessions] = useState([]);
-  const [userData, setUserData] = useState({});
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessions = await retrieveProfileStudySession();
-        const user = await retrieveUserProfileInfo();
         setStudySessions(sessions);
-        setUserData(user)
       } catch (error) {
         console.error('Error fetching sessions:', error);
       }
@@ -209,7 +206,6 @@ export default function Page() {
       message: "The table should now include your recent added course",
     });
 
-
   };
 
   return (
@@ -218,22 +214,23 @@ export default function Page() {
       <MantineProvider>
         <Center>
           <h1>Profile</h1>
-
         </Center>
 
         <Center>
           <Group gap="xl" justify="center">
             <Stack>
-              <Avatar size={200} src={userData.avatar_url} alt={userData.name} />
+              <Avatar
+                size={200}
+              />
             </Stack>
             <Stack>
               <Group justify="center">
                 <IconPencil size={16} />
-                <Text fw={700}>{userData.name}</Text>
+                <Text fw={700}>Jane Doe</Text>
               </Group>
               <Group justify="center">
                 <IconAt size={16} />
-              <Text>{userData.email}</Text>
+                <Text>janedoe@tamu.edu</Text>
               </Group>
               <Group justify="center">
                 <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
@@ -248,7 +245,6 @@ export default function Page() {
                   Selected file: {schedule.name}
                 </Text>
               )}
-
               <Group justify="center">
                 <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
                   {(props) => <Button {...props}>Upload Transcript</Button>}

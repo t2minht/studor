@@ -1,16 +1,28 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { redirect } from "next/navigation";
-import { cookies } from 'next/headers'
-import { MantineProvider } from "@mantine/core";
-import ClientPage from './client-page'
-import { retrieveExistingNotJoinedSessions } from '../../backend/study-session-backend'
-import StudySessions from "./study-sessions";
+"use client";
+import {
+  Center,
+  MantineProvider,
+  Drawer,
+  ActionIcon,
+  Switch,
+  Grid,
+  Stack,
+  Avatar,
+  Group,
+  Text,
+  Button,
+  ScrollArea,
+} from "@mantine/core";
+import { IconXboxX, IconFilter } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import Modalview from "../../ui/modalview";
+import { useViewportSize } from "@mantine/hooks";
+import { useState } from "react";
 
-
-export default async function Page() {
-  const supabase = createServerComponentClient({ cookies });
-
-  const study_sessions = await retrieveExistingNotJoinedSessions();
+export default function Page() {
+  const [opened, { open, close }] = useDisclosure(false);
+  const { height, width } = useViewportSize();
+  const [checked, setChecked] = useState(true);
 
   return (
     <MantineProvider>
@@ -160,8 +172,12 @@ export default async function Page() {
           </Group>
         </Grid.Col>
 
+        {checked && (
+          <Grid.Col span={6} order={{ base: 2 }}>
+            <Group>Calendar coming soon</Group>
+          </Grid.Col>
+        )}
+      </Grid>
     </MantineProvider>
-  )
-
-
+  );
 }
