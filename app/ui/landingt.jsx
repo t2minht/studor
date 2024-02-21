@@ -14,51 +14,27 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import {
-  IconXboxX,
-  IconFilter,
-  IconDiscountCheckFilled,
-  IconStar,
-  IconStarFilled,
-  IconStarHalfFilled,
-} from "@tabler/icons-react";
+    IconXboxX,
+    IconFilter,
+    IconDiscountCheckFilled,
+    IconStar,
+    IconStarFilled,
+    IconStarHalfFilled,
+  } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import Modalview from "../../ui/modalview";
+import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 
-export default function Page() {
-  const [opened, { open, close }] = useDisclosure(false);
+export default function Landingsg() {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
   return (
     <MantineProvider>
-      <Center>
-        <h1>Tutoring</h1>
-      </Center>
-
       <Grid overflow="hidden">
-        <Grid.Col span="content">
-          <Drawer
-            opened={opened}
-            onClose={close}
-            title="Filter"
-            closeButtonProps={{
-              icon: <IconXboxX size={20} stroke={1.5} />,
-            }}
-          >
-            Filters coming soon
-          </Drawer>
+        <Grid.Col span="content" mt={30} mr={70}>
           <Stack pl={20}>
-            <ActionIcon
-              onClick={open}
-              variant="filled"
-              size="xl"
-              color="#800000"
-              aria-label="Filter"
-            >
-              <IconFilter style={{ width: "90%", height: "90%" }} stroke={2} />
-            </ActionIcon>
             <Switch
               checked={checked}
               onChange={(event) => setChecked(event.currentTarget.checked)}
@@ -82,7 +58,8 @@ export default function Page() {
 
         <Grid.Col span="auto" order={{ base: 3 }}>
           <Group miw={200}>
-            <ScrollArea h={height - 180}>
+            <ScrollArea h={height - 100}>
+              <h1>Your Posts</h1>
               <Group>
                 <Group p={30}>
                   <Stack>
@@ -100,18 +77,6 @@ export default function Page() {
                       <Text mt={-15}>Date: Feb 14, 2024</Text>
                       <Text mt={-15}>Time: 1:00 PM - 2:00 PM</Text>
                       <Text mt={-15}>Available: 1/1</Text>
-                      <Group mt={-15}>
-                        <Text>Tutor: Name</Text>
-                        <IconDiscountCheckFilled />
-                      </Group>
-                      <Group mt={-15}>
-                        <Text>Tutor Rating: 3.2</Text>
-                        <IconStarFilled />
-                        <IconStarFilled />
-                        <IconStarFilled />
-                        <IconStarHalfFilled />
-                        <IconStar />
-                      </Group>
                     </Stack>
                     <Group align="center">
                       <Button
@@ -142,18 +107,7 @@ export default function Page() {
                       <Text mt={-15}>Date: Feb 14, 2024</Text>
                       <Text mt={-15}>Time: 1:00 PM - 2:00 PM</Text>
                       <Text mt={-15}>Available: 1/1</Text>
-                      <Group mt={-15}>
-                        <Text>Tutor: Name</Text>
-                        <IconDiscountCheckFilled />
-                      </Group>
-                      <Group mt={-15}>
-                        <Text>Tutor Rating: 3.2</Text>
-                        <IconStarFilled />
-                        <IconStarFilled />
-                        <IconStarFilled />
-                        <IconStarHalfFilled />
-                        <IconStar />
-                      </Group>
+                    
                     </Stack>
                     <Group align="center">
                       <Button
@@ -168,7 +122,10 @@ export default function Page() {
                     </Group>
                   </Stack>
                 </Group>
-                <Group p={30}>
+              </Group>
+              <h1>Joined Sessions</h1>
+              <Group>
+              <Group p={30}>
                   <Stack>
                     <Avatar size={100} />
                   </Stack>
@@ -183,19 +140,6 @@ export default function Page() {
                       <Text mt={-15}>Location: ZACH 350</Text>
                       <Text mt={-15}>Date: Feb 14, 2024</Text>
                       <Text mt={-15}>Time: 1:00 PM - 2:00 PM</Text>
-                      <Text mt={-15}>Available: 1/1</Text>
-                      <Group mt={-15}>
-                        <Text>Tutor: Name</Text>
-                        <IconDiscountCheckFilled />
-                      </Group>
-                      <Group mt={-15}>
-                        <Text>Tutor Rating: 3.2</Text>
-                        <IconStarFilled />
-                        <IconStarFilled />
-                        <IconStarFilled />
-                        <IconStarHalfFilled />
-                        <IconStar />
-                      </Group>
                     </Stack>
                     <Group align="center">
                       <Button
@@ -216,7 +160,7 @@ export default function Page() {
         </Grid.Col>
 
         {checked && (
-          <Grid.Col span={6} order={{ base: 2 }}>
+          <Grid.Col span={6} order={{ base: 2 }} mt={30}>
             <Group>Calendar coming soon</Group>
           </Grid.Col>
         )}
