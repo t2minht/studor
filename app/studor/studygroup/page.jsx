@@ -7,7 +7,7 @@ export default async function Page() {
 
   return (
     <MantineProvider>
-      <ClientPage data={study_sessions}></ClientPage>
+      <ClientPage study_sessions={study_sessions}></ClientPage>
     </MantineProvider>
   )
 }
