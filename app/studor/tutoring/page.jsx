@@ -112,7 +112,7 @@ export default function Page() {
                         <IconStar />
                       </Group>
                     </Stack>
-                    <Group justify="center">
+                    <Group>
                       <Button
                         variant="filled"
                         size="sm"
@@ -153,7 +153,7 @@ export default function Page() {
                         <IconStar />
                       </Group>
                     </Stack>
-                    <Group justify="center">
+                    <Group>
                       <Button
                         variant="filled"
                         size="sm"
@@ -194,7 +194,7 @@ export default function Page() {
                         <IconStar />
                       </Group>
                     </Stack>
-                    <Group justify="center">
+                    <Group>
                       <Button
                         variant="filled"
                         size="sm"

@@ -45,15 +45,7 @@ export default function Landingsg() {
                   <Text mt={-15}>Time: 2:00 PM - 3:00 PM</Text>
                   <Text mt={-15}>Available: 3/10</Text>
                 </Stack>
-                <Group align="center">
-                  <Button
-                    variant="filled"
-                    size="sm"
-                    color="#800000"
-                    radius="xl"
-                  >
-                    Join
-                  </Button>
+                <Group>
                   <Modalview />
                 </Group>
               </Stack>
@@ -75,15 +67,7 @@ export default function Landingsg() {
                   <Text mt={-15}>Time: 2:00 PM - 3:00 PM</Text>
                   <Text mt={-15}>Available: 3/10</Text>
                 </Stack>
-                <Group align="center">
-                  <Button
-                    variant="filled"
-                    size="sm"
-                    color="#800000"
-                    radius="xl"
-                  >
-                    Join
-                  </Button>
+                <Group>
                   <Modalview />
                 </Group>
               </Stack>
@@ -108,15 +92,7 @@ export default function Landingsg() {
                   <Text mt={-15}>Time: 2:00 PM - 3:00 PM</Text>
                   <Text mt={-15}>Available: 3/10</Text>
                 </Stack>
-                <Group align="center">
-                  <Button
-                    variant="filled"
-                    size="sm"
-                    color="#800000"
-                    radius="xl"
-                  >
-                    Join
-                  </Button>
+                <Group>
                   <Modalview />
                 </Group>
               </Stack>
