@@ -112,7 +112,7 @@ export default function ClientPage(data) {
                                   </Stack>
                                   <Group align="center">
                                       <JoinSessionButton session_id={session.id} />
-                                      <Modalview />
+                                      <Modalview current={session} />
                                   </Group>
                               </Stack>
                               </Group>

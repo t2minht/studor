@@ -26,7 +26,7 @@ import Modaltutor from "../ui/Modaltutor";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 
-export default function Landingsg() {
+export default function Landingsg(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 

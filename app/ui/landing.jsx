@@ -22,7 +22,7 @@ import { useState } from "react";
 import Landingsg from "./landingsg";
 import Landingt from "./landingt";
 
-export default function Landing() {
+export default function Landing(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState('sg');
@@ -64,10 +64,10 @@ export default function Landing() {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="sg">
-              <Landingsg></Landingsg>
+              <Landingsg study_sessions={data.study_sessions}></Landingsg>
             </Tabs.Panel>
             <Tabs.Panel value="tutor">
-              <Landingt></Landingt>
+              <Landingt study_sessions={data.study_sessions}></Landingt>
             </Tabs.Panel>
           </Tabs>
         </Grid.Col>

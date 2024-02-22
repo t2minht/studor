@@ -46,7 +46,7 @@ export default async function Home() {
             </>
           )}
         </Center> */}
-        <Landing></Landing>
+        <Landing study_sessions={study_sessions}></Landing>
       </MantineProvider>
     </>
   );
