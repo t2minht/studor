@@ -55,6 +55,7 @@ export default function Landingsg(data) {
                 </Stack>
                 <Group>
                   <Modaltutor />
+                  <Button color="#EA0B0B" radius="xl">Leave</Button>
                 </Group>
               </Stack>
             </Group>

@@ -63,7 +63,6 @@ export default function Modaltutor() {
         onClick={open}
         variant="filled"
         size="sm"
-        color="#800000"
         radius="xl"
       >
         View

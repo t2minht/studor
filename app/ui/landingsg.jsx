@@ -44,17 +44,29 @@ export default function Landingsg(data) {
               </Stack>
               <Stack>
                 <Stack>
-                  <Text fw={700} size="xl">{session.topic}</Text>
+                  <Text fw={700} size="xl">
+                    {session.topic}
+                  </Text>
                   <Text mt={-10} fw={700}>
-                    Class:{" "} {session.department + " " + session.course_number + (session.section ? " - " + session.section : "")}{" "}
+                    Class:{" "}
+                    {session.department +
+                      " " +
+                      session.course_number +
+                      (session.section ? " - " + session.section : "")}{" "}
                   </Text>
                   <Text mt={-15}>Location: {session.location}</Text>
                   <Text mt={-15}>Date: {session.date}</Text>
-                  <Text mt={-15}>Time: {session.start_time} - {session.end_time}</Text>
-                  <Text mt={-15}>Available: {session.current_group_size} /{" "} {session.max_group_size}{" "}</Text>
+                  <Text mt={-15}>
+                    Time: {session.start_time} - {session.end_time}
+                  </Text>
+                  <Text mt={-15}>
+                    Available: {session.current_group_size} /{" "}
+                    {session.max_group_size}{" "}
+                  </Text>
                 </Stack>
                 <Group>
                   <Modalview current={session} />
+                  <Button color="yellow" radius="xl">Edit</Button>
                 </Group>
               </Stack>
             </Group>

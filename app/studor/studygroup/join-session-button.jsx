@@ -13,7 +13,7 @@ export default function JoinSessionButton(session_id) {
         <Button
         variant="filled"
         size="sm"
-        color="#800000"
+        color="#009020"
         radius="xl"
         onClick={joinHandler}
         >

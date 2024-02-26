@@ -79,7 +79,6 @@ export default function Modalview(session) {
         onClick={open}
         variant="filled"
         size="sm"
-        color="#800000"
         radius="xl"
       >
         View
