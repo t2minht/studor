@@ -177,8 +177,10 @@ export async function retrieveExistingJoinedSessions() {
       .select()
       .gt('date', currentDate)
       .in('id', participantSessionIds)
+      .neq('host_user_id', user.id)
       .order('date')
       .order('end_time');
+
 
     const { data: todaysData, error: error2 } = await supabase
       .from('study_sessions')
@@ -186,6 +188,7 @@ export async function retrieveExistingJoinedSessions() {
       .eq('date', currentDate)
       .gte('end_time', currentTime)
       .in('id', participantSessionIds)
+      .neq('host_user_id', user.id)
       .order('date')
       .order('end_time');
 
@@ -239,8 +242,8 @@ export async function retrieveFutureHostedSessions() { /// TODO: test
       .gt('date', currentDate)
       .order('date')
       .order('end_time');
-      
-      const { data: todaysData, error: error2 } = await supabase
+
+    const { data: todaysData, error: error2 } = await supabase
       .from('study_sessions')
       .select()
       .eq('host_user_id', user.id)
