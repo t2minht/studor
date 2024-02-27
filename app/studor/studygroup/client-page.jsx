@@ -26,13 +26,13 @@ export default function ClientPage(data) {
     const [checked, setChecked] = useState(true);
 
     if (data.study_sessions === null) {
-      return (
+        return (
 
-        (
-          <Group>
-          <Text>Nothing to see here</Text>
-          </Group>
-          )
+            (
+                <Group>
+                    <Text>Nothing to see here</Text>
+                </Group>
+            )
         )
     }
 
@@ -93,29 +93,34 @@ export default function ClientPage(data) {
                             <Group>
                                 {data.study_sessions.map((session) => (
 
-                              <Group p={30} key={session.topic}>
-                              <Stack>
-                                  <Avatar size={100} />
-                              </Stack>
-                              <Stack>
-                                  <Stack>
-                                      <Text fw={700} size="xl">
-                                        {session.topic}
-                                      </Text>
-                                      <Text mt={-10} fw={700}>
-                                          Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
-                                      </Text>
-                                      <Text mt={-15}>Location: {session.location}</Text>
-                                      <Text mt={-15}>Date: {session.date}</Text>
-                                      <Text mt={-15}>Time: {session.start_time} - {session.end_time}</Text>
-                                      <Text mt={-15}>Available: {session.current_group_size} / {session.max_group_size} </Text>
-                                  </Stack>
-                                  <Group align="center">
-                                      <JoinSessionButton session_id={session.id} />
-                                      <Modalview />
-                                  </Group>
-                              </Stack>
-                              </Group>
+                                    <Group p={30} key={session.topic}>
+                                        <Stack>
+                                            <Avatar size={100} />
+                                        </Stack>
+                                        <Stack>
+                                            <Stack>
+                                                <Text fw={700} size="xl">
+                                                    {session.topic}
+                                                </Text>
+                                                <Text mt={-10} fw={700}>
+                                                    Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
+                                                </Text>
+                                                <Text mt={-15}>Location: {session.location}</Text>
+                                                <Text mt={-15}>Date: {session.date}</Text>
+                                                <Text mt={-15}>Time: {session.start_time} - {session.end_time}</Text>
+                                                <Text mt={-15}>Available: {session.current_group_size} / {session.max_group_size} </Text>
+                                            </Stack>
+                                            <Group align="center">
+                                                {session.current_group_size < session.max_group_size ? (
+                                                    <JoinSessionButton session={session} />
+                                                ) : (
+                                                    <Text>Full</Text>
+                                                )}
+                                                {/* <JoinSessionButton session={session} /> */}
+                                                <Modalview />
+                                            </Group>
+                                        </Stack>
+                                    </Group>
 
 
 

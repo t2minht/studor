@@ -209,7 +209,14 @@ export async function joinSession(data) {
     .insert([
       {
         user_id: user.id,
-        study_session_id: data.session_id
+        study_session_id: data.session.id
       }
     ])
+
+
+
+
+  const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
+    .update({ current_group_size: data.session.current_group_size + 1 })
+    .eq('id', data.session.id)
 }
