@@ -18,14 +18,34 @@ import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
-import JoinSessionButton from "./join-session-button";
+import { joinSession } from "@/app/backend/study-session-backend";
 
 export default function ClientPage(data) {
     const [opened, { open, close }] = useDisclosure(false);
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(true);
 
-    if (data.study_sessions === null) {
+    const [study_sessions, setStudySessions] = useState(data.study_sessions);
+
+    const joinHandler = async (session) => {
+
+        await joinSession(data = { session });
+        const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+        setStudySessions(updatedSessions);
+
+    }
+
+    const handleRemoveSession = (session) => {
+        // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+        console.log('howdy')
+        // Log the updated study_sessions
+        // console.log("Updated study_sessions:", updatedSessions);
+
+        // // Update the state with the filtered sessions
+        // setStudySessions(updatedSessions);
+    }
+
+    if (study_sessions === null) {
         return (
 
             (
@@ -91,7 +111,7 @@ export default function ClientPage(data) {
                     <Group miw={200}>
                         <ScrollArea h={height - 180}>
                             <Group>
-                                {data.study_sessions
+                                {study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
                                         <Group p={30} key={session.topic}>
@@ -112,12 +132,16 @@ export default function ClientPage(data) {
                                                     <Text mt={-15}>Available: {session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
-                                                    {/* {session.current_group_size < session.max_group_size ? (
-                                                <JoinSessionButton session={session} />
-                                            ) : (
-                                                <Text>Full</Text>
-                                            )} */}
-                                                    <JoinSessionButton session={session} />
+                                                    {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
+                                                    <Button
+                                                        variant="filled"
+                                                        size="sm"
+                                                        color="#800000"
+                                                        radius="xl"
+                                                        onClick={() => joinHandler(session)}
+                                                    >
+                                                        Join
+                                                    </Button>
                                                     <Modalview />
                                                 </Group>
                                             </Stack>
