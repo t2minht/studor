@@ -91,41 +91,42 @@ export default function ClientPage(data) {
                     <Group miw={200}>
                         <ScrollArea h={height - 180}>
                             <Group>
-                                {data.study_sessions.map((session) => (
-
-                                    <Group p={30} key={session.topic}>
-                                        <Stack>
-                                            <Avatar size={100} />
-                                        </Stack>
-                                        <Stack>
+                                {data.study_sessions
+                                    .filter((session) => session.current_group_size < session.max_group_size)
+                                    .map((session) => (
+                                        <Group p={30} key={session.topic}>
                                             <Stack>
-                                                <Text fw={700} size="xl">
-                                                    {session.topic}
-                                                </Text>
-                                                <Text mt={-10} fw={700}>
-                                                    Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
-                                                </Text>
-                                                <Text mt={-15}>Location: {session.location}</Text>
-                                                <Text mt={-15}>Date: {session.date}</Text>
-                                                <Text mt={-15}>Time: {session.start_time} - {session.end_time}</Text>
-                                                <Text mt={-15}>Available: {session.current_group_size} / {session.max_group_size} </Text>
+                                                <Avatar size={100} />
                                             </Stack>
-                                            <Group align="center">
-                                                {session.current_group_size < session.max_group_size ? (
+                                            <Stack>
+                                                <Stack>
+                                                    <Text fw={700} size="xl">
+                                                        {session.topic}
+                                                    </Text>
+                                                    <Text mt={-10} fw={700}>
+                                                        Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
+                                                    </Text>
+                                                    <Text mt={-15}>Location: {session.location}</Text>
+                                                    <Text mt={-15}>Date: {session.date}</Text>
+                                                    <Text mt={-15}>Time: {session.start_time} - {session.end_time}</Text>
+                                                    <Text mt={-15}>Available: {session.current_group_size} / {session.max_group_size} </Text>
+                                                </Stack>
+                                                <Group align="center">
+                                                    {/* {session.current_group_size < session.max_group_size ? (
+                                                <JoinSessionButton session={session} />
+                                            ) : (
+                                                <Text>Full</Text>
+                                            )} */}
                                                     <JoinSessionButton session={session} />
-                                                ) : (
-                                                    <Text>Full</Text>
-                                                )}
-                                                {/* <JoinSessionButton session={session} /> */}
-                                                <Modalview />
-                                            </Group>
-                                        </Stack>
-                                    </Group>
+                                                    <Modalview />
+                                                </Group>
+                                            </Stack>
+                                        </Group>
 
 
 
 
-                                ))}
+                                    ))}
                             </Group>
                         </ScrollArea>
                     </Group>

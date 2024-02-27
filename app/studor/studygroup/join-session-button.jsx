@@ -11,11 +11,11 @@ export default function JoinSessionButton(session_id) {
 
     return (
         <Button
-        variant="filled"
-        size="sm"
-        color="#800000"
-        radius="xl"
-        onClick={joinHandler}
+            variant="filled"
+            size="sm"
+            color="#800000"
+            radius="xl"
+            onClick={joinHandler}
         >
             Join
         </Button>
