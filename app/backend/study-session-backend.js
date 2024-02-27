@@ -220,3 +220,41 @@ export async function joinSession(data) {
     .update({ current_group_size: data.session.current_group_size + 1 })
     .eq('id', data.session.id)
 }
+
+
+export async function retrieveFutureHostedSessions() { /// TODO: test
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+  try {
+
+    const { data: futureData, error: error1 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('host_user_id', user.id)
+      .gt('date', currentDate)
+      .order('date')
+      .order('end_time');
+      
+      const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('host_user_id', user.id)
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .order('date')
+      .order('end_time');
+
+    const data = todaysData.concat(futureData);
+    console.log(data);
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+}
