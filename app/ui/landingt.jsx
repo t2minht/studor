@@ -22,7 +22,7 @@ import {
   IconStarHalfFilled,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import Modaltutor from "../ui/Modaltutor";
+import Modaltutor from "../ui/modaltutor";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 
