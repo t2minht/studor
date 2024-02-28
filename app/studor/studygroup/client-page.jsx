@@ -142,7 +142,9 @@ export default function ClientPage(data) {
                                                     >
                                                         Join
                                                     </Button>
+
                                                     <Modalview current={session}/>
+
                                                 </Group>
                                             </Stack>
                                         </Group>
