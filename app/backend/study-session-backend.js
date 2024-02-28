@@ -226,19 +226,24 @@ export async function leaveSession(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
+  console.log(data)
+
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
-    .delete([
-      {
-        user_id: user.id,
-        study_session_id: data.session.id
-      }
-    ])
+    .delete()
+    .eq('user_id', user.id)
+    .eq('study_session_id', data.session.id)
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
     .update({ current_group_size: data.session.current_group_size - 1 })
     .eq('id', data.session.id)
 }
-
+/*
+if I click leave session
+then session will be removed from the landing page
+then current group size decrements by 1
+then participant is removed from the database
+then session reappears on the study session page
+*/
 
 export async function retrieveFutureHostedSessions() {
   const supabase = createServerActionClient({ cookies });
@@ -268,7 +273,6 @@ export async function retrieveFutureHostedSessions() {
       .order('end_time');
 
     const data = todaysData.concat(futureData);
-    console.log(data);
     return data;
 
   } catch (error) {

@@ -18,10 +18,14 @@ import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
+import { leaveSession } from "../backend/study-session-backend";
 
 export default function Landingsg(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
+
+  const [study_sessions_hosted, setHostedStudySessions] = useState(data.study_sessions.hosted);
+  const [study_sessions_joined, setJoinedStudySessions] = useState(data.study_sessions.joined);
 
   if (data.study_sessions === null) {
     console.log("hi");
@@ -32,14 +36,26 @@ export default function Landingsg(data) {
     );
   }
 
-  console.log(data)
+  const deleteHandler = async (session) => {
+
+    // await joinSession(data = { session });
+    // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+    // setStudySessions(updatedSessions);
+
+  }
+
+  const leaveHandler = async (session) => {
+    await leaveSession(data = { session });
+    const updatedSessions = study_sessions_joined.filter((item) => item.id !== session.id);
+    setJoinedStudySessions(updatedSessions);
+  }
 
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>
         <h1>Your Posts</h1>
         <Group>
-          {data.study_sessions.hosted.map((session) => (
+          {study_sessions_hosted.map((session) => (
             <Group p={30} key={session.topic}>
               <Stack>
                 <Avatar size={100} />
@@ -76,7 +92,7 @@ export default function Landingsg(data) {
         </Group>
         <h1>Joined Sessions</h1>
         <Group>
-          {data.study_sessions.joined.map((session) => (
+          {study_sessions_joined.map((session) => (
             <Group p={30} key={session.topic}>
               <Stack>
                 <Avatar size={100} />
@@ -104,8 +120,7 @@ export default function Landingsg(data) {
                   </Text>
                 </Stack>
                 <Group>
-                  <Modalview current={session} />
-                  <Button color="yellow" radius="xl">Edit</Button>
+                  <Button color="red" radius="xl" onClick={ () => leaveHandler(session)}>Leave</Button>
                 </Group>
               </Stack>
             </Group>
