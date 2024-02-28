@@ -216,16 +216,31 @@ export async function joinSession(data) {
       }
     ])
 
-
-
-
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
     .update({ current_group_size: data.session.current_group_size + 1 })
     .eq('id', data.session.id)
 }
 
+export async function leaveSession(data) {
 
-export async function retrieveFutureHostedSessions() { /// TODO: test
+  const supabase = createServerActionClient({ cookies })
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
+    .delete([
+      {
+        user_id: user.id,
+        study_session_id: data.session.id
+      }
+    ])
+
+  const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
+    .update({ current_group_size: data.session.current_group_size - 1 })
+    .eq('id', data.session.id)
+}
+
+
+export async function retrieveFutureHostedSessions() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
