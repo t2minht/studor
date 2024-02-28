@@ -136,13 +136,15 @@ export default function ClientPage(data) {
                                                     <Button
                                                         variant="filled"
                                                         size="sm"
-                                                        color="#800000"
+                                                        color="#009020"
                                                         radius="xl"
                                                         onClick={() => joinHandler(session)}
                                                     >
                                                         Join
                                                     </Button>
-                                                    <Modalview />
+
+                                                    <Modalview current={session}/>
+
                                                 </Group>
                                             </Stack>
                                         </Group>
