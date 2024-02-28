@@ -92,7 +92,7 @@ export default function ClientPage(data) {
             <ScrollArea h={height - 180}>
               <Group>
                 {data.study_sessions.map((session) => (
-                  <Group p={30}>
+                  <Group p={30} key={session.id}>
                     <Stack>
                       <Avatar size={100} />
                     </Stack>
