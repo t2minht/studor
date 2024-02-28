@@ -5,7 +5,7 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitTutorSessionData } from '../../backend/study-session-backend';
+//import { submitTutorSessionData } from '../../backend/study-session-backend';
 
 let formValues = {};
 
@@ -66,7 +66,7 @@ export default function Page() {
 
 
     formValues = form.values;
-    submitTutorSessionData(formValues);
+    //submitTutorSessionData(formValues);
 
     notifications.show({
       withBorder: true,

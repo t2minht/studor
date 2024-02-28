@@ -3,21 +3,59 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
+function setDifference(setA, setB) {
+  const difference = new Set(setA);
+  for (const item of setB) {
+    difference.delete(item);
+  }
+  return difference;
+}
+
+
 export async function retrieveProfileStudySession() {
-  const supabase = createServerActionClient({ cookies })
+  const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
-    .from('study_sessions')
-    .select()
-    .eq('host_user_id', user.id)
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
-  if (error) {
-    console.error(error);
-    throw new Error("Error fetching study sessions");
+  try {
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+    if (participantSessionsError) {
+      throw participantSessionsError;
+    }
+
+    const participantSessionIds = participantSessionsData.map(entry => entry.study_session_id);
+
+    const { data, error } = await supabase
+      .from('study_sessions')
+      .select()
+      .in('id', participantSessionIds)
+      .order('date', { ascending: false })
+      .order('end_time', { ascending: false });
+
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
   }
+}
 
-  return data;
+export async function retrieveUserProfileInfo() {
+  const supabase = createServerActionClient({ cookies })
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  let metadata = user.user_metadata
+  return metadata
 }
 
 export async function submitStudyGroupSessionData(data) {
@@ -54,9 +92,9 @@ export async function submitStudyGroupSessionData(data) {
     ])
 }
 
-export async function retrieveExistingSessions() {
-
-  const supabase = createServerActionClient({ cookies })
+export async function retrieveExistingNotJoinedSessions() {
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
   const currentDate = currentDateTime.toISOString().split('T')[0];
@@ -65,25 +103,107 @@ export async function retrieveExistingSessions() {
 
 
   try {
-    const { data, error } = await supabase
+    const notParticipantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .neq('user_id', user.id);
+
+    const { data: notParticipantSessionsData, error: notParticipantSessionsError } = await notParticipantSessionsQuery;
+    const notParticipantSessionIdsSet = new Set(notParticipantSessionsData.map(entry => entry.study_session_id));
+
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+    const participantSessionIdsSet = new Set(participantSessionsData.map(entry => entry.study_session_id));
+
+    const notInSessionsSet = setDifference(notParticipantSessionIdsSet, participantSessionIdsSet);
+    const notInSessionsArray = Array.from(notInSessionsSet);
+
+
+    const { data: futureData, error: error1 } = await supabase
       .from('study_sessions')
       .select()
-      .gte('date', currentDate)
-      .gte('end_time', currentTime)
+      .gt('date', currentDate)
+      .in('id', notInSessionsArray)
       .order('date')
       .order('end_time');
 
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .in('id', notInSessionsArray)
+      .order('date')
+      .order('end_time');
 
+    const data = todaysData.concat(futureData);
     return data;
 
-  }
-  catch (error) {
+
+  } catch (error) {
     console.log('error', error);
     throw error;
   }
 }
 
-export async function joinSession(session) {
+export async function retrieveExistingJoinedSessions() {
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+  try {
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+    if (participantSessionsError) {
+      throw participantSessionsError;
+    }
+
+    const participantSessionIds = participantSessionsData.map(entry => entry.study_session_id);
+
+    const { data: futureData, error: error1 } = await supabase
+      .from('study_sessions')
+      .select()
+      .gt('date', currentDate)
+      .in('id', participantSessionIds)
+      .neq('host_user_id', user.id)
+      .order('date')
+      .order('end_time');
+
+
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .in('id', participantSessionIds)
+      .neq('host_user_id', user.id)
+      .order('date')
+      .order('end_time');
+
+    const data = todaysData.concat(futureData);
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+}
+
+
+
+export async function joinSession(data) {
 
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
@@ -92,8 +212,52 @@ export async function joinSession(session) {
     .insert([
       {
         user_id: user.id,
-        study_session_id: session.id
+        study_session_id: data.session.id
       }
     ])
+
+
+
+
+  const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
+    .update({ current_group_size: data.session.current_group_size + 1 })
+    .eq('id', data.session.id)
 }
 
+
+export async function retrieveFutureHostedSessions() { /// TODO: test
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+  try {
+
+    const { data: futureData, error: error1 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('host_user_id', user.id)
+      .gt('date', currentDate)
+      .order('date')
+      .order('end_time');
+
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('host_user_id', user.id)
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .order('date')
+      .order('end_time');
+
+    const data = todaysData.concat(futureData);
+    console.log(data);
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+}
