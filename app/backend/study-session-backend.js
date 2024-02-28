@@ -273,26 +273,14 @@ export async function getParticipantsInSession(sessionId) {
     .eq('study_session_id', sessionId);
 
   const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
-  console.log(participantSessionsData)
 
-  const names = participantSessionsData.map(entry => entry.users.first_name + ' ' + entry.users.last_name);
-  console.log(names)
-
-
-  // const participantIds = participantSessionsData.map(entry => entry.user_id);
-  // console.log(participantIds)
-
-  // const { data: participantData, error: participantError } = await supabase
-  //   .from('users')
-  //   .select()
-  //   .in('id', participantIds);
-
-  // console.log(participantData)
-
+  const names = participantSessionsData.map(entry => entry.users.full_name);
 
   if (participantSessionsError) {
     throw participantSessionsError;
   }
+
+  return names;
 
 
 
