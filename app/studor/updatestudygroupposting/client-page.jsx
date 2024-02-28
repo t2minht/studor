@@ -1,14 +1,17 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, Modal } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
+import { useDisclosure } from '@mantine/hooks';
+import Modaldelete from"../updatestudygroupposting/modalfordelete";
 
 let formValues = {};
 
 export default function Page(session) {
+  const [opened, { open, close }] = useDisclosure(false);
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -62,6 +65,10 @@ export default function Page(session) {
     },
   });
 
+  const handleDelete = () => {
+    {console.log(1)}
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
@@ -105,6 +112,7 @@ export default function Page(session) {
 
   return (
     <MantineProvider>
+      {console.log(session.current.topic)}
       <Center>
         <h1>Update a Study Group Session</h1>
       </Center>
@@ -256,50 +264,10 @@ export default function Page(session) {
                 {...form.getInputProps('noiseLevel')} />
             </Stack>
             <Stack align="center" mt={20}>
-              <Group>
-                <Button
-                  mt="md"
-                  variant="filled"
-                  color='red'
-                  radius="xl"
-                  onClick={() => {
-                    <Modal opened={opened} onClose={close} withCloseButton={false}>
-                      <Text>Are you sure you want to delete this session?</Text>
-                      <Group justify='center'>
-                        <Button mt="md"
-                          variant="filled"
-                          color='red'
-                          radius="xl"
-                          >No</Button>
-                        <Button mt="md"
-                          variant="filled"
-                          color='red'
-                          radius="xl"
-                          onClick={() => {
-                            notifications.show({
-                              withBorder: true,
-                              color: "green",
-                              radius: "md",
-                              icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-                              title: 'Session Deleted! Redirecting...',
-                              message: "Now redirecting to Landing Page",
-                            });
-                        
-                            // Redirect to the new page after a short delay
-                            setTimeout(() => {
-                              window.location.href = '/';
-                            }, 5000);
-                          }}
-                          >Yes</Button>
-                      </Group>
-                    </Modal>
-                  }} 
-                >
-                  Delete Session
-                </Button>
+              <Group mt='md'>
+                <Modaldelete />
                 <Button
                   type='submit'
-                  mt="md"
                   variant="filled"
                   color='blue'
                   radius="xl"

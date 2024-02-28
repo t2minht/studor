@@ -18,8 +18,10 @@ import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Landingsg(data) {
+  const router = useRouter();
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
@@ -30,6 +32,13 @@ export default function Landingsg(data) {
         <Text>Nothing to see here</Text>
       </Group>
     );
+  }
+
+  const handleEditSession = (session) => {
+    router.push({
+      pathname:"/studor/updatestudygroupposting",
+      query: session
+    })
   }
 
   console.log(data)
@@ -68,7 +77,7 @@ export default function Landingsg(data) {
                 </Stack>
                 <Group>
                   <Modalview current={session} />
-                  <Button color="yellow" radius="xl" component={Link} href='app/studor/updatestudygroupposting/client-page.jsx' current={session}>Edit</Button>
+                  <Button color="yellow" radius="xl" onClick={handleEditSession(session)}>Edit</Button>
                 </Group>
               </Stack>
             </Group>
@@ -105,7 +114,7 @@ export default function Landingsg(data) {
                 </Stack>
                 <Group>
                   <Modalview current={session} />
-                  <Button color="yellow" radius="xl">Edit</Button>
+                  <Button color="red" radius="xl">Leave</Button>
                 </Group>
               </Stack>
             </Group>
