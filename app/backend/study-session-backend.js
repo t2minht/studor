@@ -276,3 +276,27 @@ export async function retrieveFutureHostedSessions() {
     throw error;
   }
 }
+
+
+export async function getParticipantsInSession(sessionId) {
+
+  const supabase = createServerActionClient({ cookies });
+
+  const participantSessionsQuery = supabase
+    .from('participants_in_study_session')
+    .select('user_id, users(last_name, first_name)')
+    .eq('study_session_id', sessionId);
+
+  const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+  const names = participantSessionsData.map(entry => entry.users.full_name);
+
+  if (participantSessionsError) {
+    throw participantSessionsError;
+  }
+
+  return names;
+
+
+
+}
