@@ -66,7 +66,7 @@ export default function Landingsg(data) {
                 </Stack>
                 <Group>
                   <Modalview current={session} />
-                  <Button color="yellow" radius="xl">Edit</Button>
+                  <Button color="yellow" radius="xl" component={Link} href='app/studor/updatestudygroupposting/client-page.jsx' current={session}>Edit</Button>
                 </Group>
               </Stack>
             </Group>
