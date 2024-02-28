@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import { IconAt, IconCalendarPlus, IconCircleCheck, IconCircleX, IconPencil, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
-import { retrieveProfileStudySession } from "@/app/backend/study-session-backend";
+import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/backend/study-session-backend";
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
@@ -89,16 +89,16 @@ const data = [
 ];
 
 const departmentData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
+  .fill(0)
+  .map((_, index) => `Option ${index}`);
 
-  const courseNumberData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
+const courseNumberData = Array(100)
+  .fill(0)
+  .map((_, index) => `Option ${index}`);
 
-  const courseSectionData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
+const courseSectionData = Array(100)
+  .fill(0)
+  .map((_, index) => `Option ${index}`);
 
 export default function Page() {
   const [selection, setSelection] = useState([]);
@@ -110,10 +110,14 @@ export default function Page() {
     setSelection((current) => (current.length === data.length ? [] : data.map((item) => item.id)));
 
   const [studySessions, setStudySessions] = useState([]);
+  const [userData, setUserData] = useState({});
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const sessions = await retrieveProfileStudySession();
+        const user = await retrieveUserProfileInfo();
+        setUserData(user)
         setStudySessions(sessions);
       } catch (error) {
         console.error('Error fetching sessions:', error);
@@ -221,16 +225,17 @@ export default function Page() {
             <Stack>
               <Avatar
                 size={200}
+                src={userData.avatar_url}
               />
             </Stack>
             <Stack>
               <Group justify="center">
                 <IconPencil size={16} />
-                <Text fw={700}>Jane Doe</Text>
+                <Text fw={700}>{userData.name}</Text>
               </Group>
               <Group justify="center">
                 <IconAt size={16} />
-                <Text>janedoe@tamu.edu</Text>
+                <Text>{userData.email}</Text>
               </Group>
               <Group justify="center">
                 <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
@@ -302,7 +307,7 @@ export default function Page() {
                   </Button>
                 </Stack>
               </Stack>
-                
+
               <Stack>
                 <ScrollArea mb={-20} h={225}>
                   <Table stickyHeader striped withTableBorder highlightOnHover>
@@ -329,7 +334,7 @@ export default function Page() {
                     color='#800000'
                     mt="md"
                     radius="xl"
-                    disabled={(selection == undefined || selection.length == 0) ? true:false}
+                    disabled={(selection == undefined || selection.length == 0) ? true : false}
                   >
                     Delete Course
                   </Button>
@@ -338,7 +343,7 @@ export default function Page() {
             </Group>
           </form>
         </Stack>
-        
+
         <Stack mt={50} mx={50}>
           <Text ta="center" size="lg" fw={700}>Session History</Text>
           <ScrollArea h={250}>

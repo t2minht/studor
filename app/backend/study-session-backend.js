@@ -177,8 +177,10 @@ export async function retrieveExistingJoinedSessions() {
       .select()
       .gt('date', currentDate)
       .in('id', participantSessionIds)
+      .neq('host_user_id', user.id)
       .order('date')
       .order('end_time');
+
 
     const { data: todaysData, error: error2 } = await supabase
       .from('study_sessions')
@@ -186,6 +188,7 @@ export async function retrieveExistingJoinedSessions() {
       .eq('date', currentDate)
       .gte('end_time', currentTime)
       .in('id', participantSessionIds)
+      .neq('host_user_id', user.id)
       .order('date')
       .order('end_time');
 
@@ -209,7 +212,52 @@ export async function joinSession(data) {
     .insert([
       {
         user_id: user.id,
-        study_session_id: data.session_id
+        study_session_id: data.session.id
       }
     ])
+
+
+
+
+  const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
+    .update({ current_group_size: data.session.current_group_size + 1 })
+    .eq('id', data.session.id)
+}
+
+
+export async function retrieveFutureHostedSessions() { /// TODO: test
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+  try {
+
+    const { data: futureData, error: error1 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('host_user_id', user.id)
+      .gt('date', currentDate)
+      .order('date')
+      .order('end_time');
+
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('host_user_id', user.id)
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .order('date')
+      .order('end_time');
+
+    const data = todaysData.concat(futureData);
+    console.log(data);
+    return data;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
 }
