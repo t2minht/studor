@@ -77,7 +77,8 @@ export async function submitStudyGroupSessionData(data) {
         end_time: data.endTime,
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
-        host_user_id: user.id
+        host_user_id: user.id,
+        description : data.description
       }
     ])
     .select();
@@ -110,7 +111,9 @@ export async function updateStudyGroupSessionData(data) {
         end_time: data.endTime,
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
-        host_user_id: user.id
+        host_user_id: user.id,
+        description : data.description
+  
       }
     ])
     .select();
@@ -325,6 +328,25 @@ export async function getParticipantsInSession(sessionId) {
 
   return names;
 
+}
 
+export async function getParticipantsInAllSessions() {
+
+  const supabase = createServerActionClient({ cookies });
+
+  const participantSessionsQuery = supabase
+    .from()
+    .select()
+    .join();
+
+  const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+  const names = participantSessionsData.map(entry => entry.users.full_name);
+
+  if (participantSessionsError) {
+    throw participantSessionsError;
+  }
+
+  return names;
 
 }
