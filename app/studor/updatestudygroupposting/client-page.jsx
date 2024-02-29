@@ -7,10 +7,13 @@ import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
 import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from"../updatestudygroupposting/modalfordelete";
+import { useSearchParams } from 'next/navigation';
 
 let formValues = {};
 
-export default function Page(session) {
+export default function Page() {
+  const searchParams = useSearchParams();
+
   const [opened, { open, close }] = useDisclosure(false);
   const departmentData = Array(100)
     .fill(0)
@@ -24,10 +27,29 @@ export default function Page(session) {
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
+  Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+
+  var date = new Date(searchParams.get('date'));
+  var description_details = searchParams.get('description') || '';
+  var fix_start_time = searchParams.get('start_time').slice(0,5);
+  var fix_end_time = searchParams.get('end_time').slice(0,5);
+  var fix_section = "";
+
+  if (searchParams.get('section') == "0") {
+    fix_section = "";
+  }
+  else {
+    fix_section = searchParams.get('section');
+  }
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 1, date: new Date(), startTime: '', endTime: '', noiseLevel: '1' },
+
+    initialValues: { title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -112,7 +134,6 @@ export default function Page(session) {
 
   return (
     <MantineProvider>
-      {console.log(session.current.topic)}
       <Center>
         <h1>Update a Study Group Session</h1>
       </Center>
@@ -123,7 +144,6 @@ export default function Page(session) {
             <TextInput
               label="Title"
               placeholder="Title of Session"
-              defaultValue={session.topic}
               required
               {...form.getInputProps('title')}
             />
@@ -131,7 +151,6 @@ export default function Page(session) {
               label="Description"
               placeholder="Write a description of the session here"
               mt={15}
-              defaultValue={session.description}
               {...form.getInputProps('description')}
             />
             <Group grow mt={15}>
@@ -140,7 +159,6 @@ export default function Page(session) {
                 placeholder="Enter Four Letters"
                 data={departmentData}
                 maxDropdownHeight={200}
-                defaultValue={session.department}
                 required
                 {...form.getInputProps('department')}
               />
@@ -149,7 +167,6 @@ export default function Page(session) {
                 placeholder="Enter Three Numbers"
                 data={courseNumberData}
                 maxDropdownHeight={200}
-                defaultValue={session.course_number}
                 required
                 {...form.getInputProps('courseNumber')}
               />
@@ -158,7 +175,6 @@ export default function Page(session) {
                 placeholder="Enter Three Numbers"
                 data={courseSectionData}
                 maxDropdownHeight={200}
-                defaultValue={session.section}
                 {...form.getInputProps('courseSection')}
               />
             </Group>
@@ -166,7 +182,6 @@ export default function Page(session) {
               label="Location"
               placeholder="Location of Session"
               mt={15}
-              defaultValue={session.location}
               required
               {...form.getInputProps('location')}
             />
@@ -178,7 +193,6 @@ export default function Page(session) {
                 description="Don't include yourself"
                 min={1}
                 max={20}
-                defaultValue={session.max_group_size}
                 required
                 {...form.getInputProps('groupSize')}
               />
@@ -188,7 +202,6 @@ export default function Page(session) {
                 label="Date"
                 description="Select Date"
                 minDate={new Date()}
-                defaultValue={session.date}
                 required
                 {...form.getInputProps('date')}
 
@@ -200,7 +213,6 @@ export default function Page(session) {
                 label="Start Time"
                 withAsterisk
                 description="Enter AM or PM"
-                defaultValue={session.startTime}
                 required
                 {...form.getInputProps('startTime')}
               />
@@ -209,14 +221,13 @@ export default function Page(session) {
                 label="End Time"
                 withAsterisk
                 description="Enter AM or PM"
-                defaultValue={session.endTime}
                 required
                 {...form.getInputProps('endTime')}
               />
             </Group>
             <Stack mt={20}>
               <Text mb={-15} ta="center" size="sm" fw={500}>Noise Level</Text>
-              <SegmentedControl color="#800000" defaultValue={session.noise_level}  data={[
+              <SegmentedControl color="#800000" data={[
                 {
                   value: '1',
                   label: (
@@ -271,6 +282,15 @@ export default function Page(session) {
                   variant="filled"
                   color='blue'
                   radius="xl"
+                  onClick={() => {
+                    notifications.show({
+                      withBorder: true,
+                      color: "green",
+                      radius: "md",
+                      icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
+                      title: 'Session Updated!',
+                    });
+                  }}
                 >
                   Update Session
                 </Button>

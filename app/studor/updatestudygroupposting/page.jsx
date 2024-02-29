@@ -2,11 +2,11 @@ import { retrieveExistingNotJoinedSessions } from "@/app/backend/study-session-b
 import { MantineProvider } from "@mantine/core";
 import ClientPage from "./client-page";
 
-export default async function Page(session) {
+export default async function Page() {
 
   return (
     <MantineProvider>
-      <ClientPage current={session}></ClientPage>
+      <ClientPage />
     </MantineProvider>
   )
 }

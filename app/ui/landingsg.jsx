@@ -19,6 +19,7 @@ import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Landingsg(data) {
   const router = useRouter();
@@ -77,7 +78,12 @@ export default function Landingsg(data) {
                 </Stack>
                 <Group>
                   <Modalview current={session} />
-                  <Button color="yellow" radius="xl" onClick={handleEditSession(session)}>Edit</Button>
+                  <Link
+                  href={{
+                    pathname:"/studor/updatestudygroupposting",
+                    query: session
+                  }}
+                  ><Button color="yellow" radius="xl">Edit</Button></Link>
                 </Group>
               </Stack>
             </Group>
