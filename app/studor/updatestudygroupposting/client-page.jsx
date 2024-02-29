@@ -1,14 +1,20 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, Modal } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
+import { useDisclosure } from '@mantine/hooks';
+import Modaldelete from"../updatestudygroupposting/modalfordelete";
+import { useSearchParams } from 'next/navigation';
 
 let formValues = {};
 
 export default function Page() {
+  const searchParams = useSearchParams();
+
+  const [opened, { open, close }] = useDisclosure(false);
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -21,10 +27,29 @@ export default function Page() {
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
+  Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+
+  var date = new Date(searchParams.get('date'));
+  var description_details = searchParams.get('description') || '';
+  var fix_start_time = searchParams.get('start_time').slice(0,5);
+  var fix_end_time = searchParams.get('end_time').slice(0,5);
+  var fix_section = "";
+
+  if (searchParams.get('section') == "0") {
+    fix_section = "";
+  }
+  else {
+    fix_section = searchParams.get('section');
+  }
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 1, date: new Date(), startTime: '', endTime: '', noiseLevel: '1' },
+
+    initialValues: { title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -62,6 +87,10 @@ export default function Page() {
     },
   });
 
+  const handleDelete = () => {
+    {console.log(1)}
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
@@ -80,7 +109,7 @@ export default function Page() {
       return;
     }
 
-    console.log(form.values);
+
     form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
@@ -93,7 +122,7 @@ export default function Page() {
       color: "green",
       radius: "md",
       icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-      title: 'New Session Created! Redirecting...',
+      title: 'Session Updated! Redirecting...',
       message: "Now redirecting to Landing Page",
     });
 
@@ -106,7 +135,7 @@ export default function Page() {
   return (
     <MantineProvider>
       <Center>
-        <h1>Create a Study Group Session</h1>
+        <h1>Update a Study Group Session</h1>
       </Center>
 
       <Center mx={25}>
@@ -120,7 +149,6 @@ export default function Page() {
             />
             <Textarea
               label="Description"
-              description="Limit of 500 characters"
               placeholder="Write a description of the session here"
               mt={15}
               {...form.getInputProps('description')}
@@ -173,9 +201,7 @@ export default function Page() {
                 valueFormat="YYYY MMM DD"
                 label="Date"
                 description="Select Date"
-                defaultValue={new Date()}
                 minDate={new Date()}
-
                 required
                 {...form.getInputProps('date')}
 
@@ -249,15 +275,26 @@ export default function Page() {
                 {...form.getInputProps('noiseLevel')} />
             </Stack>
             <Stack align="center" mt={20}>
-              <Button
-                type='submit'
-                mt="md"
-                variant="filled"
-                color='#800000'
-                radius="xl"
-              >
-                Post Session
-              </Button>
+              <Group mt='md'>
+                <Modaldelete />
+                <Button
+                  type='submit'
+                  variant="filled"
+                  color='blue'
+                  radius="xl"
+                  onClick={() => {
+                    notifications.show({
+                      withBorder: true,
+                      color: "green",
+                      radius: "md",
+                      icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
+                      title: 'Session Updated!',
+                    });
+                  }}
+                >
+                  Update Session
+                </Button>
+              </Group>
             </Stack>
           </form>
         </Stack>
