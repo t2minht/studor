@@ -4,7 +4,7 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
+import { updateStudyGroupSessionData } from '../../backend/study-session-backend';
 import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from"../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
@@ -49,7 +49,7 @@ export default function Page() {
   const form = useForm({
     validateInputOnChange: true,
 
-    initialValues: { title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
+    initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
     validate: {
       title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
@@ -115,7 +115,7 @@ export default function Page() {
     form.values.endTime = form.values.endTime + ':00';
 
     formValues = form.values;
-    submitStudyGroupSessionData(formValues);
+    updateStudyGroupSessionData(formValues);
 
     notifications.show({
       withBorder: true,
@@ -276,7 +276,7 @@ export default function Page() {
             </Stack>
             <Stack align="center" mt={20}>
               <Group mt='md'>
-                <Modaldelete />
+                <Modaldelete id={searchParams.get('id')} />
                 <Button
                   type='submit'
                   variant="filled"

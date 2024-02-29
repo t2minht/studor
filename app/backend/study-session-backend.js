@@ -116,8 +116,18 @@ export async function updateStudyGroupSessionData(data) {
   
       }
     ])
+    .eq('id', data.id)
     .select();
 }
+/* 
+If I click "Update"
+then I'm redirected to the update page
+when I input "Updated Session" in the topic field
+then I click "Update"
+then I should get a notification that the session was updated
+then I should be redirected to the landing page
+then I should see the updated session called "Updated Session"
+*/
 
 export async function retrieveExistingNotJoinedSessions() {
   const supabase = createServerActionClient({ cookies });
@@ -228,7 +238,18 @@ export async function retrieveExistingJoinedSessions() {
   }
 }
 
+export async function deleteSession(id) {
+  const supabase = createServerActionClient({ cookies });
 
+  const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
+  .delete()
+  .eq('id', id)
+}
+/*
+if I click "Delete Session" 
+then click "Yes"
+then the session will be removed from the landing page
+*/
 
 export async function joinSession(data) {
 

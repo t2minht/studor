@@ -162,7 +162,7 @@ export default function Page() {
 
                 label="Group Size"
                 placeholder="Enter a Value 1-20"
-                description="Don't include yourself"
+                description="Include yourself"
                 min={1}
                 max={20}
                 required
