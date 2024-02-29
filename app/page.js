@@ -4,7 +4,8 @@ import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingSessions } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions, retrieveFutureHostedSessions } from "./backend/study-session-backend";
+import Landing from "./ui/landing";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
@@ -14,13 +15,18 @@ export default async function Home() {
     redirect("/login");
   }
 
-  const study_sessions = await retrieveExistingSessions();
+  const hosted_study_sessions = await retrieveFutureHostedSessions();
+  const joined_study_sessions = await retrieveExistingJoinedSessions();
+
+  const study_sessions = {};
+  study_sessions.hosted = hosted_study_sessions;
+  study_sessions.joined = joined_study_sessions;
 
   return (
     <>
       <MantineProvider>
         <Navbar />
-        <Center>
+        {/* <Center>
           <h1>My Landing Page</h1>
           {study_sessions.length > 0 ? (
             <pre>{JSON.stringify(study_sessions, null, 2)}</pre>
@@ -44,7 +50,8 @@ export default async function Home() {
               </a>
             </>
           )}
-        </Center>
+        </Center> */}
+        <Landing study_sessions={study_sessions}></Landing>
       </MantineProvider>
     </>
   );
