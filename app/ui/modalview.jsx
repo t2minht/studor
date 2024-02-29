@@ -38,14 +38,14 @@ export default function Modalview(session) {
 
   useEffect(() => {
     getParticipants();
-  }, [] );
+  });
 
   const getParticipants = async () => {
-    var {data : result, error} = 
-    await supabase
-    .from('participants_in_study_session')
-    .select('users(*)')
-    .eq('study_session_id', session.current.id);
+    var { data: result, error } =
+      await supabase
+        .from('participants_in_study_session')
+        .select('users(*)')
+        .eq('study_session_id', session.current.id);
     setParticipants(result);
     console.log(result)
   }
@@ -87,15 +87,15 @@ export default function Modalview(session) {
               <Text mt={-15}>Noise Level:</Text>
               <Badge mt={-15} color="#800000" size="lg">{session.current.noise_level}</Badge>
             </Group>
-                        
+
             <Text mt={-10} fw={700}>Participants:</Text>
             {participants.map((participant) => (
-              <Text mt={-15}>{participant?.users?.full_name}</Text>
-              
+              <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+
             ))}
-          
+
           </Stack>
-        
+
         </Group>
 
       </Modal>
