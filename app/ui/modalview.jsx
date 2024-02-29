@@ -27,9 +27,28 @@ import {
   IconVolumeOff,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useEffect, useState } from "react";
 
 export default function Modalview(session) {
+  const supabase = createClientComponentClient();
   const [opened, { open, close }] = useDisclosure(false);
+
+  const [participants, setParticipants] = useState([]);
+
+  useEffect(() => {
+    getParticipants();
+  });
+
+  const getParticipants = async () => {
+    var { data: result, error } =
+      await supabase
+        .from('participants_in_study_session')
+        .select('users(*)')
+        .eq('study_session_id', session.current.id);
+    setParticipants(result);
+    console.log(result)
+  }
 
   return (
     <MantineProvider>
@@ -68,12 +87,17 @@ export default function Modalview(session) {
               <Text mt={-15}>Noise Level:</Text>
               <Badge mt={-15} color="#800000" size="lg">{session.current.noise_level}</Badge>
             </Group>
-                        
+
+            <Text mt={-10} fw={700}>Participants:</Text>
+            {participants.map((participant) => (
+              <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+
+            ))}
+
           </Stack>
-          <Text mt={-15} ml={30}>
-            Group Members
-          </Text>
+
         </Group>
+
       </Modal>
       <Button
         onClick={open}

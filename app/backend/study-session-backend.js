@@ -77,12 +77,12 @@ export async function submitStudyGroupSessionData(data) {
         end_time: data.endTime,
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
-        host_user_id: user.id
+        host_user_id: user.id,
+        description : data.description
       }
     ])
     .select();
 
-  // TODO: put into new function???
   const { data: returned_participant, data: error2 } = await supabase.from('participants_in_study_session')
     .insert([
       {
@@ -90,6 +90,33 @@ export async function submitStudyGroupSessionData(data) {
         study_session_id: returned_session[0].id
       }
     ])
+}
+
+export async function updateStudyGroupSessionData(data) {
+
+  const supabase = createServerActionClient({ cookies })
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: returned_session, error: error1 } = await supabase
+    .from('study_sessions')
+    .update([
+      {
+        topic: data.title,
+        department: data.department,
+        course_number: data.courseNumber,
+        section: data.courseSection || 0,
+        location: data.location,
+        date: data.date,
+        start_time: data.startTime,
+        end_time: data.endTime,
+        max_group_size: data.groupSize,
+        noise_level: data.noiseLevel,
+        host_user_id: user.id,
+        description : data.description
+  
+      }
+    ])
+    .select();
 }
 
 export async function retrieveExistingNotJoinedSessions() {
@@ -226,19 +253,24 @@ export async function leaveSession(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
+  console.log(data)
+
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
-    .delete([
-      {
-        user_id: user.id,
-        study_session_id: data.session.id
-      }
-    ])
+    .delete()
+    .eq('user_id', user.id)
+    .eq('study_session_id', data.session.id)
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
     .update({ current_group_size: data.session.current_group_size - 1 })
     .eq('id', data.session.id)
 }
-
+/*
+if I click leave session
+then session will be removed from the landing page
+then current group size decrements by 1
+then participant is removed from the database
+then session reappears on the study session page
+*/
 
 export async function retrieveFutureHostedSessions() {
   const supabase = createServerActionClient({ cookies });
@@ -268,7 +300,6 @@ export async function retrieveFutureHostedSessions() {
       .order('end_time');
 
     const data = todaysData.concat(futureData);
-    console.log(data);
     return data;
 
   } catch (error) {
@@ -297,6 +328,25 @@ export async function getParticipantsInSession(sessionId) {
 
   return names;
 
+}
 
+export async function getParticipantsInAllSessions() {
+
+  const supabase = createServerActionClient({ cookies });
+
+  const participantSessionsQuery = supabase
+    .from()
+    .select()
+    .join();
+
+  const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+
+  const names = participantSessionsData.map(entry => entry.users.full_name);
+
+  if (participantSessionsError) {
+    throw participantSessionsError;
+  }
+
+  return names;
 
 }
