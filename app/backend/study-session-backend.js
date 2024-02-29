@@ -116,6 +116,7 @@ export async function updateStudyGroupSessionData(data) {
   
       }
     ])
+    .eq('id', data.id)
     .select();
 }
 
@@ -228,7 +229,13 @@ export async function retrieveExistingJoinedSessions() {
   }
 }
 
+export async function deleteSession(id) {
+  const supabase = createServerActionClient({ cookies });
 
+  const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
+  .delete()
+  .eq('id', id)
+}
 
 export async function joinSession(data) {
 

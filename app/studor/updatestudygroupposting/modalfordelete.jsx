@@ -3,10 +3,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { Modal, Text, Group, Button, MantineProvider, rem } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { deleteSession } from "@/app/backend/study-session-backend";
 
-export default function Modaldelete() {
+export default function Modaldelete(data) {
   const [opened, { open, close }] = useDisclosure(false);
 
+  console.log(data)
   return (
     <MantineProvider>
       <Modal opened={opened} onClose={close} withCloseButton={true} centered> 
@@ -25,6 +27,8 @@ export default function Modaldelete() {
                 title: 'Session Deleted! Redirecting...',
                 message: "Now redirecting to Landing Page",
               });
+
+              deleteSession(data.id);
           
               // Redirect to the new page after a short delay
               setTimeout(() => {
