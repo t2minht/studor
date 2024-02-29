@@ -38,7 +38,8 @@ export default function Modalview(session) {
 
   useEffect(() => {
     getParticipants();
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getParticipants = async () => {
     var { data: result, error } =
