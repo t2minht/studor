@@ -54,6 +54,7 @@ export default function Page() {
     fix_section = searchParams.get('section');
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validateInputOnChange: true,
 
