@@ -8,13 +8,21 @@ import { updateStudyGroupSessionData } from '../../backend/study-session-backend
 import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from"../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 let formValues = {};
 
 export default function Page() {
   const searchParams = useSearchParams();
-
   const [opened, { open, close }] = useDisclosure(false);
+  if (searchParams.get('topic') == null) {
+    window.location.href = '/';
+    return;
+  }
+  else {
+
+  
+  
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -301,5 +309,5 @@ export default function Page() {
       </Center>
       <Space h='xl' />
     </MantineProvider>
-  )
+  )}
 }

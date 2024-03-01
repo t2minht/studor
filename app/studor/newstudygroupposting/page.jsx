@@ -37,7 +37,7 @@ export default function Page() {
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
       location: (value) => (value.length < 2 ? 'Invalid Location' : null),
-      groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
+      groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
       noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
       date: (value) => {
 
@@ -165,7 +165,7 @@ export default function Page() {
               <NumberInput
 
                 label="Group Size"
-                placeholder="Enter a Value 1-20"
+                placeholder="Enter a Value 2-20"
                 description="Include yourself"
                 min={1}
                 max={20}
