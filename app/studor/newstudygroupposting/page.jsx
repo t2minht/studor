@@ -36,7 +36,7 @@ export default function Page() {
       courseSection: (value, allValues) => (
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
-      location: (value) => (value.length < 2 ? 'Invalid Location' : null),
+      location: (value) => ((value.length < 2 || value.length > 100) ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
       noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
       date: (value) => {
