@@ -27,7 +27,10 @@ export default function Page() {
     initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 1, date: new Date(), startTime: '', endTime: '', noiseLevel: '1' },
 
     validate: {
-      title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
+      title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+      description: (value, allValues) => (
+        allValues.description && (value.length > 500) ? 'Invalid Description' : null
+      ),
       department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
       courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
       courseSection: (value, allValues) => (
@@ -114,6 +117,7 @@ export default function Page() {
           <form onSubmit={handleSubmit}>
             <TextInput
               label="Title"
+              description="Limit of 100 characters"
               placeholder="Title of Session"
               required
               {...form.getInputProps('title')}

@@ -53,6 +53,34 @@ export default function Landingsg(data) {
     setJoinedStudySessions(updatedSessions);
   }
 
+  function convertTo12HourFormat(timeString) {
+    // Split the string into hours and minutes
+    var parts = timeString.split(":");
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Convert hours to 12-hour format
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+    // Construct the new time string
+    var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+    return formattedTime;
+  }
+
+  function formatDate(inputDate) {
+    // Create a new Date object from the input string
+    var dateObj = new Date(inputDate);
+    dateObj.setDate(dateObj.getDate() + 1);
+    // Format the date using options
+    var options = { month: 'long', day: '2-digit', year: 'numeric' };
+    var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+    return formattedDate;
+  }
+
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>
@@ -76,9 +104,9 @@ export default function Landingsg(data) {
                       (session.section ? " - " + session.section : "")}{" "}
                   </Text>
                   <Text mt={-15}>Location: {session.location}</Text>
-                  <Text mt={-15}>Date: {session.date}</Text>
+                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                   <Text mt={-15}>
-                    Time: {session.start_time} - {session.end_time}
+                    Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}
                   </Text>
                   <Text mt={-15}>
                     Available: {session.current_group_size} /{" "}
