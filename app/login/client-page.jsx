@@ -18,10 +18,13 @@ export default function ClientPage() {
             >
                 <Center style={{ height: '100vh' }}>
                     <Paper mx={50} shadow="lg" radius="md" p="xl" withBorder style={{ maxWidth: '500px' }}>
-                        <Text size="lg" fw={500}>
+                        <Text ta="center" size="lg" fw={500}>
                             Welcome to TAMU Studor!
                         </Text>
-                        <Space h="md" />
+                        <Text ta="center" size="sm">
+                            Please log in with your TAMU email.
+                        </Text>
+                        <Space h="xs" />
                          <Group justify="center" mt="md">
                              <LoginButtonClient />
                          </Group>

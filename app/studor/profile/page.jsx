@@ -25,69 +25,6 @@ import { notifications } from '@mantine/notifications';
 
 let formValues = {};
 
-const data = [
-  {
-    id: '1',
-    department: 'CSCE',
-    courseNumber: '482',
-    section: '600',
-  },
-  {
-    id: '2',
-    department: 'CSCE',
-    courseNumber: '656',
-    section: '600',
-  },
-  {
-    id: '3',
-    department: 'CSCE',
-    courseNumber: '713',
-    section: '600',
-  },
-  {
-    id: '4',
-    department: 'CSCE',
-    courseNumber: '681',
-    section: '600',
-  },
-  {
-    id: '5',
-    department: 'CSCE',
-    courseNumber: '451',
-    section: '600',
-  },
-  {
-    id: '6',
-    department: 'CSCE',
-    courseNumber: '482',
-    section: '600',
-  },
-  {
-    id: '7',
-    department: 'CSCE',
-    courseNumber: '656',
-    section: '600',
-  },
-  {
-    id: '8',
-    department: 'CSCE',
-    courseNumber: '713',
-    section: '600',
-  },
-  {
-    id: '9',
-    department: 'CSCE',
-    courseNumber: '681',
-    section: '600',
-  },
-  {
-    id: '10',
-    department: 'CSCE',
-    courseNumber: '451',
-    section: '600',
-  },
-];
-
 const departmentData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
@@ -101,6 +38,8 @@ const courseSectionData = Array(100)
   .map((_, index) => `Option ${index}`);
 
 export default function Page() {
+  const [data, setData] = useState([]);
+
   const [selection, setSelection] = useState([]);
   const toggleRow = (id) =>
     setSelection((current) =>
@@ -199,7 +138,16 @@ export default function Page() {
     }
 
     formValues = form.values;
-    // submitStudyGroupSessionData(formValues);
+    const newCourse = {
+      id: (data.length + 1).toString(), // Generate new ID for the course
+      department: form.values.department,
+      courseNumber: form.values.courseNumber,
+      section: form.values.courseSection,
+    };
+
+    setData([...data, newCourse]); // Update data with the new course
+
+    form.reset(); // Reset form fields
 
     notifications.show({
       withBorder: true,
@@ -208,6 +156,24 @@ export default function Page() {
       icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
       title: 'New Course Added!',
       message: "The table should now include your recent added course",
+    });
+
+  };
+
+  const handleDelete = (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const newData = data.filter((item) => !selection.includes(item.id));
+    setData(newData);
+    setSelection([]); // Clear selection
+
+    notifications.show({
+      withBorder: true,
+      color: "green",
+      radius: "md",
+      icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
+      title: 'Course(s) Deleted!',
+      message: "The table should now reflect the changes",
     });
 
   };
@@ -335,6 +301,7 @@ export default function Page() {
                     mt="md"
                     radius="xl"
                     disabled={(selection == undefined || selection.length == 0) ? true : false}
+                    onClick={handleDelete}
                   >
                     Delete Course
                   </Button>
