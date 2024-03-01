@@ -156,6 +156,7 @@ export default function Page() {
             </Group>
             <TextInput
               label="Location"
+              description="Limit of 100 characters"
               placeholder="Location of Session"
               mt={15}
               required
