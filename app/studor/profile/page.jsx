@@ -137,15 +137,37 @@ export default function Page() {
       return;
     }
 
-    formValues = form.values;
     const newCourse = {
-      id: (data.length + 1).toString(), // Generate new ID for the course
       department: form.values.department,
       courseNumber: form.values.courseNumber,
       section: form.values.courseSection,
     };
 
-    setData([...data, newCourse]); // Update data with the new course
+    // Check if the new course already exists in the data list
+    const exists = data.some(course => (
+      course.department === newCourse.department &&
+      course.courseNumber === newCourse.courseNumber &&
+      course.section === newCourse.section
+    ));
+
+    if (exists) {
+      notifications.show({
+        withBorder: true,
+        color: "red",
+        radius: "md",
+        icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
+        title: "Course Already Exists",
+        message: "This course has already been added.",
+      });
+      return;
+    }
+
+    const newCourseWithId = {
+      ...newCourse,
+      id: (data.length + 1).toString(), // Generate new ID for the course
+    };
+
+    setData([...data, newCourseWithId]); // Update data with the new course
 
     form.reset(); // Reset form fields
 
