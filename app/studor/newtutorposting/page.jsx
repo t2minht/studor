@@ -25,7 +25,7 @@ export default function Page() {
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 1, date: new Date(), startTime: '', endTime: '' },
+    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '' },
 
     validate: {
       title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
@@ -164,7 +164,7 @@ export default function Page() {
             <Group grow mt={15}>
               <NumberInput
                 label="Group Size"
-                placeholder="Enter a Value 1-20"
+                placeholder="Enter a Value 2-20"
                 description="Include yourself"
                 min={1}
                 max={20}

@@ -186,7 +186,7 @@ export default function Page() {
               <NumberInput
 
                 label="Group Size"
-                placeholder="Enter a Value 1-20"
+                placeholder="Enter a Value 2-20"
                 description="Include yourself"
                 min={1}
                 max={20}
