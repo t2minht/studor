@@ -59,14 +59,14 @@ export default function Modalview(session) {
         withCloseButton={false}
         size="auto"
       >
-        <Text fw={700} size="xl" ta="center">
+        <Text td="underline" c="blue" fw={700} size="xl" ta="center">
           {session.current.topic}
         </Text>
 
-        <Group p={20}>
+        <Group justify="center" gap={75} p={20}>
           <Stack>
-            <Text mt={-10} fw={700}>
-              Class:{" "}
+            <Text fw={700}>
+              <b>Class:</b>{" "}
               {session.current.department +
                 " " +
                 session.current.course_number +
@@ -74,27 +74,38 @@ export default function Modalview(session) {
                   ? " - " + session.current.section
                   : "")}{" "}
             </Text>
-            <Text mt={-15}>Location: {session.current.location}</Text>
-            <Text mt={-15}>Date: {session.current.date}</Text>
+            <Text mt={-15}><b>Location:</b> {session.current.location}</Text>
+            <Text mt={-15}><b>Date:</b> {session.current.date}</Text>
             <Text mt={-15}>
-              Time: {session.current.start_time} - {session.current.end_time}
+              <b>Time:</b> {session.current.start_time} - {session.current.end_time}
             </Text>
             <Text mt={-15}>
-              Available: {session.current.current_group_size} /{" "}
+              <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
               {session.current.max_group_size}{" "}
             </Text>
-            <Text mt={-15}>Description: {session.current.description}</Text>
+            <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
             <Group>
-              <Text mt={-15}>Noise Level:</Text>
+              <Text mt={-15}><b>Noise Level:</b></Text>
               <Badge mt={-15} color="#800000" size="lg">{session.current.noise_level}</Badge>
             </Group>
+          </Stack>
 
-            <Text mt={-10} fw={700}>Participants:</Text>
-            {participants.map((participant) => (
-              <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
-
-            ))}
-
+          <Stack>
+            <Text fw={700} mt={-75} ml={5}>Participants:</Text>
+              {participants.map((participant) => (
+                <>
+                  <Group ml={25} mt={-8}>
+                    <Stack>
+                      <Avatar
+                        size={30}
+                      />
+                    </Stack>
+                    <Stack mt={10} ml={-10} align="center">
+                      <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+                    </Stack>
+                  </Group>
+                </>
+              ))}
           </Stack>
 
         </Group>
