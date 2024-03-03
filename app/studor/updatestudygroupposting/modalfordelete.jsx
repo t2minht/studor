@@ -30,10 +30,8 @@ export default function Modaldelete(data) {
 
               deleteSession(data.id);
           
-              // Redirect to the new page after a short delay
-              setTimeout(() => {
+              // Redirect to the new page
               window.location.href = '/';
-            }, 5000);
             }}
             >Yes</Button>
         </Group>

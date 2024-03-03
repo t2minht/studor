@@ -17,7 +17,8 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconBook,
-  IconChevronDown
+  IconChevronDown,
+  IconQuestionMark
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import LightOrDarkMode from './lightordarkmode';
@@ -61,6 +62,12 @@ export default function Navbar() {
                 <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
               </ActionIcon>
             </a>
+
+            <a href='/studor/faqs'>
+              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
+                <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)"/>
+              </ActionIcon>
+            </a>
             <LightOrDarkMode />
           </Group>
 
@@ -102,6 +109,14 @@ export default function Navbar() {
             <Group justify="center" grow pb="xl" px="md">
               <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
                 <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
+              </ActionIcon>
+            </Group>
+          </a>
+
+          <a href='/studor/faqs'>
+            <Group justify="center" grow pb="xl" px="md">
+              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
+                <IconQuestionMark variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)"/>
               </ActionIcon>
             </Group>
           </a>

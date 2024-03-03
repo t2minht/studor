@@ -8,13 +8,21 @@ import { updateStudyGroupSessionData } from '../../backend/study-session-backend
 import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from"../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 let formValues = {};
 
 export default function Page() {
   const searchParams = useSearchParams();
-
   const [opened, { open, close }] = useDisclosure(false);
+  if (searchParams.get('topic') == null) {
+    window.location.href = '/';
+    return;
+  }
+  else {
+
+  
+  
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -46,20 +54,24 @@ export default function Page() {
     fix_section = searchParams.get('section');
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validateInputOnChange: true,
 
     initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
     validate: {
-      title: (value) => (value.length < 2 ? 'Must have at least 2 characters' : null),
+      title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+      description: (value, allValues) => (
+        allValues.description && (value.length > 500) ? 'Invalid Description' : null
+      ),
       department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
       courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
       courseSection: (value, allValues) => (
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
-      location: (value) => (value.length < 2 ? 'Invalid Location' : null),
-      groupSize: (value) => ((value >= 1 && value <= 20) ? null : 'Invalid Group Size'),
+      location: (value) => ((value.length < 2 || value.length > 100) ? 'Invalid Location' : null),
+      groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
       noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
       date: (value) => {
 
@@ -143,12 +155,14 @@ export default function Page() {
           <form onSubmit={handleSubmit}>
             <TextInput
               label="Title"
+              description="Limit of 100 characters"
               placeholder="Title of Session"
               required
               {...form.getInputProps('title')}
             />
             <Textarea
               label="Description"
+              description="Limit of 500 characters"
               placeholder="Write a description of the session here"
               mt={15}
               {...form.getInputProps('description')}
@@ -180,6 +194,7 @@ export default function Page() {
             </Group>
             <TextInput
               label="Location"
+              description="Limit of 100 characters"
               placeholder="Location of Session"
               mt={15}
               required
@@ -189,8 +204,8 @@ export default function Page() {
               <NumberInput
 
                 label="Group Size"
-                placeholder="Enter a Value 1-20"
-                description="Don't include yourself"
+                placeholder="Enter a Value 2-20"
+                description="Include yourself"
                 min={1}
                 max={20}
                 required
@@ -301,5 +316,5 @@ export default function Page() {
       </Center>
       <Space h='xl' />
     </MantineProvider>
-  )
+  )}
 }
