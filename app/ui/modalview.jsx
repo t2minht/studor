@@ -51,6 +51,34 @@ export default function Modalview(session) {
     console.log(result)
   }
 
+  function convertTo12HourFormat(timeString) {
+    // Split the string into hours and minutes
+    var parts = timeString.split(":");
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Convert hours to 12-hour format
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+    // Construct the new time string
+    var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+    return formattedTime;
+  }
+
+  function formatDate(inputDate) {
+    // Create a new Date object from the input string
+    var dateObj = new Date(inputDate);
+    dateObj.setDate(dateObj.getDate() + 1);
+    // Format the date using options
+    var options = { month: 'long', day: '2-digit', year: 'numeric' };
+    var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+    return formattedDate;
+  }
+
   return (
     <MantineProvider>
       <Modal
@@ -75,9 +103,9 @@ export default function Modalview(session) {
                   : "")}{" "}
             </Text>
             <Text mt={-15}><b>Location:</b> {session.current.location}</Text>
-            <Text mt={-15}><b>Date:</b> {session.current.date}</Text>
+            <Text mt={-15}><b>Date:</b> {formatDate(session.current.date)}</Text>
             <Text mt={-15}>
-              <b>Time:</b> {session.current.start_time} - {session.current.end_time}
+              <b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}
             </Text>
             <Text mt={-15}>
               <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
