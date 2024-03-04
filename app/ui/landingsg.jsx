@@ -87,11 +87,11 @@ export default function Landingsg(data) {
         <h1>Your Posts</h1>
         <Group>
           {study_sessions_hosted.map((session) => (
-            <Group p={30} key={session.topic}>
+            <Group p={30} key={session.topic} maw={400}>
               <Stack>
                 <Avatar size={100} src={session.host_avatar_url} />
               </Stack>
-              <Stack>
+              <Stack maw={210}>
                 <Stack>
                   <Text fw={700} size="xl">
                     {session.topic}
@@ -129,11 +129,11 @@ export default function Landingsg(data) {
         <h1>Joined Sessions</h1>
         <Group>
           {study_sessions_joined.map((session) => (
-            <Group p={30} key={session.topic}>
+            <Group p={30} key={session.topic} maw={400}>
               <Stack>
                 <Avatar size={100} />
               </Stack>
-              <Stack>
+              <Stack maw={210}>
                 <Stack>
                   <Text fw={700} size="xl">
                     {session.topic}
@@ -146,9 +146,10 @@ export default function Landingsg(data) {
                       (session.section ? " - " + session.section : "")}{" "}
                   </Text>
                   <Text mt={-15}>Location: {session.location}</Text>
-                  <Text mt={-15}>Date: {session.date}</Text>
+                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                   <Text mt={-15}>
-                    Time: {session.start_time} - {session.end_time}
+                    Time: {convertTo12HourFormat(session.start_time)} -{" "}
+                    {convertTo12HourFormat(session.end_time)}
                   </Text>
                   <Text mt={-15}>
                     Available: {session.max_group_size - session.current_group_size} /{" "}
