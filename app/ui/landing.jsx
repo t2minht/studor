@@ -54,7 +54,7 @@ export default function Landing(data) {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span="auto" order={{ base: 3 }}>
+        <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
           <Tabs variant="default" defaultValue="sg" value={activeTab} onChange={setActiveTab}>
             <Tabs.List mt={20}>
               <Tabs.Tab value="sg" fz={15}>
@@ -64,17 +64,17 @@ export default function Landing(data) {
                 Tutor
               </Tabs.Tab>
             </Tabs.List>
-            <Tabs.Panel value="sg">
+            <Tabs.Panel value="sg" pl={10}>
               <Landingsg study_sessions={data.study_sessions}></Landingsg>
             </Tabs.Panel>
-            <Tabs.Panel value="tutor">
+            <Tabs.Panel value="tutor" pl={10}>
               <Landingt study_sessions={data.study_sessions}></Landingt>
             </Tabs.Panel>
           </Tabs>
         </Grid.Col>
 
         {checked && (
-          <Grid.Col span={6} order={{ base: 2 }} mt={30}>
+          <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700}>
             <Calendar></Calendar>
           </Grid.Col>
         )}
