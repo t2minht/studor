@@ -72,18 +72,18 @@ export default function ClientPage(data) {
         var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
 
         return formattedTime;
-      }
-    
-      function formatDate(inputDate) {
+    }
+
+    function formatDate(inputDate) {
         // Create a new Date object from the input string
         var dateObj = new Date(inputDate);
         dateObj.setDate(dateObj.getDate() + 1);
         // Format the date using options
         var options = { month: 'long', day: '2-digit', year: 'numeric' };
         var formattedDate = dateObj.toLocaleDateString('en-US', options);
-    
+
         return formattedDate;
-      }
+    }
 
     return (
         <MantineProvider>
@@ -145,7 +145,7 @@ export default function ClientPage(data) {
                                     .map((session) => (
                                         <Group p={30} key={session.topic} maw={400}>
                                             <Stack>
-                                                <Avatar size={100} />
+                                                <Avatar size={100} src={session.host_avatar_url} />
                                             </Stack>
                                             <Stack maw={210}>
                                                 <Stack>
@@ -172,7 +172,6 @@ export default function ClientPage(data) {
                                                     >
                                                         Join
                                                     </Button>
-
                                                 </Group>
                                             </Stack>
                                         </Group>
@@ -186,12 +185,14 @@ export default function ClientPage(data) {
                     </Group>
                 </Grid.Col>
 
-                {checked && (
-                    <Grid.Col span={6} order={{ base: 2 }}>
-                        <Calendar></Calendar>
-                    </Grid.Col>
-                )}
-            </Grid>
-        </MantineProvider>
+                {
+                    checked && (
+                        <Grid.Col span={6} order={{ base: 2 }}>
+                            <Calendar></Calendar>
+                        </Grid.Col>
+                    )
+                }
+            </Grid >
+        </MantineProvider >
     );
 }

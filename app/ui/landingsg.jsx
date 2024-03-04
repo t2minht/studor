@@ -89,7 +89,7 @@ export default function Landingsg(data) {
           {study_sessions_hosted.map((session) => (
             <Group p={30} key={session.topic} maw={400}>
               <Stack>
-                <Avatar size={100} />
+                <Avatar size={100} src={session.host_avatar_url} />
               </Stack>
               <Stack maw={210}>
                 <Stack>
@@ -116,10 +116,10 @@ export default function Landingsg(data) {
                 <Group>
                   <Modalview current={session} />
                   <Link
-                  href={{
-                    pathname:"/studor/updatestudygroupposting",
-                    query: session
-                  }}
+                    href={{
+                      pathname: "/studor/updatestudygroupposting",
+                      query: session
+                    }}
                   ><Button color="yellow" radius="xl">Edit</Button></Link>
                 </Group>
               </Stack>
@@ -158,7 +158,7 @@ export default function Landingsg(data) {
                 </Stack>
                 <Group>
                   <Modalview current={session} />
-                  <Button color="red" radius="xl" onClick={ () => leaveHandler(session)}>Leave</Button>
+                  <Button color="red" radius="xl" onClick={() => leaveHandler(session)}>Leave</Button>
                 </Group>
               </Stack>
             </Group>

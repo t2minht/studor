@@ -38,7 +38,7 @@ export default function Modalview(session) {
 
   useEffect(() => {
     getParticipants();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getParticipants = async () => {
@@ -120,20 +120,20 @@ export default function Modalview(session) {
 
           <Stack>
             <Text fw={700} mt={-75} ml={5}>Participants:</Text>
-              {participants.map((participant) => (
-                <>
-                  <Group ml={25} mt={-8}>
-                    <Stack>
-                      <Avatar
-                        size={30}
-                      />
-                    </Stack>
-                    <Stack mt={10} ml={-10} align="center">
-                      <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
-                    </Stack>
-                  </Group>
-                </>
-              ))}
+            {participants.map((participant) => (
+              <>
+                <Group ml={25} mt={-8}>
+                  <Stack>
+                    <Avatar
+                      size={30} src={participant?.users?.avatar_url}
+                    />
+                  </Stack>
+                  <Stack mt={10} ml={-10} align="center">
+                    <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+                  </Stack>
+                </Group>
+              </>
+            ))}
           </Stack>
 
         </Group>
