@@ -125,7 +125,7 @@ export default function Modalview(session) {
                 <Group ml={25} mt={-8}>
                   <Stack>
                     <Avatar
-                      size={30} src={session.host_avatar_url}
+                      size={30} src={participant?.users?.avatar_url}
                     />
                   </Stack>
                   <Stack mt={10} ml={-10} align="center">

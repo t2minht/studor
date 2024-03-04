@@ -143,9 +143,10 @@ export default function ClientPage(data) {
                                 {study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Group p={30} key={session.topic}>
+
+                                        < Group p={30} key={session.topic} >
                                             <Stack>
-                                                <Avatar size={100} src={session.avatar_url} />
+                                                <Avatar size={100} src={session.host_avatar_url} />
                                             </Stack>
                                             <Stack>
                                                 <Stack>
@@ -187,12 +188,14 @@ export default function ClientPage(data) {
                     </Group>
                 </Grid.Col>
 
-                {checked && (
-                    <Grid.Col span={6} order={{ base: 2 }}>
-                        <Calendar></Calendar>
-                    </Grid.Col>
-                )}
-            </Grid>
-        </MantineProvider>
+                {
+                    checked && (
+                        <Grid.Col span={6} order={{ base: 2 }}>
+                            <Calendar></Calendar>
+                        </Grid.Col>
+                    )
+                }
+            </Grid >
+        </MantineProvider >
     );
 }
