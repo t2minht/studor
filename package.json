@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@daypilot/daypilot-lite-react": "^3.20.1",
     "@mantine/carousel": "^7.5.1",
     "@mantine/charts": "^7.5.1",
     "@mantine/code-highlight": "^7.5.1",
@@ -16,7 +17,7 @@
     "@mantine/dates": "^7.5.1",
     "@mantine/dropzone": "^7.5.1",
     "@mantine/form": "^7.5.1",
-    "@mantine/hooks": "^7.5.2",
+    "@mantine/hooks": "^7.5.1",
     "@mantine/modals": "^7.5.1",
     "@mantine/notifications": "^7.5.1",
     "@mantine/nprogress": "^7.5.1",
@@ -31,7 +32,7 @@
     "dayjs": "^1.11.10",
     "embla-carousel-react": "^7.1.0",
     "next": "14.1.0",
-    "react": "^18",
+    "react": "^18.0.0",
     "react-dom": "^18",
     "react-router-dom": "^6.22.0",
     "recharts": "^2.11.0"
