@@ -22,11 +22,11 @@ import {
   IconStarHalfFilled,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import Modaltutor from "../ui/Modaltutor";
+import Modaltutor from "../ui/modaltutor";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 
-export default function Landingsg() {
+export default function Landingsg(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
@@ -55,6 +55,7 @@ export default function Landingsg() {
                 </Stack>
                 <Group>
                   <Modaltutor />
+                  <Button color="#EA0B0B" radius="xl">Leave</Button>
                 </Group>
               </Stack>
             </Group>
