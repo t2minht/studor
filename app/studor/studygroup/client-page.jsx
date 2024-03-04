@@ -19,6 +19,7 @@ import Modalview from "../../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import { joinSession } from "@/app/backend/study-session-backend";
+import Calendar from "@/app/ui/calendar";
 
 export default function ClientPage(data) {
     const [opened, { open, close }] = useDisclosure(false);
@@ -56,6 +57,34 @@ export default function ClientPage(data) {
         )
     }
 
+    function convertTo12HourFormat(timeString) {
+        // Split the string into hours and minutes
+        var parts = timeString.split(":");
+        var hours = parseInt(parts[0]);
+        var minutes = parseInt(parts[1]);
+
+        // Convert hours to 12-hour format
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+        // Construct the new time string
+        var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+        return formattedTime;
+      }
+    
+      function formatDate(inputDate) {
+        // Create a new Date object from the input string
+        var dateObj = new Date(inputDate);
+        dateObj.setDate(dateObj.getDate() + 1);
+        // Format the date using options
+        var options = { month: 'long', day: '2-digit', year: 'numeric' };
+        var formattedDate = dateObj.toLocaleDateString('en-US', options);
+    
+        return formattedDate;
+      }
+
     return (
         <MantineProvider>
             <Center>
@@ -65,7 +94,7 @@ export default function ClientPage(data) {
 
 
             <Grid overflow="hidden">
-                <Grid.Col span="content">
+                <Grid.Col span="content" mt={30} mr={70}>
                     <Drawer
                         opened={opened}
                         onClose={close}
@@ -109,16 +138,16 @@ export default function ClientPage(data) {
 
                 <Grid.Col span="auto" order={{ base: 3 }}>
                     <Group miw={200}>
-                        <ScrollArea h={height - 180}>
+                        <ScrollArea h={height - 160}>
                             <Group>
                                 {study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Group p={30} key={session.topic}>
+                                        <Group p={30} key={session.topic} maw={400}>
                                             <Stack>
                                                 <Avatar size={100} />
                                             </Stack>
-                                            <Stack>
+                                            <Stack maw={210}>
                                                 <Stack>
                                                     <Text fw={700} size="xl">
                                                         {session.topic}
@@ -127,11 +156,12 @@ export default function ClientPage(data) {
                                                         Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
                                                     </Text>
                                                     <Text mt={-15}>Location: {session.location}</Text>
-                                                    <Text mt={-15}>Date: {session.date}</Text>
-                                                    <Text mt={-15}>Time: {session.start_time} - {session.end_time}</Text>
-                                                    <Text mt={-15}>Available: {session.current_group_size} / {session.max_group_size} </Text>
+                                                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                                                    <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                                                    <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
+                                                    <Modalview current={session}/>
                                                     {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
                                                     <Button
                                                         variant="filled"
@@ -142,8 +172,6 @@ export default function ClientPage(data) {
                                                     >
                                                         Join
                                                     </Button>
-
-                                                    <Modalview current={session}/>
 
                                                 </Group>
                                             </Stack>
@@ -160,7 +188,7 @@ export default function ClientPage(data) {
 
                 {checked && (
                     <Grid.Col span={6} order={{ base: 2 }}>
-                        <Group>Calendar coming soon</Group>
+                        <Calendar></Calendar>
                     </Grid.Col>
                 )}
             </Grid>

@@ -21,6 +21,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import Landingsg from "./landingsg";
 import Landingt from "./landingt";
+import Calendar from "@/app/ui/calendar";
 
 export default function Landing(data) {
   const { height, width } = useViewportSize();
@@ -74,7 +75,7 @@ export default function Landing(data) {
 
         {checked && (
           <Grid.Col span={6} order={{ base: 2 }} mt={30}>
-            <Group>Calendar coming soon</Group>
+            <Calendar></Calendar>
           </Grid.Col>
         )}
       </Grid>
