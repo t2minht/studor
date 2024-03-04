@@ -63,6 +63,7 @@ export async function submitStudyGroupSessionData(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
+
   const { data: returned_session, error: error1 } = await supabase
     .from('study_sessions')
     .insert([
@@ -78,10 +79,12 @@ export async function submitStudyGroupSessionData(data) {
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
         host_user_id: user.id,
-        description : data.description
+        description: data.description,
+        host_avatar_url: user.user_metadata.avatar_url
       }
     ])
     .select();
+
 
   const { data: returned_participant, data: error2 } = await supabase.from('participants_in_study_session')
     .insert([
@@ -112,8 +115,8 @@ export async function updateStudyGroupSessionData(data) {
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
         host_user_id: user.id,
-        description : data.description
-  
+        description: data.description
+
       }
     ])
     .eq('id', data.id)
@@ -242,8 +245,8 @@ export async function deleteSession(id) {
   const supabase = createServerActionClient({ cookies });
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
-  .delete()
-  .eq('id', id)
+    .delete()
+    .eq('id', id)
 }
 /*
 if I click "Delete Session" 
