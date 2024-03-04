@@ -151,7 +151,7 @@ export default function Landingsg(data) {
                     Time: {session.start_time} - {session.end_time}
                   </Text>
                   <Text mt={-15}>
-                    Available: {session.current_group_size} /{" "}
+                    Available: {session.max_group_size - session.current_group_size} /{" "}
                     {session.max_group_size}{" "}
                   </Text>
                 </Stack>
