@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
+import { MantineProvider, Container} from "@mantine/core";
 
 const Calendar = () => {
     const [config, setConfig] = useState({
@@ -8,9 +9,11 @@ const Calendar = () => {
 
 
     return (
-        <div>
-            <DayPilotCalendar {...config} />
-        </div>
+        <MantineProvider>
+            <Container>
+                <DayPilotCalendar {...config}></DayPilotCalendar>
+            </Container>
+        </MantineProvider>
     );
 }
 

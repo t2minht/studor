@@ -94,7 +94,7 @@ export default function ClientPage(data) {
 
 
             <Grid overflow="hidden">
-                <Grid.Col span="content">
+                <Grid.Col span="content" mt={30} mr={70}>
                     <Drawer
                         opened={opened}
                         onClose={close}
@@ -138,16 +138,16 @@ export default function ClientPage(data) {
 
                 <Grid.Col span="auto" order={{ base: 3 }}>
                     <Group miw={200}>
-                        <ScrollArea h={height - 180}>
+                        <ScrollArea h={height - 160}>
                             <Group>
                                 {study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Group p={30} key={session.topic}>
+                                        <Group p={30} key={session.topic} maw={400}>
                                             <Stack>
                                                 <Avatar size={100} />
                                             </Stack>
-                                            <Stack>
+                                            <Stack maw={210}>
                                                 <Stack>
                                                     <Text fw={700} size="xl">
                                                         {session.topic}
@@ -161,6 +161,7 @@ export default function ClientPage(data) {
                                                     <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
+                                                    <Modalview current={session}/>
                                                     {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
                                                     <Button
                                                         variant="filled"
@@ -171,8 +172,6 @@ export default function ClientPage(data) {
                                                     >
                                                         Join
                                                     </Button>
-
-                                                    <Modalview current={session}/>
 
                                                 </Group>
                                             </Stack>
