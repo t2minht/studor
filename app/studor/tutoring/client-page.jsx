@@ -24,6 +24,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
+import Calendar from "@/app/ui/calendar";
 
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -141,7 +142,7 @@ export default function ClientPage(data) {
 
         {checked && (
           <Grid.Col span={6} order={{ base: 2 }}>
-            <Group>Calendar coming soon</Group>
+            <Calendar></Calendar>
           </Grid.Col>
         )}
       </Grid>
