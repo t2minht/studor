@@ -58,7 +58,7 @@ export async function retrieveFutureHostedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select()
+            .select('*, users(full_name)')
             .eq('tutor_user_id', user.id)
             .gt('date', currentDate)
             .order('date')
@@ -66,7 +66,7 @@ export async function retrieveFutureHostedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select()
+            .select('*, users(full_name)')
             .eq('tutor_user_id', user.id)
             .eq('date', currentDate)
             .gte('end_time', currentTime)
@@ -106,7 +106,7 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select()
+            .select('*, users(full_name)')
             .gt('date', currentDate)
             .in('id', participantSessionIds)
             .neq('tutor_user_id', user.id)
@@ -116,7 +116,7 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select()
+            .select('*, users(full_name)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', participantSessionIds)
