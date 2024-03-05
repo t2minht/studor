@@ -4,7 +4,8 @@ import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingJoinedSessions, retrieveFutureHostedSessions } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions} from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions as getJoinedTutoring, retrieveFutureHostedSessions as getHostedTutoring} from "./backend/tutoring-backend";
 import Landing from "./ui/landing";
 
 export default async function Home() {
@@ -15,12 +16,19 @@ export default async function Home() {
     redirect("/login");
   }
 
-  const hosted_study_sessions = await retrieveFutureHostedSessions();
-  const joined_study_sessions = await retrieveExistingJoinedSessions();
+  const hosted_study_sessions = await getHostedStudySessions();
+  const joined_study_sessions = await getJoinedStudySessions();
 
   const study_sessions = {};
   study_sessions.hosted = hosted_study_sessions;
   study_sessions.joined = joined_study_sessions;
+
+  const hosted_tutoring_sessions = await getHostedTutoring();
+  const joined_tutoring_sessions = await getJoinedTutoring();
+
+  const tutoring = {};
+  tutoring.hosted = hosted_tutoring_sessions;
+  tutoring.joined = joined_tutoring_sessions;
 
   return (
     <>
@@ -51,7 +59,7 @@ export default async function Home() {
             </>
           )}
         </Center> */}
-        <Landing study_sessions={study_sessions}></Landing>
+        <Landing study_sessions={study_sessions} tutoring={tutoring}></Landing>
       </MantineProvider>
     </>
   );

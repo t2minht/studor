@@ -31,20 +31,11 @@ export default function Landingsg(data) {
   const [study_sessions_joined, setJoinedStudySessions] = useState(data.study_sessions.joined);
 
   if (data.study_sessions === null) {
-    console.log("hi");
     return (
       <Group>
         <Text>Nothing to see here</Text>
       </Group>
     );
-  }
-
-  const deleteHandler = async (session) => {
-
-    // await joinSession(data = { session });
-    // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-    // setStudySessions(updatedSessions);
-
   }
 
   const leaveHandler = async (session) => {

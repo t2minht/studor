@@ -48,7 +48,6 @@ export default function Modalview(session) {
         .select('users(*)')
         .eq('study_session_id', session.current.id);
     setParticipants(result);
-    console.log(result)
   }
 
   function convertTo12HourFormat(timeString) {
