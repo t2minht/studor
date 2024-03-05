@@ -25,13 +25,51 @@ import { useDisclosure } from "@mantine/hooks";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import Calendar from "@/app/ui/calendar";
+import { joinSession } from "@/app/backend/tutoring-backend";
 
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
-  if (data.study_sessions === null) {
+  const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
+
+
+  const joinHandler = async (session) => {
+    await joinSession(data = { session });
+    const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
+    setTutorSessions(updatedSessions);
+
+  }
+  function convertTo12HourFormat(timeString) {
+    // Split the string into hours and minutes
+    var parts = timeString.split(":");
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Convert hours to 12-hour format
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+    // Construct the new time string
+    var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+    return formattedTime;
+  }
+
+  function formatDate(inputDate) {
+    // Create a new Date object from the input string
+    var dateObj = new Date(inputDate);
+    dateObj.setDate(dateObj.getDate() + 1);
+    // Format the date using options
+    var options = { month: 'long', day: '2-digit', year: 'numeric' };
+    var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+    return formattedDate;
+  }
+
+  if (data.tutor_sessions === null) {
     return (
       <Group>
         <Text>Nothing to see here</Text>
@@ -92,29 +130,29 @@ export default function ClientPage(data) {
           <Group miw={200}>
             <ScrollArea h={height - 180}>
               <Group>
-                {data.study_sessions.map((session) => (
+                {tutor_sessions.map((session) => (
                   <Group p={30} key={session.id}>
                     <Stack>
-                      <Avatar size={100} />
+                      <Avatar size={100} src={session.tutor_avatar_url} />
                     </Stack>
                     <Stack>
                       <Stack>
                         <Text fw={700} size="xl">
-                        312 One-on-One Tutor Session                      
+                          {session.title}
                         </Text>
                         <Text mt={-10} fw={700}>
-                          CSCE 312                        
+                          Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
                         </Text>
-                        <Text mt={-15}>Location: ZACH 350</Text>
-                        <Text mt={-15}>Date: Feb 14, 2024</Text>
-                        <Text mt={-15}>Time: 1:00 PM - 2:00 PM</Text>
-                        <Text mt={-15}>Available: 1/1</Text>
+                        <Text mt={-15}>Location: {session.location}</Text>
+                        <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                        <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                        <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size}</Text>
                         <Group mt={-15}>
-                          <Text>Tutor: Name</Text>
+                          <Text>Tutor: {session.users.full_name}</Text>
                           <IconDiscountCheckFilled />
                         </Group>
                         <Group mt={-15}>
-                          <Text>Tutor Rating: 3.2</Text>
+                          <Text>Tutor Rating: TBD</Text>
                           <IconStarFilled />
                           <IconStarFilled />
                           <IconStarFilled />
@@ -128,6 +166,7 @@ export default function ClientPage(data) {
                           size="sm"
                           color="#009020"
                           radius="xl"
+                          onClick={() => joinHandler(session)}
                         >
                           Join
                         </Button>
