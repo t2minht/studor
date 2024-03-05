@@ -108,6 +108,10 @@ export default function Landingsg(data) {
                       {session.max_group_size}{" "}
                     </Text>
                   </Stack>
+                  <Group>
+                    <Modaltutor current={session} />
+                    <Button color="yellow" radius='xl' onClick={() => leaveHandler(session)}>Edit</Button>
+                  </Group>
                 </Stack>
               </Group>
             ))}

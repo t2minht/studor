@@ -92,7 +92,7 @@ export default function Modalview(session) {
 
         <Group justify="center" gap={75} p={20}>
           <Stack>
-            <Text fw={700}>
+            <Text>
               <b>Class:</b>{" "}
               {session.current.department +
                 " " +
