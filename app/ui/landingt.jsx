@@ -84,7 +84,7 @@ export default function Landingsg(data) {
           <h1>Your Posts</h1>
           <Group>
             {tutoring_sessions_hosted.map((session) => (
-              <Group p={30} key={session.topic} maw={400}>
+              <Group p={30} key={session.title} maw={400}>
                 <Stack>
                   <Avatar size={100} src={session.tutor_avatar_url} />
                 </Stack>

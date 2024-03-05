@@ -73,64 +73,67 @@ export default function Modaltutor(session) {
   return (
     <MantineProvider>
       <Modal opened={opened} onClose={close} withCloseButton={false}>
-        <Stack align="center">
-          <Stack>
-            <Avatar size={100} src={session.current.tutor_avatar_url} />
-          </Stack>
-          <Stack>
-            <Text ta="center" fw={700} size="xl">
-              {session.current.title}
-            </Text>
-            <Text mt={-10}>
-              <b>Class:</b>{" "}
-              {session.current.department +
-                " " +
-                session.current.course_number +
-                (session.current.section
-                  ? " - " + session.current.section
-                  : "")}{" "}
-            </Text>
-            <Text mt={-15}><b>Location:</b> {session.current.location}</Text>
-            <Text mt={-15}><b>Date:</b> {formatDate(session.current.date)}</Text>
-            <Text mt={-15}><b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}</Text>
-            <Text mt={-15}> <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
-              {session.current.max_group_size}{" "}</Text>
-            <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
-            <Group mt={-15}>
-              <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-              <IconDiscountCheckFilled />
-            </Group>
-            <Group mt={-15}>
-              <Text><b>Tutor Rating:</b> 3.2</Text>
-              <IconStarFilled />
-              <IconStarFilled />
-              <IconStarFilled />
-              <IconStarHalfFilled />
-              <IconStar />
-            </Group>
-          </Stack>
-        </Stack>
+        <Group>
 
-
-
-        {/* <Stack>
-          <Text fw={700} ml={5}>Participants:</Text>
-          {participants.map((participant) => (
-            <>
-              <Group ml={25} mt={-8}>
-                <Stack>
-                  <Avatar
-                    size={30} src={participant?.users?.avatar_url}
-                  />
-                </Stack>
-                <Stack mt={10} ml={-10} align="center">
-                  <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
-                </Stack>
+          <Stack align="center">
+            <Stack>
+              <Avatar size={100} src={session.current.tutor_avatar_url} />
+            </Stack>
+            <Stack>
+              <Text fw={700} size="xl">
+                {session.current.title}
+              </Text>
+              <Text mt={-10} fw={700}>
+                <b>Class:</b>{" "}
+                {session.current.department +
+                  " " +
+                  session.current.course_number +
+                  (session.current.section
+                    ? " - " + session.current.section
+                    : "")}{" "}
+              </Text>
+              <Text mt={-15}>Location: {session.current.location}</Text>
+              <Text mt={-15}>Date: {formatDate(session.current.date)}</Text>
+              <Text mt={-15}>Time: {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}</Text>
+              <Text mt={-15}> <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
+                {session.current.max_group_size}{" "}</Text>
+              <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
+              <Group mt={-15}>
+                <Text>Tutor: {session.current.users.full_name}</Text>
+                <IconDiscountCheckFilled />
               </Group>
-            </>
-          ))}
-        </Stack> */}
+              <Group mt={-15}>
+                <Text>Tutor Rating: 3.2</Text>
+                <IconStarFilled />
+                <IconStarFilled />
+                <IconStarFilled />
+                <IconStarHalfFilled />
+                <IconStar />
+              </Group>
+            </Stack>
+          </Stack>
 
+
+
+          <Stack>
+            <Text fw={700} mt={-75} ml={5}>Participants:</Text>
+            {participants.map((participant) => (
+              <>
+                <Group ml={25} mt={-8}>
+                  <Stack>
+                    <Avatar
+                      size={30} src={participant?.users?.avatar_url}
+                    />
+                  </Stack>
+                  <Stack mt={10} ml={-10} align="center">
+                    <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+                  </Stack>
+                </Group>
+              </>
+            ))}
+          </Stack>
+
+        </Group>
 
       </Modal>
       <Button
