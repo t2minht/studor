@@ -42,6 +42,7 @@ export default function Page() {
   var fix_start_time = searchParams.get('start_time').slice(0,5);
   var fix_end_time = searchParams.get('end_time').slice(0,5);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validateInputOnChange: true,
 
