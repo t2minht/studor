@@ -5,7 +5,7 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-//import { submitTutorSessionData } from '../../backend/study-session-backend';
+import { submitTutoringSession } from '../../backend/tutoring-backend';
 
 let formValues = {};
 
@@ -43,8 +43,8 @@ export default function Page() {
 
         const currentDate = new Date();
         const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
-        
-        if (value < today){
+
+        if (value < today) {
           return 'Date must be in the future';
         }
         return null;
@@ -54,10 +54,10 @@ export default function Page() {
         const selectedTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), ...value.split(':').map(Number));
         // Construct Date object for the selected time
         if (selectedTime < new Date()) { // Check if selected time is in the past
-            return 'Start time must be in the future'; // Return error message if it is
+          return 'Start time must be in the future'; // Return error message if it is
         }
         return null; // Return null if start time is valid
-    },
+      },
       endTime: (value, allValues) => (
         allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
       ),
@@ -88,7 +88,7 @@ export default function Page() {
 
 
     formValues = form.values;
-    //submitTutorSessionData(formValues);
+    submitTutoringSession(formValues);
 
     notifications.show({
       withBorder: true,
