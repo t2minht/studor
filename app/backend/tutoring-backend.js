@@ -227,21 +227,21 @@ export async function getExistingNotJoinedSessions() {
 //         .eq('id', id)
 // }
 
-// export async function leaveSession(data) {
+export async function leaveSession(data) {
 
-//     const supabase = createServerActionClient({ cookies })
-//     const { data: { user } } = await supabase.auth.getUser();
+    const supabase = createServerActionClient({ cookies })
+    const { data: { user } } = await supabase.auth.getUser();
 
 
-//     const { data: returned_participant, data: error } = await supabase.from('participants_in_tutor_session')
-//         .delete()
-//         .eq('user_id', user.id)
-//         .eq('tutoring_session_id', data.session.id)
+    const { data: returned_participant, data: error } = await supabase.from('participants_in_tutor_session')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('tutoring_session_id', data.session.id)
 
-//     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
-//         .update({ current_group_size: data.session.current_group_size - 1 })
-//         .eq('id', data.session.id)
-// }
+    const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
+        .update({ current_group_size: data.session.current_group_size - 1 })
+        .eq('id', data.session.id)
+}
 
 // export async function updateTutoringSessionData(data) {
 

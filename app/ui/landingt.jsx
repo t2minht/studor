@@ -25,13 +25,14 @@ import { useDisclosure } from "@mantine/hooks";
 import Modaltutor from "../ui/modaltutor";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
+import { leaveSession } from "../backend/tutoring-backend";
 
 export default function Landingsg(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
-  const [tutoring_sessions_hosted, setHostedStudySessions] = useState(data.tutoring.hosted);
-  const [tutoring_sessions_joined, setJoinedStudySessions] = useState(data.tutoring.joined);
+  const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(data.tutoring.hosted);
+  const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(data.tutoring.joined);
 
   if (data.tutoring === null) {
     return (
@@ -39,6 +40,12 @@ export default function Landingsg(data) {
         <Text>Nothing to see here</Text>
       </Group>
     );
+  }
+
+  const leaveHandler = async (session) => {
+    await leaveSession(data = { session });
+    const updatedSessions = tutoring_sessions_joined.filter((item) => item.id !== session.id);
+    setJoinedTutoringSessions(updatedSessions);
   }
 
   function convertTo12HourFormat(timeString) {
@@ -88,17 +95,17 @@ export default function Landingsg(data) {
                     </Text>
                     <Text mt={-10} fw={700}>
                       Class: {" "}
-                      {session.department + 
-                      " " + 
-                      session.course_number + 
-                      (session.section ? " - " + session.section : "")}{" "}
+                      {session.department +
+                        " " +
+                        session.course_number +
+                        (session.section ? " - " + session.section : "")}{" "}
                     </Text>
                     <Text mt={-15}>Location: {session.location}</Text>
                     <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                     <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
                     <Text mt={-15}>
                       Available: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size}{" "}
+                      {session.max_group_size}{" "}
                     </Text>
                   </Stack>
                 </Stack>
@@ -119,19 +126,23 @@ export default function Landingsg(data) {
                     </Text>
                     <Text mt={-10} fw={700}>
                       Class: {" "}
-                      {session.department + 
-                      " " + 
-                      session.course_number + 
-                      (session.section ? " - " + session.section : "")}{" "}
+                      {session.department +
+                        " " +
+                        session.course_number +
+                        (session.section ? " - " + session.section : "")}{" "}
                     </Text>
                     <Text mt={-15}>Location: {session.location}</Text>
                     <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                     <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
                     <Text mt={-15}>
                       Available: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size}{" "}
+                      {session.max_group_size}{" "}
                     </Text>
                   </Stack>
+                  <Group>
+                    <Modaltutor current={session} />
+                    <Button color="red" radius='xl' onClick={() => leaveHandler(session)}>Leave</Button>
+                  </Group>
                 </Stack>
               </Group>
             ))}
