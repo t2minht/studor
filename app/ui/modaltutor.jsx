@@ -78,10 +78,10 @@ export default function Modaltutor(session) {
             <Avatar size={100} src={session.current.tutor_avatar_url} />
           </Stack>
           <Stack>
-            <Text fw={700} size="xl">
+            <Text ta="center" fw={700} size="xl">
               {session.current.title}
             </Text>
-            <Text mt={-10} fw={700}>
+            <Text mt={-10}>
               <b>Class:</b>{" "}
               {session.current.department +
                 " " +
@@ -90,18 +90,18 @@ export default function Modaltutor(session) {
                   ? " - " + session.current.section
                   : "")}{" "}
             </Text>
-            <Text mt={-15}>Location: {session.current.location}</Text>
-            <Text mt={-15}>Date: {formatDate(session.current.date)}</Text>
-            <Text mt={-15}>Time: {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}</Text>
+            <Text mt={-15}><b>Location:</b> {session.current.location}</Text>
+            <Text mt={-15}><b>Date:</b> {formatDate(session.current.date)}</Text>
+            <Text mt={-15}><b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}</Text>
             <Text mt={-15}> <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
               {session.current.max_group_size}{" "}</Text>
             <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
             <Group mt={-15}>
-              <Text>Tutor: {session.current.users.full_name}</Text>
+              <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
               <IconDiscountCheckFilled />
             </Group>
             <Group mt={-15}>
-              <Text>Tutor Rating: 3.2</Text>
+              <Text><b>Tutor Rating:</b> 3.2</Text>
               <IconStarFilled />
               <IconStarFilled />
               <IconStarFilled />
@@ -113,8 +113,8 @@ export default function Modaltutor(session) {
 
 
 
-        <Stack>
-          <Text fw={700} mt={-75} ml={5}>Participants:</Text>
+        {/* <Stack>
+          <Text fw={700} ml={5}>Participants:</Text>
           {participants.map((participant) => (
             <>
               <Group ml={25} mt={-8}>
@@ -129,7 +129,7 @@ export default function Modaltutor(session) {
               </Group>
             </>
           ))}
-        </Stack>
+        </Stack> */}
 
 
       </Modal>

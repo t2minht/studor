@@ -91,7 +91,7 @@ export default function Landingsg(data) {
                 <Stack maw={210}>
                   <Stack>
                     <Text fw={700} size="xl">
-                      {session.topic}
+                      {session.title}
                     </Text>
                     <Text mt={-10} fw={700}>
                       Class: {" "}
