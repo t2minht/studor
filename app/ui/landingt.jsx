@@ -115,14 +115,14 @@ export default function Landingsg(data) {
           <h1>Joined Sessions</h1>
           <Group>
             {tutoring_sessions_joined.map((session) => (
-              <Group p={30} key={session.topic} maw={400}>
+              <Group p={30} key={session.title} maw={400}>
                 <Stack>
                   <Avatar size={100} src={session.tutor_avatar_url} />
                 </Stack>
                 <Stack maw={210}>
                   <Stack>
                     <Text fw={700} size="xl">
-                      {session.topic}
+                      {session.title}
                     </Text>
                     <Text mt={-10} fw={700}>
                       Class: {" "}
