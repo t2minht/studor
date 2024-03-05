@@ -26,6 +26,7 @@ import Modaltutor from "../ui/modaltutor";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import { leaveSession } from "../backend/tutoring-backend";
+import Link from "next/link";
 
 export default function Landingsg(data) {
   const { height, width } = useViewportSize();
@@ -110,7 +111,12 @@ export default function Landingsg(data) {
                   </Stack>
                   <Group>
                     <Modaltutor current={session} />
-                    <Button color="yellow" radius='xl' onClick={() => leaveHandler(session)}>Edit</Button>
+                    <Link
+                    href={{
+                      pathname: "/studor/updatetutorposting",
+                      query: session
+                    }}
+                  ><Button color="yellow" radius="xl">Edit</Button></Link>
                   </Group>
                 </Stack>
               </Group>
@@ -139,7 +145,7 @@ export default function Landingsg(data) {
                     <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                     <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
                     <Text mt={-15}>
-                      Available: {session.max_group_size - session.current_group_size} /{" "}
+                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
                       {session.max_group_size}{" "}
                     </Text>
                   </Stack>

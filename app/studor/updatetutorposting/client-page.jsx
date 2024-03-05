@@ -13,8 +13,12 @@ let formValues = {};
 
 export default function Page() {
   const searchParams = useSearchParams();
-
   const [opened, { open, close }] = useDisclosure(false);
+  if (searchParams.get('title') == null) {
+    window.location.href = '/';
+    return;
+  }
+  else {
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -41,7 +45,7 @@ export default function Page() {
   const form = useForm({
     validateInputOnChange: true,
 
-    initialValues: { title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: searchParams.get('section'), location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
+    initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: searchParams.get('section'), location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
 
     validate: {
       title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
@@ -240,5 +244,5 @@ export default function Page() {
       </Center>
       <Space h='xl' />
     </MantineProvider>
-  )
+  )}
 }
