@@ -36,9 +36,13 @@ export default function ClientPage(data) {
 
 
   const joinHandler = async (session) => {
-    await joinSession(data = { session });
-    const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
-    setTutorSessions(updatedSessions);
+    const joined = await joinSession(data = { session });
+    if (!joined) {
+      alert("Tutoring Session is full, sorry")
+    } else {
+      const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
+      setTutorSessions(updatedSessions);
+    }
 
   }
   function convertTo12HourFormat(timeString) {
