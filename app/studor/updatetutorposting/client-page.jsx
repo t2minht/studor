@@ -94,17 +94,11 @@ export default function Page() {
     },
   });
 
-  const handleDelete = () => {
-    {console.log(1)}
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
     if (!form.isValid()) {
 
-      console.log(form.values)
-      console.log('Form is invalid');
       notifications.show({
         withBorder: true,
         color: "red",
@@ -238,7 +232,7 @@ export default function Page() {
             </Group>
             <Stack align="center" mt={20}>
               <Group mt='md'>
-                <Modaldelete />
+                <Modaldelete id={searchParams.get("id")}/>
                 <Button
                   type='submit'
                   variant="filled"
