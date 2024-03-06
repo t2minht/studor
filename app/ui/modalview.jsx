@@ -118,10 +118,10 @@ export default function Modalview(session) {
           </Stack>
 
           <Stack>
-            <Text fw={700} mt={-75} ml={5}>Participants:</Text>
+            <Text fw={700} ml={5}>Participants:</Text>
             {participants.map((participant) => (
               <>
-                <Group ml={25} mt={-8}>
+                <Group ml={25} >
                   <Stack>
                     <Avatar
                       size={30} src={participant?.users?.avatar_url}
