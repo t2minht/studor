@@ -28,7 +28,7 @@ export default function Page() {
     initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '' },
 
     validate: {
-      title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+      title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
       description: (value, allValues) => (
         allValues.description && (value.length > 500) ? 'Invalid Description' : null
       ),

@@ -63,7 +63,7 @@ export default function Page() {
       initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
       validate: {
-        title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+        title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
         description: (value, allValues) => (
           allValues.description && (value.length > 500) ? 'Invalid Description' : null
         ),
