@@ -26,6 +26,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import Calendar from "@/app/ui/calendar";
 import { joinSession } from "@/app/backend/tutoring-backend";
+import Modaltutor from "@/app/ui/modaltutor";
 
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -164,6 +165,7 @@ export default function ClientPage(data) {
                           </Group>
                         </Stack>
                         <Group>
+                          <Modaltutor current={session} />
                           <Button
                             variant="filled"
                             size="sm"
