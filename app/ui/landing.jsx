@@ -67,8 +67,8 @@ export default function Landing(data) {
             <Tabs.Panel value="sg" pl={10}>
               <Landingsg study_sessions={data.study_sessions}></Landingsg>
             </Tabs.Panel>
-            <Tabs.Panel value="tutor" pl={10}>
-              <Landingt study_sessions={data.study_sessions}></Landingt>
+            <Tabs.Panel value="tutor">
+              <Landingt tutoring={data.tutoring}></Landingt>
             </Tabs.Panel>
           </Tabs>
         </Grid.Col>

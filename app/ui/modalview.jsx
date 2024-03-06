@@ -48,7 +48,6 @@ export default function Modalview(session) {
         .select('users(*)')
         .eq('study_session_id', session.current.id);
     setParticipants(result);
-    console.log(result)
   }
 
   function convertTo12HourFormat(timeString) {
@@ -93,7 +92,7 @@ export default function Modalview(session) {
 
         <Group justify="center" gap={75} p={20}>
           <Stack>
-            <Text fw={700}>
+            <Text>
               <b>Class:</b>{" "}
               {session.current.department +
                 " " +
@@ -108,7 +107,7 @@ export default function Modalview(session) {
               <b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}
             </Text>
             <Text mt={-15}>
-              <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
+              <b>Remaining:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
               {session.current.max_group_size}{" "}
             </Text>
             <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
