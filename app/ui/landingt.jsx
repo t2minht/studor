@@ -80,85 +80,83 @@ export default function Landingsg(data) {
 
   return (
     <MantineProvider>
-      <Group miw={200}>
-        <ScrollArea h={height - 120}>
-          <h1>Your Posts</h1>
-          <Group>
-            {tutoring_sessions_hosted.map((session) => (
-              <Group p={30} key={session.title} maw={400}>
+      <ScrollArea h={height - 120}>
+        <h1>Your Posts</h1>
+        <Group>
+          {tutoring_sessions_hosted.map((session) => (
+            <Group p={30} key={session.title} maw={400}>
+              <Stack>
+                <Avatar size={100} src={session.tutor_avatar_url} />
+              </Stack>
+              <Stack maw={210}>
                 <Stack>
-                  <Avatar size={100} src={session.tutor_avatar_url} />
+                  <Text fw={700} size="xl">
+                    {session.title}
+                  </Text>
+                  <Text mt={-10} fw={700}>
+                    Class: {" "}
+                    {session.department +
+                      " " +
+                      session.course_number +
+                      (session.section ? " - " + session.section : "")}{" "}
+                  </Text>
+                  <Text mt={-15}>Location: {session.location}</Text>
+                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                  <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                  <Text mt={-15}>
+                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
+                    {session.max_group_size}{" "}
+                  </Text>
                 </Stack>
-                <Stack maw={210}>
-                  <Stack>
-                    <Text fw={700} size="xl">
-                      {session.title}
-                    </Text>
-                    <Text mt={-10} fw={700}>
-                      Class: {" "}
-                      {session.department +
-                        " " +
-                        session.course_number +
-                        (session.section ? " - " + session.section : "")}{" "}
-                    </Text>
-                    <Text mt={-15}>Location: {session.location}</Text>
-                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                    <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                    <Text mt={-15}>
-                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                      {session.max_group_size}{" "}
-                    </Text>
-                  </Stack>
-                  <Group>
-                    <Modaltutor current={session} />
-                    <Link
+                <Group>
+                  <Modaltutor current={session} />
+                  <Link
                     href={{
                       pathname: "/studor/updatetutorposting",
                       query: session
                     }}
                   ><Button color="yellow" radius="xl">Edit</Button></Link>
-                  </Group>
-                </Stack>
-              </Group>
-            ))}
-          </Group>
-          <h1>Joined Sessions</h1>
-          <Group>
-            {tutoring_sessions_joined.map((session) => (
-              <Group p={30} key={session.title} maw={400}>
+                </Group>
+              </Stack>
+            </Group>
+          ))}
+        </Group>
+        <h1>Joined Sessions</h1>
+        <Group>
+          {tutoring_sessions_joined.map((session) => (
+            <Group p={30} key={session.title} maw={400}>
+              <Stack>
+                <Avatar size={100} src={session.tutor_avatar_url} />
+              </Stack>
+              <Stack maw={210}>
                 <Stack>
-                  <Avatar size={100} src={session.tutor_avatar_url} />
+                  <Text fw={700} size="xl">
+                    {session.title}
+                  </Text>
+                  <Text mt={-10} fw={700}>
+                    Class: {" "}
+                    {session.department +
+                      " " +
+                      session.course_number +
+                      (session.section ? " - " + session.section : "")}{" "}
+                  </Text>
+                  <Text mt={-15}>Location: {session.location}</Text>
+                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                  <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                  <Text mt={-15}>
+                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
+                    {session.max_group_size}{" "}
+                  </Text>
                 </Stack>
-                <Stack maw={210}>
-                  <Stack>
-                    <Text fw={700} size="xl">
-                      {session.title}
-                    </Text>
-                    <Text mt={-10} fw={700}>
-                      Class: {" "}
-                      {session.department +
-                        " " +
-                        session.course_number +
-                        (session.section ? " - " + session.section : "")}{" "}
-                    </Text>
-                    <Text mt={-15}>Location: {session.location}</Text>
-                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                    <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                    <Text mt={-15}>
-                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                      {session.max_group_size}{" "}
-                    </Text>
-                  </Stack>
-                  <Group>
-                    <Modaltutor current={session} />
-                    <Button color="red" radius='xl' onClick={() => leaveHandler(session)}>Leave</Button>
-                  </Group>
-                </Stack>
-              </Group>
-            ))}
-          </Group>
-        </ScrollArea>
-      </Group>
+                <Group>
+                  <Modaltutor current={session} />
+                  <Button color="red" radius='xl' onClick={() => leaveHandler(session)}>Leave</Button>
+                </Group>
+              </Stack>
+            </Group>
+          ))}
+        </Group>
+      </ScrollArea>
     </MantineProvider>
   );
 }
