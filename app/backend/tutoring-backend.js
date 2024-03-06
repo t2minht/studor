@@ -149,14 +149,13 @@ export async function joinSession(data) {
         ])
         .select()
 
-    console.log(error)
+
 
     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
         .update({ current_group_size: data.session.current_group_size + 1 })
         .eq('id', data.session.id)
         .select()
 
-    console.log("returned:\n", returned_data)
 
 }
 
