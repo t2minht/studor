@@ -42,11 +42,19 @@ export default function Page() {
   var fix_start_time = searchParams.get('start_time').slice(0,5);
   var fix_end_time = searchParams.get('end_time').slice(0,5);
 
+  var fix_section = "";
+  if (searchParams.get('section') == "0") {
+    fix_section = "";
+  }
+  else {
+    fix_section = searchParams.get('section');
+  }
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validateInputOnChange: true,
 
-    initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: searchParams.get('section'), location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
+    initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
 
     validate: {
       title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
