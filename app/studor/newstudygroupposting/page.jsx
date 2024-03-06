@@ -24,7 +24,7 @@ export default function Page() {
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '', noiseLevel: '1' },
+    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '', noiseLevel: '3' },
 
     validate: {
       title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
