@@ -30,9 +30,13 @@ export default function ClientPage(data) {
 
     const joinHandler = async (session) => {
 
-        await joinSession(data = { session });
-        const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-        setStudySessions(updatedSessions);
+        const joined = await joinSession(data = { session });
+        if (!joined) {
+            alert("Session is full bum")
+        } else {
+            const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+            setStudySessions(updatedSessions);
+        }
 
     }
 
@@ -161,7 +165,7 @@ export default function ClientPage(data) {
                                                     <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
-                                                    <Modalview current={session}/>
+                                                    <Modalview current={session} />
                                                     {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
                                                     <Button
                                                         variant="filled"

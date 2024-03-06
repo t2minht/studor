@@ -259,6 +259,16 @@ export async function joinSession(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
+  // need to check if session is full first
+  const { data: sessionData, error: sessionError } = await supabase
+    .from('study_sessions')
+    .select('current_group_size, max_group_size')
+    .eq('id', data.session.id);
+
+  if (sessionData.current_group_size >= sessionData.max_group_size) {
+    return false
+  }
+
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
     .insert([
       {
@@ -270,6 +280,8 @@ export async function joinSession(data) {
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
     .update({ current_group_size: data.session.current_group_size + 1 })
     .eq('id', data.session.id)
+
+  return true
 }
 
 export async function leaveSession(data) {
