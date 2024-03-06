@@ -134,7 +134,7 @@ export default function Page() {
   return (
     <MantineProvider>
       <Center>
-        <h1>Update a Study Group Session</h1>
+        <h1>Update a Tutor Session</h1>
       </Center>
 
       <Center mx={25}>
