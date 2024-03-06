@@ -136,7 +136,7 @@ export default function ClientPage(data) {
                     </Stack>
                 </Grid.Col>
 
-                <Grid.Col span="auto" order={{ base: 3 }}>
+                <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group>
@@ -185,14 +185,12 @@ export default function ClientPage(data) {
                     </Group>
                 </Grid.Col>
 
-                {
-                    checked && (
-                        <Grid.Col span={6} order={{ base: 2 }}>
-                            <Calendar></Calendar>
-                        </Grid.Col>
-                    )
-                }
-            </Grid >
-        </MantineProvider >
+                {checked && (
+                    <Grid.Col span="content" order={{ base: 2 }} maw={700}>
+                        <Calendar></Calendar>
+                    </Grid.Col>
+                )}
+            </Grid>
+        </MantineProvider>
     );
 }
