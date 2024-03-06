@@ -117,7 +117,7 @@ export default function Page() {
           <form onSubmit={handleSubmit}>
             <TextInput
               label="Title"
-              description="Limit of 100 characters"
+              description="Limit of 50 characters"
               placeholder="Title of Session"
               required
               {...form.getInputProps('title')}
