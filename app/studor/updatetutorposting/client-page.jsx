@@ -4,7 +4,7 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
+import { updateTutoringSessionData } from '../../backend/tutoring-backend';
 import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from"../updatetutorposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
@@ -120,9 +120,10 @@ export default function Page() {
     form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
+    form.values.id = searchParams.get('id');
 
     formValues = form.values;
-    submitStudyGroupSessionData(formValues);
+    updateTutoringSessionData(formValues);
 
     notifications.show({
       withBorder: true,

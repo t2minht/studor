@@ -243,29 +243,31 @@ export async function leaveSession(data) {
         .eq('id', data.session.id)
 }
 
-// export async function updateTutoringSessionData(data) {
+export async function updateTutoringSessionData(data) {
 
-//     const supabase = createServerActionClient({ cookies })
-//     const { data: { user } } = await supabase.auth.getUser();
+    const supabase = createServerActionClient({ cookies })
+    const { data: { user } } = await supabase.auth.getUser();
 
-//     const { data: returned_session, error: error1 } = await supabase
-//         .from('tutoring_sessions')
-//         .update([
-//             {
-//                 topic: data.title,
-//                 department: data.department,
-//                 course_number: data.courseNumber,
-//                 section: data.courseSection || 0,
-//                 location: data.location,
-//                 date: data.date,
-//                 start_time: data.startTime,
-//                 end_time: data.endTime,
-//                 max_group_size: data.groupSize,
-//                 host_user_id: user.id,
-//                 description: data.description
+    const { data: returned_session, error: error1 } = await supabase
+        .from('tutoring_sessions')
+        .update([
+            {
+                title: data.title,
+                department: data.department,
+                course_number: data.courseNumber,
+                section: data.courseSection || 0,
+                location: data.location,
+                date: data.date,
+                start_time: data.startTime,
+                end_time: data.endTime,
+                max_group_size: data.groupSize,
+                tutor_user_id: user.id,
+                description: data.description
 
-//             }
-//         ])
-//         .eq('id', data.id)
-//         .select();
-// }
+            }
+        ])
+        .eq('id', data.id)
+        .select();
+
+}
+
