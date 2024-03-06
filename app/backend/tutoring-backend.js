@@ -231,13 +231,13 @@ export async function getExistingNotJoinedSessions() {
 // Everything below this needs to be tested once the UI is implemented
 **********************************************************************/
 
-// export async function deleteSession(id) {
-//     const supabase = createServerActionClient({ cookies });
+export async function deleteSession(id) {
+    const supabase = createServerActionClient({ cookies });
 
-//     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
-//         .delete()
-//         .eq('id', id)
-// }
+    const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
+        .delete()
+        .eq('id', id)
+}
 
 export async function leaveSession(data) {
 
