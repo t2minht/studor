@@ -94,7 +94,7 @@ export default function Landingsg(data) {
                       session.course_number +
                       (session.section ? " - " + session.section : "")}{" "}
                   </Text>
-                  <Text mt={-15}>Location: {session.location}</Text>
+                  <Text aria-label="Location" mt={-15}>Location: {session.location}</Text>
                   <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                   <Text mt={-15}>
                     Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}

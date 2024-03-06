@@ -162,7 +162,7 @@ export default function ClientPage(data) {
                                                     <Text mt={-15}>Location: {session.location}</Text>
                                                     <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                                                     <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                                                    <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
+                                                    <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
                                                     <Modalview current={session} />
