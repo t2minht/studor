@@ -265,7 +265,8 @@ export async function joinSession(data) {
     .select('current_group_size, max_group_size')
     .eq('id', data.session.id);
 
-  if (sessionData.current_group_size >= sessionData.max_group_size) {
+
+  if (sessionData[0].current_group_size >= sessionData[0].max_group_size) {
     return false
   }
 
@@ -289,7 +290,6 @@ export async function leaveSession(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
-  console.log(data)
 
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
     .delete()
