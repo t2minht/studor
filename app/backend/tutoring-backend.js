@@ -284,3 +284,16 @@ export async function updateTutoringSessionData(data) {
 
 }
 
+
+// get all courses that a tutor can tutor in
+export async function getTutorCourses() {
+    const supabase = createServerActionClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data: returned_data, error: error1 } = await supabase.from("tutor_courses")
+        .select('tutor_course_catalog(Department, CourseNum)')
+        .eq('user_id', user.id)
+
+
+    return returned_data; // returns an array of format [{tutor_course_catalog: {CourseNum: 'XXX', Department: 'XXX'}}]
+}
