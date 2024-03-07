@@ -92,7 +92,7 @@ export default function Modalview(session) {
 
         <Group justify="center" gap={75} p={20}>
           <Stack>
-            <Text fw={700}>
+            <Text>
               <b>Class:</b>{" "}
               {session.current.department +
                 " " +
@@ -107,7 +107,7 @@ export default function Modalview(session) {
               <b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}
             </Text>
             <Text mt={-15}>
-              <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
+              <b>Remaining:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
               {session.current.max_group_size}{" "}
             </Text>
             <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
@@ -118,10 +118,10 @@ export default function Modalview(session) {
           </Stack>
 
           <Stack>
-            <Text fw={700} mt={-75} ml={5}>Participants:</Text>
+            <Text fw={700} ml={5}>Participants:</Text>
             {participants.map((participant) => (
               <>
-                <Group ml={25} mt={-8}>
+                <Group ml={25} >
                   <Stack>
                     <Avatar
                       size={30} src={participant?.users?.avatar_url}

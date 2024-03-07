@@ -30,9 +30,13 @@ export default function ClientPage(data) {
 
     const joinHandler = async (session) => {
 
-        await joinSession(data = { session });
-        const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-        setStudySessions(updatedSessions);
+        const joined = await joinSession(data = { session });
+        if (!joined) {
+            alert("Study session is currently full, sorry!")
+        } else {
+            const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+            setStudySessions(updatedSessions);
+        }
 
     }
 
@@ -136,7 +140,7 @@ export default function ClientPage(data) {
                     </Stack>
                 </Grid.Col>
 
-                <Grid.Col span="auto" order={{ base: 3 }}>
+                <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group>
@@ -158,10 +162,10 @@ export default function ClientPage(data) {
                                                     <Text mt={-15}>Location: {session.location}</Text>
                                                     <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                                                     <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                                                    <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
+                                                    <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
-                                                    <Modalview current={session}/>
+                                                    <Modalview current={session} />
                                                     {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
                                                     <Button
                                                         variant="filled"
@@ -185,14 +189,12 @@ export default function ClientPage(data) {
                     </Group>
                 </Grid.Col>
 
-                {
-                    checked && (
-                        <Grid.Col span={6} order={{ base: 2 }}>
-                            <Calendar></Calendar>
-                        </Grid.Col>
-                    )
-                }
-            </Grid >
-        </MantineProvider >
+                {checked && (
+                    <Grid.Col span="content" order={{ base: 2 }} maw={700}>
+                        <Calendar></Calendar>
+                    </Grid.Col>
+                )}
+            </Grid>
+        </MantineProvider>
     );
 }

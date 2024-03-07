@@ -4,7 +4,7 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
+import { updateTutoringSessionData } from '../../backend/tutoring-backend';
 import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from"../updatetutorposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
@@ -13,8 +13,12 @@ let formValues = {};
 
 export default function Page() {
   const searchParams = useSearchParams();
-
   const [opened, { open, close }] = useDisclosure(false);
+  if (searchParams.get('title') == null) {
+    window.location.href = '/';
+    return;
+  }
+  else {
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -38,13 +42,22 @@ export default function Page() {
   var fix_start_time = searchParams.get('start_time').slice(0,5);
   var fix_end_time = searchParams.get('end_time').slice(0,5);
 
+  var fix_section = "";
+  if (searchParams.get('section') == "0") {
+    fix_section = "";
+  }
+  else {
+    fix_section = searchParams.get('section');
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validateInputOnChange: true,
 
-    initialValues: { title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: searchParams.get('section'), location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
+    initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
 
     validate: {
-      title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+      title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
       description: (value, allValues) => (
         allValues.description && (value.length > 500) ? 'Invalid Description' : null
       ),
@@ -53,7 +66,7 @@ export default function Page() {
       courseSection: (value, allValues) => (
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
-      location: (value) => ((value.length < 2 || value.length > 100) ? 'Invalid Location' : null),
+      location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
       groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
       date: (value) => {
 
@@ -81,17 +94,11 @@ export default function Page() {
     },
   });
 
-  const handleDelete = () => {
-    {console.log(1)}
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
     if (!form.isValid()) {
 
-      console.log(form.values)
-      console.log('Form is invalid');
       notifications.show({
         withBorder: true,
         color: "red",
@@ -107,9 +114,10 @@ export default function Page() {
     form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
+    form.values.id = searchParams.get('id');
 
     formValues = form.values;
-    submitStudyGroupSessionData(formValues);
+    updateTutoringSessionData(formValues);
 
     notifications.show({
       withBorder: true,
@@ -129,7 +137,7 @@ export default function Page() {
   return (
     <MantineProvider>
       <Center>
-        <h1>Update a Study Group Session</h1>
+        <h1>Update a Tutor Session</h1>
       </Center>
 
       <Center mx={25}>
@@ -137,7 +145,7 @@ export default function Page() {
           <form onSubmit={handleSubmit}>
             <TextInput
               label="Title"
-              description="Limit of 100 characters"
+              description="Limit of 50 characters"
               placeholder="Title of Session"
               required
               {...form.getInputProps('title')}
@@ -176,7 +184,7 @@ export default function Page() {
             </Group>
             <TextInput
               label="Location"
-              description="Limit of 100 characters"
+              description="Limit of 50 characters"
               placeholder="Location of Session"
               mt={15}
               required
@@ -224,7 +232,7 @@ export default function Page() {
             </Group>
             <Stack align="center" mt={20}>
               <Group mt='md'>
-                <Modaldelete />
+                <Modaldelete id={searchParams.get("id")}/>
                 <Button
                   type='submit'
                   variant="filled"
@@ -240,5 +248,5 @@ export default function Page() {
       </Center>
       <Space h='xl' />
     </MantineProvider>
-  )
+  )}
 }

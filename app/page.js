@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions} from "./backend/study-session-backend";
-import { retrieveExistingJoinedSessions as getJoinedTutoring, retrieveFutureHostedSessions as getHostedTutoring} from "./backend/tutoring-backend";
+import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions as getJoinedTutoring, retrieveFutureHostedSessions as getHostedTutoring } from "./backend/tutoring-backend";
 import Landing from "./ui/landing";
 
 export default async function Home() {

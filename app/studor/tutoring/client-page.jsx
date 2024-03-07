@@ -26,6 +26,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import Calendar from "@/app/ui/calendar";
 import { joinSession } from "@/app/backend/tutoring-backend";
+import Modaltutor from "@/app/ui/modaltutor";
 
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,9 +37,13 @@ export default function ClientPage(data) {
 
 
   const joinHandler = async (session) => {
-    await joinSession(data = { session });
-    const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
-    setTutorSessions(updatedSessions);
+    const joined = await joinSession(data = { session });
+    if (!joined) {
+      alert("Tutoring Session is full, sorry")
+    } else {
+      const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
+      setTutorSessions(updatedSessions);
+    }
 
   }
   function convertTo12HourFormat(timeString) {
@@ -130,50 +135,54 @@ export default function ClientPage(data) {
           <Group miw={200}>
             <ScrollArea h={height - 180}>
               <Group>
-                {tutor_sessions.map((session) => (
-                  <Group p={30} key={session.id}>
-                    <Stack>
-                      <Avatar size={100} src={session.tutor_avatar_url} />
-                    </Stack>
-                    <Stack>
+
+                {tutor_sessions
+                  .filter((session) => session.current_group_size < session.max_group_size)
+                  .map((session) => (
+                    <Group p={30} key={session.id}>
                       <Stack>
-                        <Text fw={700} size="xl">
-                          {session.title}
-                        </Text>
-                        <Text mt={-10} fw={700}>
-                          Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
-                        </Text>
-                        <Text mt={-15}>Location: {session.location}</Text>
-                        <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                        <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                        <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size}</Text>
-                        <Group mt={-15}>
-                          <Text>Tutor: {session.users.full_name}</Text>
-                          <IconDiscountCheckFilled />
-                        </Group>
-                        <Group mt={-15}>
-                          <Text>Tutor Rating: TBD</Text>
-                          <IconStarFilled />
-                          <IconStarFilled />
-                          <IconStarFilled />
-                          <IconStarHalfFilled />
-                          <IconStar />
+                        <Avatar size={100} src={session.tutor_avatar_url} />
+                      </Stack>
+                      <Stack>
+                        <Stack>
+                          <Text fw={700} size="xl">
+                            {session.title}
+                          </Text>
+                          <Text mt={-10} fw={700}>
+                            Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
+                          </Text>
+                          <Text mt={-15}>Location: {session.location}</Text>
+                          <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                          <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                          <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size}</Text>
+                          <Group mt={-15}>
+                            <Text>Tutor: {session.users.full_name}</Text>
+                            <IconDiscountCheckFilled />
+                          </Group>
+                          <Group mt={-15}>
+                            <Text>Tutor Rating: TBD</Text>
+                            <IconStarFilled />
+                            <IconStarFilled />
+                            <IconStarFilled />
+                            <IconStarHalfFilled />
+                            <IconStar />
+                          </Group>
+                        </Stack>
+                        <Group>
+                          <Modaltutor current={session} />
+                          <Button
+                            variant="filled"
+                            size="sm"
+                            color="#009020"
+                            radius="xl"
+                            onClick={() => joinHandler(session)}
+                          >
+                            Join
+                          </Button>
                         </Group>
                       </Stack>
-                      <Group>
-                        <Button
-                          variant="filled"
-                          size="sm"
-                          color="#009020"
-                          radius="xl"
-                          onClick={() => joinHandler(session)}
-                        >
-                          Join
-                        </Button>
-                      </Group>
-                    </Stack>
-                  </Group>
-                ))}
+                    </Group>
+                  ))}
               </Group>
             </ScrollArea>
           </Group>
