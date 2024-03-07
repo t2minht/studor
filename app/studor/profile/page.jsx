@@ -105,6 +105,26 @@ export default function Page() {
     resetSchedule.current?.();
   };
 
+  const uploadSchedule = (event) =>{
+    // const fileInput = document.getElementById("calendar"); // Replace with your HTML element ID
+    // const file = fileInput.files[0];
+
+    const file = schedule;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("../../backend/calendar-backend.js", {
+      method: "POST",
+      body: formData,
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  };
+  
+
+
   const form = useForm({
     validateInputOnChange: true,
     initialValues: { department: '', courseNumber: '', courseSection: '' },
@@ -226,9 +246,12 @@ export default function Page() {
                 <Text>{userData.email}</Text>
               </Group>
               <Group justify="center">
-                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
+                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
                   {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
                 </FileButton>
+                <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                  Upload
+                </Button>
                 <Button disabled={!schedule} color="red" onClick={clearSchedule}>
                   Reset
                 </Button>
