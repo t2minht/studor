@@ -22,7 +22,7 @@ export async function submitTutoringSession(data) {
             description: data.description,
             department: data.department,
             course_number: data.courseNumber,
-            course_section: data.courseSection || 0,
+            section: data.courseSection || 0,
             location: data.location,
             max_group_size: data.groupSize,
             date: data.date,
@@ -33,7 +33,6 @@ export async function submitTutoringSession(data) {
         }
     ])
         .select();
-
 
 
     const { data: returnedParticipant, error: participantError } = await supabase.from('participants_in_tutor_session').insert([
