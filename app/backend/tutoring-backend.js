@@ -297,3 +297,15 @@ export async function getTutorCourses() {
 
     return returned_data; // returns an array of format [{tutor_course_catalog: {CourseNum: 'XXX', Department: 'XXX'}}]
 }
+
+export async function getDepartmentNames() {
+    const supabase = createServerActionClient({ cookies });
+    const { data: returned_data, error: error1 } = await supabase.from("tutor_course_catalog")
+        .select('Department',);
+
+
+    // turn this into a set
+    const departmentSet = new Set(returned_data.map(entry => entry.Department));
+    const deptartments = Array.from(departmentSet);
+    return deptartments;
+}

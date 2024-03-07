@@ -25,7 +25,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import Calendar from "@/app/ui/calendar";
-import { getTutorCourses, joinSession } from "@/app/backend/tutoring-backend";
+import { joinSession } from "@/app/backend/tutoring-backend";
 import Modaltutor from "@/app/ui/modaltutor";
 
 export default function ClientPage(data) {
@@ -124,7 +124,6 @@ export default function ClientPage(data) {
                 component="a"
                 href="/studor/newtutorposting"
                 color="#800000"
-                onClick={() => getTutorCourses()}
               >
                 New Tutor Post
               </Button>

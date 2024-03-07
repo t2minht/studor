@@ -1,19 +1,21 @@
 'use client'
 
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, Select, NativeSelect } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitTutoringSession } from '../../backend/tutoring-backend';
+import { useState } from 'react';
 
 let formValues = {};
 
-export default function ClientPage() {
+export default function ClientPage(data) {
 
-  const departmentData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
+  // const [courseNumbers, setCourseNumbers] = useState([]);
+  // const handleDepartmentChange = (selectedDepartment) => {
+  //   setCourseNumbers(getCourseNumbersFor(selectedDepartment));
+  // }
 
   const courseNumberData = Array(100)
     .fill(0)
@@ -129,15 +131,14 @@ export default function ClientPage() {
               {...form.getInputProps('description')}
             />
             <Group grow mt={15}>
-              <Autocomplete
+              <NativeSelect
                 label="Department"
-                placeholder="Enter Four Letters"
-                data={departmentData}
-                maxDropdownHeight={200}
+                placeholder="Select a Department"
+                data={data.departments.map((department) => ({ value: department, label: department }))}
                 required
                 {...form.getInputProps('department')}
               />
-              <Autocomplete
+              <NativeSelect
                 label="Course Number"
                 placeholder="Enter Three Numbers"
                 data={courseNumberData}
@@ -145,7 +146,7 @@ export default function ClientPage() {
                 required
                 {...form.getInputProps('courseNumber')}
               />
-              <Autocomplete
+              <NativeSelect
                 label="Course Section"
                 placeholder="Enter Three Numbers"
                 data={courseSectionData}
