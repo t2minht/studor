@@ -5,17 +5,97 @@ import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { submitTutoringSession } from '../../backend/tutoring-backend';
-import { useState } from 'react';
+import { getCourseNumbersForDepartment, submitTutoringSession } from '../../backend/tutoring-backend';
+import { useEffect, useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 let formValues = {};
 
 export default function ClientPage(data) {
+  const supabase = createClientComponentClient();
+  const [selectedDepartment, setSelectedDepartment] = useState('ACCT');
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
+  const [selectedCourseSection, setSelectedCourseSection] = useState('');
+  const [courseNumbers, setCourseNumbers] = useState([]);
+  const [courseSections, setCourseSections] = useState([]);
 
-  // const [courseNumbers, setCourseNumbers] = useState([]);
-  // const handleDepartmentChange = (selectedDepartment) => {
-  //   setCourseNumbers(getCourseNumbersFor(selectedDepartment));
-  // }
+  useEffect(() => {
+    const fetchData = async () => {
+      const numbers = await getCourseNumbers(selectedDepartment);
+      setCourseNumbers(numbers);
+    };
+
+    fetchData();
+  }, [selectedDepartment]);
+
+  useEffect(() => {
+
+  }, [courseNumbers]);
+
+  const getSectionNumbers = async (courseNumber) => {
+    try {
+      const { data: returned_data, error } = await supabase.from("course_catalog")
+        .select('SectionNum',)
+        .eq('Department', selectedDepartment)
+        .eq('CourseNum', courseNumber);
+
+      if (error) {
+        console.error("Error fetching course sections:", error);
+        return [];
+      }
+
+      const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
+      const sectionNums = Array.from(sectionNumSet);
+      return sectionNums;
+
+    } catch (error) {
+      console.error('Error fetching course sections:', error);
+      return [];
+    }
+
+  }
+
+
+  const getCourseNumbers = async (department) => {
+    try {
+      const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
+        .select('CourseNum',)
+        .eq('Department', department);
+
+      if (error1) {
+        console.error('Error fetching course numbers:', error1);
+        return [];
+      }
+
+      const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
+      const courseNums = Array.from(courseNumSet);
+      return courseNums;
+
+    } catch (error) {
+      console.error('Error fetching course numbers:', error);
+      return [];
+    }
+  }
+
+  const handleDepartmentChange = async (selectedDepartment) => {
+    try {
+      const numbers = await getCourseNumbers(selectedDepartment);
+      setCourseNumbers(numbers);
+    } catch (error) {
+      console.error('Error updating course numbers:', error);
+    }
+  }
+
+  const handleCourseNumberChange = async (selectedCourseNumber) => {
+    try {
+      const sections = await getSectionNumbers(selectedCourseNumber);
+      setCourseSections(sections);
+    } catch (error) {
+      console.error('Error updating course sections:', error);
+    }
+  }
+
+
 
   const courseNumberData = Array(100)
     .fill(0)
@@ -137,19 +217,23 @@ export default function ClientPage(data) {
                 data={data.departments.map((department) => ({ value: department, label: department }))}
                 required
                 {...form.getInputProps('department')}
+                value={selectedDepartment}
+                onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
               />
               <NativeSelect
                 label="Course Number"
                 placeholder="Enter Three Numbers"
-                data={courseNumberData}
+                data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
                 maxDropdownHeight={200}
                 required
                 {...form.getInputProps('courseNumber')}
+                onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                value={selectedCourseNumber}
               />
               <NativeSelect
                 label="Course Section"
                 placeholder="Enter Three Numbers"
-                data={courseSectionData}
+                data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                 maxDropdownHeight={200}
                 {...form.getInputProps('courseSection')}
               />
@@ -217,5 +301,7 @@ export default function ClientPage(data) {
       </Center>
       <Space h='xl' />
     </MantineProvider>
+
+
   )
 }

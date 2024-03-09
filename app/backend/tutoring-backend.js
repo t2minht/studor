@@ -228,10 +228,6 @@ export async function getExistingNotJoinedSessions() {
     }
 }
 
-/*********************************************************************
-// Everything below this needs to be tested once the UI is implemented
-**********************************************************************/
-
 export async function deleteSession(id) {
     const supabase = createServerActionClient({ cookies });
 
