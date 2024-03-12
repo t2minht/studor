@@ -167,7 +167,7 @@ export default function Page() {
                 {...form.getInputProps('department')}
               />
               <Autocomplete
-                label="Course Number"
+                label="Course #"
                 placeholder="Enter Three Numbers"
                 data={courseNumberData}
                 maxDropdownHeight={200}
