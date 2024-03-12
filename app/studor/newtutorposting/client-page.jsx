@@ -28,11 +28,20 @@ export default function ClientPage(data) {
     };
 
     fetchData();
+
+    form.values.department = selectedDepartment;
   }, [selectedDepartment]);
 
   useEffect(() => {
-
   }, [courseNumbers]);
+
+  useEffect(() => {
+    form.values.courseNumber = selectedCourseNumber;
+  }, [selectedCourseNumber]);
+
+  useEffect(() => {
+    form.values.courseSection = selectedCourseSection;
+  }, [selectedCourseSection]);
 
   const getSectionNumbers = async (courseNumber) => {
     try {
@@ -156,8 +165,8 @@ export default function ClientPage(data) {
     event.preventDefault(); // Prevent default form submission
 
     if (!form.isValid()) {
-      console.log(form.values)
-      console.log('Form is invalid');
+      console.error(form.values)
+      console.error('Form is invalid');
       notifications.show({
         withBorder: true,
         color: "red",
@@ -166,7 +175,7 @@ export default function ClientPage(data) {
         title: "Incorrect Inputs",
         message: "Please make sure all inputs are correctly formatted",
       });
-      
+
       return;
     }
 
