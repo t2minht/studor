@@ -100,7 +100,8 @@ export default function ClientPage(data) {
   const handleCourseNumberChange = async (selectedCourseNumber) => {
     try {
       const sections = await getSectionNumbers(selectedCourseNumber);
-      setCourseSections(sections);
+      const allSections = [''].concat(sections);
+      setCourseSections(allSections);
     } catch (error) {
       console.error('Error updating course sections:', error);
     }
