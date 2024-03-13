@@ -15,7 +15,7 @@ let formValues = {};
 export default function ClientPage(data) {
   const { height, width } = useViewportSize();
   const supabase = createClientComponentClient();
-  const [selectedDepartment, setSelectedDepartment] = useState('ACCT');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
   const [selectedCourseSection, setSelectedCourseSection] = useState('');
   const [courseNumbers, setCourseNumbers] = useState([]);
@@ -24,7 +24,8 @@ export default function ClientPage(data) {
   useEffect(() => {
     const fetchData = async () => {
       const numbers = await getCourseNumbers(selectedDepartment);
-      setCourseNumbers(numbers);
+      const allNumbers = [''].concat(numbers);
+      setCourseNumbers(allNumbers);
     };
 
     fetchData();
@@ -241,6 +242,7 @@ export default function ClientPage(data) {
                 placeholder="Enter Three Numbers"
                 data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
                 maxDropdownHeight={200}
+                disabled={!selectedDepartment}
                 required
                 {...form.getInputProps('courseNumber')}
                 onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
@@ -251,6 +253,7 @@ export default function ClientPage(data) {
                 placeholder="Enter Three Numbers"
                 data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                 maxDropdownHeight={200}
+                disabled={!selectedCourseNumber}
                 {...form.getInputProps('courseSection')}
               />
             </Group>
