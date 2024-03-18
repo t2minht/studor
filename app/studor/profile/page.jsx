@@ -5,6 +5,7 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
+import { retrieveProfileTutoringSessions } from "@/app/backend/tutoring-backend";
 
 
 let formValues = {};
@@ -23,11 +24,12 @@ const courseSectionData = Array(100)
 
 export default async function Page() {
   const sessions = await retrieveProfileStudySession();
+  const tutor_sessions = await retrieveProfileTutoringSessions();
   const user = await retrieveUserProfileInfo();
   return (
     <div>
       <MantineProvider>
-        <ClientPage sessions={sessions} user={user} />
+        <ClientPage sessions={sessions} user={user} tutor_sessions={tutor_sessions} />
       </MantineProvider>
 
     </div>
