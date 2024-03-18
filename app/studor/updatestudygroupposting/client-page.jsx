@@ -63,7 +63,7 @@ export default function Page() {
       initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
       validate: {
-        title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+        title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
         description: (value, allValues) => (
           allValues.description && (value.length > 500) ? 'Invalid Description' : null
         ),
@@ -72,7 +72,7 @@ export default function Page() {
         courseSection: (value, allValues) => (
           allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
         ),
-        location: (value) => ((value.length < 2 || value.length > 100) ? 'Invalid Location' : null),
+        location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
         groupSize: (value) => ((value >= current_group_size && value <= 20) ? null : 'Invalid Group Size'),
         noiseLevel: (value) => ((value > 5 || value < 1) ? 'Invalid Noise Level' : null),
         date: (value) => {
@@ -157,7 +157,7 @@ export default function Page() {
             <form onSubmit={handleSubmit}>
               <TextInput
                 label="Title"
-                description="Limit of 100 characters"
+                description="Limit of 50 characters"
                 placeholder="Title of Session"
                 required
                 {...form.getInputProps('title')}
@@ -196,7 +196,7 @@ export default function Page() {
               </Group>
               <TextInput
                 label="Location"
-                description="Limit of 100 characters"
+                description="Limit of 50 characters"
                 placeholder="Location of Session"
                 mt={15}
                 required

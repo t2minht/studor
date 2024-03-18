@@ -22,7 +22,7 @@ export async function submitTutoringSession(data) {
             description: data.description,
             department: data.department,
             course_number: data.courseNumber,
-            course_section: data.courseSection || 0,
+            section: data.courseSection || 0,
             location: data.location,
             max_group_size: data.groupSize,
             date: data.date,
@@ -33,7 +33,6 @@ export async function submitTutoringSession(data) {
         }
     ])
         .select();
-
 
 
     const { data: returnedParticipant, error: participantError } = await supabase.from('participants_in_tutor_session').insert([
@@ -139,6 +138,16 @@ export async function joinSession(data) {
     const supabase = createServerActionClient({ cookies })
     const { data: { user } } = await supabase.auth.getUser();
 
+    const { data: sessionData, error: sessionError } = await supabase
+        .from('tutoring_sessions')
+        .select('current_group_size, max_group_size')
+        .eq('id', data.session.id);
+
+
+    if (sessionData[0].current_group_size >= sessionData[0].max_group_size) {
+        return false
+    }
+
 
     const { data: returned_participant, data: error } = await supabase.from('participants_in_tutor_session')
         .insert([
@@ -149,11 +158,15 @@ export async function joinSession(data) {
         ])
         .select()
 
-    console.log(error)
+
 
     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
         .update({ current_group_size: data.session.current_group_size + 1 })
-        .eq('id', data.id)
+        .eq('id', data.session.id)
+        .select()
+
+
+    return true
 
 }
 
@@ -215,17 +228,13 @@ export async function getExistingNotJoinedSessions() {
     }
 }
 
-/*********************************************************************
-// Everything below this needs to be tested once the UI is implemented
-**********************************************************************/
+export async function deleteSession(id) {
+    const supabase = createServerActionClient({ cookies });
 
-// export async function deleteSession(id) {
-//     const supabase = createServerActionClient({ cookies });
-
-//     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
-//         .delete()
-//         .eq('id', id)
-// }
+    const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
+        .delete()
+        .eq('id', id)
+}
 
 export async function leaveSession(data) {
 
@@ -243,29 +252,56 @@ export async function leaveSession(data) {
         .eq('id', data.session.id)
 }
 
-// export async function updateTutoringSessionData(data) {
+export async function updateTutoringSessionData(data) {
 
-//     const supabase = createServerActionClient({ cookies })
-//     const { data: { user } } = await supabase.auth.getUser();
+    const supabase = createServerActionClient({ cookies })
+    const { data: { user } } = await supabase.auth.getUser();
 
-//     const { data: returned_session, error: error1 } = await supabase
-//         .from('tutoring_sessions')
-//         .update([
-//             {
-//                 topic: data.title,
-//                 department: data.department,
-//                 course_number: data.courseNumber,
-//                 section: data.courseSection || 0,
-//                 location: data.location,
-//                 date: data.date,
-//                 start_time: data.startTime,
-//                 end_time: data.endTime,
-//                 max_group_size: data.groupSize,
-//                 host_user_id: user.id,
-//                 description: data.description
+    const { data: returned_session, error: error1 } = await supabase
+        .from('tutoring_sessions')
+        .update([
+            {
+                title: data.title,
+                department: data.department,
+                course_number: data.courseNumber,
+                section: data.courseSection || 0,
+                location: data.location,
+                date: data.date,
+                start_time: data.startTime,
+                end_time: data.endTime,
+                max_group_size: data.groupSize,
+                tutor_user_id: user.id,
+                description: data.description
 
-//             }
-//         ])
-//         .eq('id', data.id)
-//         .select();
-// }
+            }
+        ])
+        .eq('id', data.id)
+        .select();
+
+}
+
+
+// get all courses that a tutor can tutor in
+export async function getTutorCourses() {
+    const supabase = createServerActionClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data: returned_data, error: error1 } = await supabase.from("tutor_courses")
+        .select('tutor_course_catalog(Department, CourseNum)')
+        .eq('user_id', user.id)
+
+
+    return returned_data; // returns an array of format [{tutor_course_catalog: {CourseNum: 'XXX', Department: 'XXX'}}]
+}
+
+export async function getDepartmentNames() {
+    const supabase = createServerActionClient({ cookies });
+    const { data: returned_data, error: error1 } = await supabase.from("tutor_course_catalog")
+        .select('Department',);
+
+
+    // turn this into a set
+    const departmentSet = new Set(returned_data.map(entry => entry.Department));
+    const deptartments = Array.from(departmentSet);
+    return deptartments;
+}

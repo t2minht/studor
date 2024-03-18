@@ -26,6 +26,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import Calendar from "@/app/ui/calendar";
 import { joinSession } from "@/app/backend/tutoring-backend";
+import Modaltutor from "@/app/ui/modaltutor";
 
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,9 +37,13 @@ export default function ClientPage(data) {
 
 
   const joinHandler = async (session) => {
-    await joinSession(data = { session });
-    const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
-    setTutorSessions(updatedSessions);
+    const joined = await joinSession(data = { session });
+    if (!joined) {
+      alert("Tutoring Session is full, sorry")
+    } else {
+      const updatedSessions = tutor_sessions.filter((item) => item.id !== session.id);
+      setTutorSessions(updatedSessions);
+    }
 
   }
   function convertTo12HourFormat(timeString) {
@@ -164,6 +169,7 @@ export default function ClientPage(data) {
                           </Group>
                         </Stack>
                         <Group>
+                          <Modaltutor current={session} />
                           <Button
                             variant="filled"
                             size="sm"

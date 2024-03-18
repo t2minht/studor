@@ -1,23 +1,5 @@
-'use client'
-import {
-  MantineProvider,
-  Group,
-  Center,
-  Stack,
-  Avatar,
-  Input,
-  Button,
-  Table,
-  ScrollArea,
-  Space,
-  Text,
-  FileButton,
-  Checkbox,
-  rem,
-  Autocomplete
-} from "@mantine/core";
-import { IconAt, IconCalendarPlus, IconCircleCheck, IconCircleX, IconPencil, IconUpload } from '@tabler/icons-react';
-import React, { useRef, useState, useEffect } from 'react';
+import { MantineProvider } from "@mantine/core"
+import ClientPage from "./client-page"
 import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/backend/study-session-backend";
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
@@ -203,175 +185,15 @@ export default function Page() {
 
   };
 
+export default async function Page() {
+  const sessions = await retrieveProfileStudySession();
+  const user = await retrieveUserProfileInfo();
   return (
-    <>
-      {console.log(selection)}
+    <div>
       <MantineProvider>
-        <Center>
-          <h1>Profile</h1>
-        </Center>
-
-        <Center>
-          <Group gap="xl" justify="center">
-            <Stack>
-              <Avatar
-                size={200}
-                src={userData.avatar_url}
-              />
-            </Stack>
-            <Stack>
-              <Group justify="center">
-                <IconPencil size={16} />
-                <Text fw={700}>{userData.name}</Text>
-              </Group>
-              <Group justify="center">
-                <IconAt size={16} />
-                <Text>{userData.email}</Text>
-              </Group>
-              <Group justify="center">
-                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
-                  {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
-                </FileButton>
-                <Button disabled={!schedule} color="red" onClick={clearSchedule}>
-                  Reset
-                </Button>
-              </Group>
-              {schedule && (
-                <Text size="sm" mt={-10} ta="center">
-                  Selected file: {schedule.name}
-                </Text>
-              )}
-              <Group justify="center">
-                <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
-                  {(props) => <Button {...props}>Upload Transcript</Button>}
-                </FileButton>
-                <Button disabled={!transcript} color="red" onClick={clearTranscript}>
-                  Reset
-                </Button>
-              </Group>
-              {transcript && (
-                <Text size="sm" mt={-10} ta="center">
-                  Selected file: {transcript.name}
-                </Text>
-              )}
-            </Stack>
-          </Group>
-        </Center>
-        <Stack mt={60} mx={50}>
-          <Text ta="center" size="lg" fw={700}>My Courses</Text>
-          <form onSubmit={handleSubmit}>
-            <Group grow mt={0}>
-              <Stack>
-                <Autocomplete
-                  label="Department"
-                  placeholder="Enter Four Letters"
-                  data={departmentData}
-                  maxDropdownHeight={200}
-                  required
-                  {...form.getInputProps('department')}
-                />
-                <Autocomplete
-                  label="Course Number"
-                  placeholder="Enter Three Numbers"
-                  data={courseNumberData}
-                  maxDropdownHeight={200}
-                  required
-                  {...form.getInputProps('courseNumber')}
-                />
-                <Autocomplete
-                  label="Course Section"
-                  placeholder="Enter Three Numbers"
-                  data={courseSectionData}
-                  maxDropdownHeight={200}
-                  required
-                  {...form.getInputProps('courseSection')}
-                />
-                <Stack align="center">
-                  <Button
-                    type='submit'
-                    mt="md"
-                    variant="filled"
-                    color='#800000'
-                    radius="xl"
-                  >
-                    Add Course
-                  </Button>
-                </Stack>
-              </Stack>
-
-              <Stack>
-                <ScrollArea mb={-20} h={225}>
-                  <Table stickyHeader striped withTableBorder highlightOnHover>
-                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                      <Table.Tr>
-                        <Table.Th style={{ width: rem(40) }}>
-                          <Checkbox
-                            onChange={toggleAll}
-                            checked={selection.length === data.length}
-                            indeterminate={selection.length > 0 && selection.length !== data.length}
-                          />
-                        </Table.Th>
-                        <Table.Th>Department</Table.Th>
-                        <Table.Th>Course Number</Table.Th>
-                        <Table.Th>Section</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>{coursesRows}</Table.Tbody>
-                  </Table>
-                </ScrollArea>
-                <Stack align="center">
-                  <Button
-                    variant="filled"
-                    color='#800000'
-                    mt="md"
-                    radius="xl"
-                    disabled={(selection == undefined || selection.length == 0) ? true : false}
-                    onClick={handleDelete}
-                  >
-                    Delete Course
-                  </Button>
-                </Stack>
-              </Stack>
-            </Group>
-          </form>
-        </Stack>
-
-        <Group grow>
-          <Stack mt={50} pl={50}>
-            <Text ta="center" size="lg" fw={700}>Study Group History</Text>
-            <ScrollArea h={250}>
-              <Table stickyHeader striped withTableBorder highlightOnHover>
-                <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                  <Table.Tr>
-                    <Table.Th>Topic</Table.Th>
-                    <Table.Th>Course</Table.Th>
-                    <Table.Th>Date</Table.Th>
-                    <Table.Th>Details</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
-              </Table>
-            </ScrollArea>
-          </Stack>
-          <Stack mt={50} pr={50}>
-            <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
-            <ScrollArea h={250}>
-              <Table stickyHeader striped withTableBorder highlightOnHover>
-                <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                  <Table.Tr>
-                    <Table.Th>Topic</Table.Th>
-                    <Table.Th>Course</Table.Th>
-                    <Table.Th>Date</Table.Th>
-                    <Table.Th>Details</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
-              </Table>
-            </ScrollArea>
-          </Stack>
-        </Group>
-        <Space h='xl' />
+        <ClientPage sessions={sessions} user={user} />
       </MantineProvider>
-    </>
+
+    </div>
   )
-}
+};

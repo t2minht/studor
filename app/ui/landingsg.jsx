@@ -122,7 +122,7 @@ export default function Landingsg(data) {
           {study_sessions_joined.map((session) => (
             <Group p={30} key={session.topic} maw={400}>
               <Stack>
-                <Avatar size={100} />
+                <Avatar size={100} src={session.host_avatar_url} />
               </Stack>
               <Stack maw={210}>
                 <Stack>
