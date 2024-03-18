@@ -318,21 +318,40 @@ export default function ClientPage({ sessions, user }) {
                     </form>
                 </Stack>
 
-                <Stack mt={50} mx={50}>
-                    <Text ta="center" size="lg" fw={700}>Session History</Text>
-                    <ScrollArea h={250}>
+                <Group grow>
+                    <Stack mt={50} pl={50}>
+                        <Text ta="center" size="lg" fw={700}>Study Group History</Text>
+                        <ScrollArea h={250}>
                         <Table stickyHeader striped withTableBorder highlightOnHover>
                             <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                <Table.Tr>
-                                    <Table.Th>Topic</Table.Th>
-                                    <Table.Th>Course</Table.Th>
-                                    <Table.Th>Date</Table.Th>
-                                </Table.Tr>
+                            <Table.Tr>
+                                <Table.Th>Topic</Table.Th>
+                                <Table.Th>Course</Table.Th>
+                                <Table.Th>Date</Table.Th>
+                                <Table.Th>Details</Table.Th>
+                            </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
                         </Table>
-                    </ScrollArea>
-                </Stack>
+                        </ScrollArea>
+                    </Stack>
+                    <Stack mt={50} pr={50}>
+                        <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
+                        <ScrollArea h={250}>
+                        <Table stickyHeader striped withTableBorder highlightOnHover>
+                            <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                            <Table.Tr>
+                                <Table.Th>Topic</Table.Th>
+                                <Table.Th>Course</Table.Th>
+                                <Table.Th>Date</Table.Th>
+                                <Table.Th>Details</Table.Th>
+                            </Table.Tr>
+                            </Table.Thead>
+                            <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
+                        </Table>
+                        </ScrollArea>
+                    </Stack>
+                </Group>
                 <Space h='xl' />
             </MantineProvider>
         </>
