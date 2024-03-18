@@ -189,8 +189,6 @@ export default function Page(data) {
     }, [selectedCourseSection]);
 
     const getSectionNumbers = async (courseNumber) => {
-      console.log("GETTING SECTION NUMBERS")
-
       try {
         const { data: returned_data, error } = await supabase.from("course_catalog")
           .select('SectionNum',)
@@ -244,8 +242,6 @@ export default function Page(data) {
     }
 
     const handleCourseNumberChange = async (selectedCourseNumber) => {
-      console.log("HANDLING COURSE  NUMBER CHANGE")
-
       try {
         const sections = await getSectionNumbers(selectedCourseNumber);
         const allSections = [''].concat(sections);
