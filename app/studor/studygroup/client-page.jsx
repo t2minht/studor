@@ -32,7 +32,7 @@ export default function ClientPage(data) {
 
         const joined = await joinSession(data = { session });
         if (!joined) {
-            alert("Session is full bum")
+            alert("Study session is currently full, sorry!")
         } else {
             const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
             setStudySessions(updatedSessions);
