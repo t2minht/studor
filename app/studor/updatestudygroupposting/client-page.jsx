@@ -1,5 +1,5 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, Modal } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, Modal, NativeSelect } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
@@ -9,10 +9,13 @@ import { useDisclosure } from '@mantine/hooks';
 import Modaldelete from "../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 let formValues = {};
 
-export default function Page() {
+export default function Page(data) {
+
+
   const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
   if (searchParams.get('topic') == null) {
@@ -146,6 +149,113 @@ export default function Page() {
       }, 5000);
     };
 
+    const supabase = createClientComponentClient();
+    const [selectedDepartment, setSelectedDepartment] = useState(searchParams.get('department'));
+    const [selectedCourseNumber, setSelectedCourseNumber] = useState(searchParams.get('course_number'));
+    const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
+    const [courseNumbers, setCourseNumbers] = useState([]);
+    const [courseSections, setCourseSections] = useState([]);
+
+
+    useEffect(() => {
+      const getSectionsInitial = async () => {
+        const sections = await getSectionNumbers(selectedCourseNumber);
+        setCourseSections(sections);
+      }
+      getSectionsInitial();
+    }, []);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const numbers = await getCourseNumbers(selectedDepartment);
+        const allNumbers = [''].concat(numbers);
+        setCourseNumbers(allNumbers);
+      };
+
+      fetchData();
+
+      form.values.department = selectedDepartment;
+    }, [selectedDepartment]);
+
+    useEffect(() => {
+    }, [courseNumbers]);
+
+    useEffect(() => {
+      form.values.courseNumber = selectedCourseNumber;
+    }, [selectedCourseNumber]);
+
+    useEffect(() => {
+      form.values.courseSection = selectedCourseSection;
+    }, [selectedCourseSection]);
+
+    const getSectionNumbers = async (courseNumber) => {
+      console.log("GETTING SECTION NUMBERS")
+
+      try {
+        const { data: returned_data, error } = await supabase.from("course_catalog")
+          .select('SectionNum',)
+          .eq('Department', selectedDepartment)
+          .eq('CourseNum', courseNumber);
+
+        if (error) {
+          console.error("Error fetching course sections:", error);
+          return [];
+        }
+
+        const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
+        const sectionNums = Array.from(sectionNumSet);
+        return sectionNums;
+
+      } catch (error) {
+        console.error('Error fetching course sections:', error);
+        return [];
+      }
+
+    }
+
+    const getCourseNumbers = async (department) => {
+      try {
+        const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
+          .select('CourseNum',)
+          .eq('Department', department);
+
+        if (error1) {
+          console.error('Error fetching course numbers:', error1);
+          return [];
+        }
+
+        const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
+        const courseNums = Array.from(courseNumSet);
+        return courseNums;
+
+      } catch (error) {
+        console.error('Error fetching course numbers:', error);
+        return [];
+      }
+    }
+
+    const handleDepartmentChange = async (selectedDepartment) => {
+      try {
+        const numbers = await getCourseNumbers(selectedDepartment);
+        setCourseNumbers(numbers);
+      } catch (error) {
+        console.error('Error updating course numbers:', error);
+      }
+    }
+
+    const handleCourseNumberChange = async (selectedCourseNumber) => {
+      console.log("HANDLING COURSE  NUMBER CHANGE")
+
+      try {
+        const sections = await getSectionNumbers(selectedCourseNumber);
+        const allSections = [''].concat(sections);
+        setCourseSections(allSections);
+      } catch (error) {
+        console.error('Error updating course sections:', error);
+      }
+    }
+
+
     return (
       <MantineProvider>
         <Center>
@@ -170,27 +280,33 @@ export default function Page() {
                 {...form.getInputProps('description')}
               />
               <Group grow mt={15}>
-                <Autocomplete
+                <NativeSelect
                   label="Department"
                   placeholder="Enter Four Letters"
-                  data={departmentData}
+                  data={data.departments.map((department) => ({ value: department, label: department }))}
                   maxDropdownHeight={200}
                   required
                   {...form.getInputProps('department')}
+                  onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
+
                 />
-                <Autocomplete
-                  label="Course Number"
+                <NativeSelect
+                  label="Course #"
                   placeholder="Enter Three Numbers"
-                  data={courseNumberData}
+                  data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
                   maxDropdownHeight={200}
+                  disabled={!selectedDepartment}
                   required
                   {...form.getInputProps('courseNumber')}
+                  onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                  value={selectedCourseNumber}
                 />
-                <Autocomplete
+                <NativeSelect
                   label="Course Section"
                   placeholder="Enter Three Numbers"
-                  data={courseSectionData}
+                  data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                   maxDropdownHeight={200}
+                  disabled={!selectedCourseNumber}
                   {...form.getInputProps('courseSection')}
                 />
               </Group>
