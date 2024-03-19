@@ -38,7 +38,7 @@ export default function Modalview(session) {
 
   useEffect(() => {
     getParticipants();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getParticipants = async () => {
@@ -48,7 +48,34 @@ export default function Modalview(session) {
         .select('users(*)')
         .eq('study_session_id', session.current.id);
     setParticipants(result);
-    console.log(result)
+  }
+
+  function convertTo12HourFormat(timeString) {
+    // Split the string into hours and minutes
+    var parts = timeString.split(":");
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Convert hours to 12-hour format
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+    // Construct the new time string
+    var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+    return formattedTime;
+  }
+
+  function formatDate(inputDate) {
+    // Create a new Date object from the input string
+    var dateObj = new Date(inputDate);
+    dateObj.setDate(dateObj.getDate() + 1);
+    // Format the date using options
+    var options = { month: 'long', day: '2-digit', year: 'numeric' };
+    var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+    return formattedDate;
   }
 
   return (
@@ -65,7 +92,7 @@ export default function Modalview(session) {
 
         <Group justify="center" gap={75} p={20}>
           <Stack>
-            <Text fw={700}>
+            <Text>
               <b>Class:</b>{" "}
               {session.current.department +
                 " " +
@@ -75,12 +102,12 @@ export default function Modalview(session) {
                   : "")}{" "}
             </Text>
             <Text mt={-15}><b>Location:</b> {session.current.location}</Text>
-            <Text mt={-15}><b>Date:</b> {session.current.date}</Text>
+            <Text mt={-15}><b>Date:</b> {formatDate(session.current.date)}</Text>
             <Text mt={-15}>
-              <b>Time:</b> {session.current.start_time} - {session.current.end_time}
+              <b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}
             </Text>
             <Text mt={-15}>
-              <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
+              <b>Remaining:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
               {session.current.max_group_size}{" "}
             </Text>
             <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
@@ -91,21 +118,21 @@ export default function Modalview(session) {
           </Stack>
 
           <Stack>
-            <Text fw={700} mt={-75} ml={5}>Participants:</Text>
-              {participants.map((participant) => (
-                <>
-                  <Group ml={25} mt={-8}>
-                    <Stack>
-                      <Avatar
-                        size={30}
-                      />
-                    </Stack>
-                    <Stack mt={10} ml={-10} align="center">
-                      <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
-                    </Stack>
-                  </Group>
-                </>
-              ))}
+            <Text fw={700} ml={5}>Participants:</Text>
+            {participants.map((participant) => (
+              <>
+                <Group ml={25} >
+                  <Stack>
+                    <Avatar
+                      size={30} src={participant?.users?.avatar_url}
+                    />
+                  </Stack>
+                  <Stack mt={10} ml={-10} align="center">
+                    <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+                  </Stack>
+                </Group>
+              </>
+            ))}
           </Stack>
 
         </Group>
