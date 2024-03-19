@@ -80,7 +80,7 @@ export default function Modaltutor(session) {
               <Avatar size={100} src={session.current.tutor_avatar_url} />
             </Stack>
             <Stack ml={30}>
-              <Text fw={700} td="underline" c="blue" size="xl"ta="center">
+              <Text fw={700} td="underline" c="blue" size="xl" ta="center">
                 {session.current.title}
               </Text>
               <Text mt={-10}>
@@ -100,7 +100,7 @@ export default function Modaltutor(session) {
               <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
               <Group mt={-15}>
                 <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-                <IconDiscountCheckFilled />
+                {session.current.verified && <IconDiscountCheckFilled />}
               </Group>
               <Group mt={-15}>
                 <Text><b>Tutor Rating:</b> 3.2</Text>
