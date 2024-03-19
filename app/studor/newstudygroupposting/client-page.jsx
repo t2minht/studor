@@ -7,11 +7,12 @@ import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useViewportSize } from '@mantine/hooks';
 
 let formValues = {};
 
 export default function ClientPage(data) {
-
+    const { height, width } = useViewportSize();
     const supabase = createClientComponentClient();
     const [selectedDepartment, setSelectedDepartment] = useState('');
     const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
@@ -196,7 +197,7 @@ export default function ClientPage(data) {
             </Center>
 
             <Center mx={25}>
-                <Stack>
+                <Stack miw={(width > 754) ? 680 : null}>
                     <form onSubmit={handleSubmit}>
                         <TextInput
                             label="Title"

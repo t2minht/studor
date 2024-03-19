@@ -5,7 +5,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { updateTutoringSessionData } from '../../backend/tutoring-backend';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import Modaldelete from "../updatetutorposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 let formValues = {};
 
 export default function Page(data) {
+  const { height, width } = useViewportSize();
   const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
   if (searchParams.get('title') == null) {
@@ -245,7 +246,7 @@ export default function Page(data) {
         </Center>
 
         <Center mx={25}>
-          <Stack>
+          <Stack miw={(width > 754) ? 680 : null}>
             <form onSubmit={handleSubmit}>
               <TextInput
                 label="Title"

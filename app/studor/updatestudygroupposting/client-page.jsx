@@ -5,7 +5,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { updateStudyGroupSessionData } from '../../backend/study-session-backend';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import Modaldelete from "../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ let formValues = {};
 
 export default function Page(data) {
 
-
+  const { height, width } = useViewportSize();
   const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
   if (searchParams.get('topic') == null) {
@@ -259,7 +259,7 @@ export default function Page(data) {
         </Center>
 
         <Center mx={25}>
-          <Stack>
+          <Stack miw={(width > 754) ? 680 : null}>
             <form onSubmit={handleSubmit}>
               <TextInput
                 label="Title"
