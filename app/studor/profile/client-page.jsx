@@ -169,6 +169,9 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         setData([...data, newCourseWithId]); // Update data with the new course
 
         form.reset(); // Reset form fields
+        setSelectedDepartment('');
+        setSelectedCourseNumber('');
+        setSelectedCourseSection('');
 
         notifications.show({
             withBorder: true,
