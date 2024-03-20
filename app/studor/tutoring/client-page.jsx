@@ -157,7 +157,7 @@ export default function ClientPage(data) {
                           <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size}</Text>
                           <Group mt={-15}>
                             <Text>Tutor: {session.users.full_name}</Text>
-                            <IconDiscountCheckFilled />
+                            {session.verified && <IconDiscountCheckFilled />}
                           </Group>
                           <Group mt={-15}>
                             <Text>Tutor Rating: TBD</Text>
