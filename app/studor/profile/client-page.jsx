@@ -25,6 +25,7 @@ import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
 import Modaltutor from "@/app/ui/modaltutor";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 let formValues = {};
 
