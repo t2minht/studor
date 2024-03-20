@@ -30,7 +30,7 @@ export async function retrieveProfileTutoringSessions() {
 
         const { data, error } = await supabase
             .from('tutoring_sessions')
-            .select()
+            .select('*, users(full_name)')
             .in('id', participantSessionIds)
             .order('date', { ascending: false })
             .order('end_time', { ascending: false });

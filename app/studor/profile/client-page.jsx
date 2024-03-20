@@ -23,6 +23,7 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
+import Modaltutor from "@/app/ui/modaltutor";
 
 let formValues = {};
 
@@ -66,7 +67,7 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
             <Table.Td>{session.title}</Table.Td>
             <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
             <Table.Td>{session.date}</Table.Td>
-            <Table.Td> <Modalview current={session} /> </Table.Td>
+            <Table.Td> <Modaltutor current={session} /> </Table.Td>
         </Table.Tr>
     ));
 
