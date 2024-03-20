@@ -1,45 +1,104 @@
 // Import necessary modules
 import { NextResponse } from "next/server";
 import path from "path";
-import { writeFile } from "fs/promises";
-
-// Define the POST handler for the file upload
-export const POST = async (req, res) => {
-  // Parse the incoming form data
-  const formData = await req.formData();
-
-  // Get the file from the form data
-  const file = formData.get("file");
-
-  // Check if a file is received
-  if (!file) {
-    // If no file is received, return a JSON response with an error and a 400 status code
-    return NextResponse.json({ error: "No files received." }, { status: 400 });
-  }
-
-  // Convert the file data to a Buffer
-  const buffer = Buffer.from(await file.arrayBuffer());
-
-  // Replace spaces in the file name with underscores
-  const filename = file.name.replaceAll(" ", "_");
-  console.log(filename);
-
-  try {
-    // Write the file to the specified directory (public/assets) with the modified filename
-    await writeFile(
-      path.join(process.cwd(), "../../assets/" + filename),
-      buffer
-    );
-
-    // Return a JSON response with a success message and a 201 status code
-    return NextResponse.json({ Message: "Success", status: 201 });
-  } catch (error) {
-    // If an error occurs during file writing, log the error and return a JSON response with a failure message and a 500 status code
-    console.log("Error occurred ", error);
-    return NextResponse.json({ Message: "Failed", status: 500 });
-  }
-};
+import { exit } from "process";
 
 export async function calendarDataUpload(data) {
+  console.log("arrived at function");
+  let reader = new FileReader();
+  reader.readAsText(data);
+  let results;
+  reader.onload = function() {
+    console.log("results")
+    results = JSON.stringify(parseICS(reader.result))
+    // console.log(readable(results));
+  };
 
+  reader.onerror = function() {
+    console.log(reader.error);
+  };
 };
+/*
+// function readable(data){
+//   let events = []
+//   for(let i = 0; i < data.length; i++){
+//     console.log(data[i]);
+//     events[i] = {};
+//     events[i]["title"] = data[i]["SUMMARY"].substring(0,data[i]["SUMMARY"].lastIndexOf("-"));
+//     events[i]["dtstart"] = data[i]["DTSTART"]
+//     events[i]["dtend"] = data[i]["DTEND"]
+//   }
+//   return events;
+// }
+*/
+
+function parseICS(icsString) { 
+  const lines = icsString.split('\n'); 
+  const events = []; 
+  let event; 
+  for (let i = 0; i < lines.length; i++) { 
+    const line = lines[i].trim(); 
+    if (line === 'BEGIN:VEVENT') { event = {}; } 
+    else if (line === 'END:VEVENT') { events.push(event); } 
+    else if (event) { const match = /^([A-Z]+):(.*)$/.exec(line); 
+    if (match) { const [, key, value] = match; event[key] = value; } } 
+  } 
+  return events; 
+}
+export async function retrieveEvents() {
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const currentDateTime = new Date();
+  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+
+
+
+  try {
+    const notParticipantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .neq('user_id', user.id);
+
+    const { data: notParticipantSessionsData, error: notParticipantSessionsError } = await notParticipantSessionsQuery;
+    const notParticipantSessionIdsSet = new Set(notParticipantSessionsData.map(entry => entry.study_session_id));
+
+    const participantSessionsQuery = supabase
+      .from('participants_in_study_session')
+      .select('study_session_id')
+      .eq('user_id', user.id);
+
+    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
+    const participantSessionIdsSet = new Set(participantSessionsData.map(entry => entry.study_session_id));
+
+    const notInSessionsSet = setDifference(notParticipantSessionIdsSet, participantSessionIdsSet);
+    const notInSessionsArray = Array.from(notInSessionsSet);
+
+
+    const { data: futureData, error: error1 } = await supabase
+      .from('study_sessions')
+      .select()
+      .gt('date', currentDate)
+      .in('id', notInSessionsArray)
+      .order('date')
+      .order('end_time');
+
+    const { data: todaysData, error: error2 } = await supabase
+      .from('study_sessions')
+      .select()
+      .eq('date', currentDate)
+      .gte('end_time', currentTime)
+      .in('id', notInSessionsArray)
+      .order('date')
+      .order('end_time');
+
+    const data = todaysData.concat(futureData);
+    return data;
+
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+}

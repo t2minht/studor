@@ -18,15 +18,32 @@ import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Landingsg from "./landingsg";
 import Landingt from "./landingt";
 import Calendar from "@/app/ui/calendar";
+import { retrieveEvents } from "@/app/backend/calendar-backend";
+
 
 export default function Landing(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState('sg');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sessions = await retrieveProfileStudySession();
+        const user = await retrieveUserProfileInfo();
+        setUserData(user)
+        setStudySessions(sessions);
+      } catch (error) {
+        console.error('Error fetching sessions:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <MantineProvider>

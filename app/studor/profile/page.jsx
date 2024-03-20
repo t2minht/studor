@@ -22,6 +22,8 @@ import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/back
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
+import { calendarDataUpload } from '../../backend/calendar-backend';
+
 
 let formValues = {};
 
@@ -106,21 +108,11 @@ export default function Page() {
   };
 
   const uploadSchedule = (event) =>{
-    // const fileInput = document.getElementById("calendar"); // Replace with your HTML element ID
-    // const file = fileInput.files[0];
 
     const file = schedule;
+    console.log("sending file");
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    fetch("../../backend/calendar-backend.js", {
-      method: "POST",
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error(error));
+    calendarDataUpload(file);
   };
   
 
