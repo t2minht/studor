@@ -3,7 +3,7 @@ import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { IconCircleCheck, IconCircleX, IconClock, IconFilter, IconVolume, IconVolume2, IconVolumeOff, IconXboxX } from "@tabler/icons-react";
+import { IconCircleCheck, IconCircleX, IconClock, IconFilter, IconVolume, IconVolume2, IconVolumeOff, IconX, IconXboxX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 const departmentData = Array(100)
@@ -26,6 +26,7 @@ export default function Filter({ departments }) {
   const [selectedCourseSection, setSelectedCourseSection] = useState('');
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
+  const [coursesList, setCoursesList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,8 +123,8 @@ export default function Filter({ departments }) {
     initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', noiseLevel: 'None' },
 
     validate: {
-      department: (value, allValues) => allValues.department && ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-      courseNumber: (value, allValues) => allValues.courseNumber && ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
+      department: (value, allValues) => allValues.department && ((allValues.department.length !== 4 || !(/^[a-zA-Z]+$/.test(allValues.department))) ? 'Invalid Department' : null),
+      courseNumber: (value, allValues) => allValues.courseNumber && ((allValues.courseNumber.length !== 3 || !(/^\d{3}$/.test(Number(allValues.courseNumber)))) ? 'Invalid Course Number' : null),
       courseSection: (value, allValues) => (
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
@@ -160,78 +161,46 @@ export default function Filter({ departments }) {
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
-    if (!form.isValid()) {
-
-      console.log(form.values)
-      console.log('Form is invalid');
-      notifications.show({
-        withBorder: true,
-        color: "red",
-        radius: "md",
-        icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-        title: "Incorrect Inputs",
-        message: "Please make sure all inputs are correctly filled and formatted",
-      });
-      return;
-    }
-
-    const newCourse = {
-      department: form.values.department,
-      courseNumber: form.values.courseNumber,
-      section: form.values.courseSection,
-    };
-
-    // Check if the new course already exists in the data list
-    const exists = data.some(course => (
-      course.department === newCourse.department &&
-      course.courseNumber === newCourse.courseNumber &&
-      course.section === newCourse.section
-    ));
-
-    if (exists) {
-      notifications.show({
-        withBorder: true,
-        color: "red",
-        radius: "md",
-        icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-        title: "Course Already Exists",
-        message: "This course has already been added.",
-      });
-      return;
-    }
-
-    const newCourseWithId = {
-      ...newCourse,
-      id: (data.length + 1).toString(), // Generate new ID for the course
-    };
-
-    setData([...data, newCourseWithId]); // Update data with the new course
-
-    form.reset(); // Reset form fields
-
-    notifications.show({
-      withBorder: true,
-      color: "green",
-      radius: "md",
-      icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-      title: 'New Course Added!',
-      message: "The table should now include your recent added course",
-    });
+    // put code for applying filters here
 
   };
 
-  const handleFilter = (event) => {
+  const handleAddCourse = (event) => {
     event.preventDefault();
+
+    var newItem = '';
+    if (form.values.courseSection != ''){
+      newItem = form.values.department + ' ' + form.values.courseNumber + '-' + form.values.courseSection;
+    }
+    else{
+      newItem = form.values.department + ' ' + form.values.courseNumber;
+    }
+    
+    if (!coursesList.includes(newItem)) {
+      setCoursesList([...coursesList, newItem]);
+      console.log(coursesList)
+      form.reset();
+    }
+    else {
+      alert("This exact course and section has already been added!");
+    }
+  }
+
+  const handleRemoveCourse = (event,index) => {
+    event.preventDefault();
+
+    const updatedCoursesList = coursesList.filter((_, i) => i !== index);
+    setCoursesList(updatedCoursesList);
   }
 
   const handleReset = (event) => {
     event.preventDefault();
 
     form.reset();
-    form.setFieldValue('department', '');
-    form.setFieldValue('courseNumber', '');
-    form.setFieldValue('courseSection', '');
     form.setInitialValues({ values: 'object' });
+    setCoursesList([]);
+    form.setFieldValue('startDate', new Date());
+    form.setFieldValue('endDate', currentDate);
     form.setFieldValue('minGroupSize', '');
     form.setFieldValue('maxGroupSize', '');
     form.setFieldValue('startTime', '');
@@ -249,26 +218,19 @@ export default function Filter({ departments }) {
           icon: <IconXboxX size={20} stroke={1.5} />,
         }}
       >
-        <Text fw={700}>Courses</Text>
-        <Checkbox
-          mt="xs"
-          defaultChecked
-          size="xs"
-          label="CSCE 472"
-        />
-        <Checkbox
-          mt="xs"
-          defaultChecked
-          size="xs"
-          label="ENGL 210"
-        />
-        <Checkbox
-          mt="xs"
-          defaultChecked
-          size="xs"
-          label="ITSV 308"
-        />
-        <form onSubmit={handleFilter}>
+        <form onSubmit={handleSubmit}>
+          <Text fw={700}>Courses</Text>
+          {/* add default courses here (current courses) */}
+          {coursesList.map((item, index) => (
+            <Stack key={index}>
+              <Group>
+                <Checkbox mt="xs" defaultChecked size="xs"  id={`checkbox-${index}`} label={item} />
+                <ActionIcon ml={-10} mt="xs" size={13} variant="subtle" color="rgba(186, 0, 0, 1)" aria-label="Remove Course" onClick={(event) => handleRemoveCourse(event, index)}>
+                  <IconX/>
+                </ActionIcon>
+              </Group>
+            </Stack>
+          ))}
           <Group grow mt={15}>
             <NativeSelect
               label="Department"
@@ -301,7 +263,7 @@ export default function Filter({ departments }) {
           </Group>
           <Stack align="center" mt='sm'>
             <Button
-              onClick={handleSubmit}
+              onClick={handleAddCourse}
               variant="filled"
               color='#800000'
               radius="xl"
