@@ -26,6 +26,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 
 export default function Modaltutor(session) {
+  console.log(session)
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [participants, setParticipants] = useState([]);
@@ -38,7 +39,9 @@ export default function Modaltutor(session) {
       await supabase
         .from('participants_in_tutor_session')
         .select('users(*)')
-        .eq('tutoring_session_id', session.current.id);
+        .eq('tutoring_session_id', session.current.id)
+        .neq('users.id', session.current.tutor_user_id);
+
     setParticipants(result);
   }
 
@@ -116,21 +119,27 @@ export default function Modaltutor(session) {
 
 
           <Stack ml={27}>
-            <Text fw={700} ml={5}>Participants:</Text>
-            {participants.map((participant) => (
-              <>
-                <Group ml={25} mt={-8}>
-                  <Stack>
-                    <Avatar
-                      size={30} src={participant?.users?.avatar_url}
-                    />
-                  </Stack>
-                  <Stack mt={10} ml={-10} align="center">
-                    <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
-                  </Stack>
-                </Group>
-              </>
-            ))}
+            {participants.length > 1 && (
+              <Text fw={700} ml={5}>Participants:</Text>
+            )}
+            {participants
+              .map((participant) => {
+                if (!participant.users) return null;
+                return (
+                  <>
+                    <Group ml={25} mt={-8}>
+                      <Stack>
+                        <Avatar
+                          size={30} src={participant?.users?.avatar_url}
+                        />
+                      </Stack>
+                      <Stack mt={10} ml={-10} align="center">
+                        <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+                      </Stack>
+                    </Group>
+                  </>
+                )
+              })}
           </Stack>
 
         </Group>
@@ -144,6 +153,6 @@ export default function Modaltutor(session) {
       >
         View
       </Button>
-    </MantineProvider>
+    </MantineProvider >
   );
 }

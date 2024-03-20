@@ -20,6 +20,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import { joinSession } from "@/app/backend/study-session-backend";
 import Calendar from "@/app/ui/calendar";
+import Filter from "@/app/studor/studygroup/filter"
 
 export default function ClientPage(data) {
     const [opened, { open, close }] = useDisclosure(false);
@@ -95,30 +96,10 @@ export default function ClientPage(data) {
                 <h1>Study Groups</h1>
             </Center>
 
-
-
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
-                    <Drawer
-                        opened={opened}
-                        onClose={close}
-                        title="Filter"
-                        closeButtonProps={{
-                            icon: <IconXboxX size={20} stroke={1.5} />,
-                        }}
-                    >
-                        Filters coming soon
-                    </Drawer>
                     <Stack pl={20}>
-                        <ActionIcon
-                            onClick={open}
-                            variant="filled"
-                            size="xl"
-                            color="#800000"
-                            aria-label="Filter"
-                        >
-                            <IconFilter style={{ width: "90%", height: "90%" }} stroke={2} />
-                        </ActionIcon>
+                        <Filter/>
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
