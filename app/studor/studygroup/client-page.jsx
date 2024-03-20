@@ -99,7 +99,7 @@ export default function ClientPage(data) {
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
                     <Stack pl={20}>
-                        <Filter/>
+                        <Filter departments={data.departments} />
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
