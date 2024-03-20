@@ -3,6 +3,7 @@ import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCircleCheck, IconCircleX, IconClock, IconFilter, IconVolume, IconVolume2, IconVolumeOff, IconXboxX } from "@tabler/icons-react";
+import { useState } from "react";
 
 const departmentData = Array(100)
     .fill(0)
@@ -18,20 +19,34 @@ const courseSectionData = Array(100)
 
 export default function Filter(data) {
   const [opened, { open, close }] = useDisclosure(false);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
+  const [selectedCourseSection, setSelectedCourseSection] = useState('');
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { department: '', courseNumber: '', courseSection: '', groupSize: 2, startDate: '', endDate:'', startTime: '', endTime: '', noiseLevel: '' },
+    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: new Date(), startTime: '', endTime: '', noiseLevel: '' },
 
     validate: {
-      department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-      courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
+      department: (value, allValues) =>  allValues.department && ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
+      courseNumber: (value,  allValues) => allValues.courseNumber && ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
       courseSection: (value, allValues) => (
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
-      groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
-      noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
-      date: (value) => {
+      minGroupSize: (value, allValues) => allValues.minGroupSize && ((allValues.minGroupSize>= 2 && allValues.minGroupSize <= 20) ? null : 'Invalid Group Size'),
+      maxGroupSize: (value, allValues) => allValues.maxGroupSize && ((allValues.maxGroupSize >= 2 && allValues.maxGroupSize <= 20) ? null : 'Invalid Group Size'),
+      noiseLevel: (value) => (( value > 5 || value < 1 || value != '') ? 'Invalid Noise Level' : null),
+      startDate: (value) => {
+
+        const currentDate = new Date();
+        const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
+        
+        if (value < today){
+          return 'Date must be in the future';
+        }
+        return null;
+      },
+      endDate: (value) => {
 
         const currentDate = new Date();
         const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
@@ -49,9 +64,9 @@ export default function Filter(data) {
             return 'Start time must be in the future'; // Return error message if it is
         }
         return null; // Return null if start time is valid
-    },
+      },
       endTime: (value, allValues) => (
-        allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
+        allValues.startTime && allValues.endTime && allValues.endTime <= allValues.startTime ? 'End time must be after start time' : null
       ),
 
     },
@@ -126,6 +141,11 @@ export default function Filter(data) {
 
   const handleReset = (event) => {
     event.preventDefault();
+
+    form.reset();
+    form.setInitialValues({ values: 'object' });
+    form.setFieldValue('minGroupSize', '');
+    form.setFieldValue('maxGroupSize', '');
   }
 
   return(
@@ -235,8 +255,8 @@ export default function Filter(data) {
             <NumberInput
               label="Min Group Size"
               placeholder="Enter a value"
-              description="Include yourself"
-              min={1}
+              description="Include yourself (2-20)"
+              min={2}
               max={20}
               maw={150}
               {...form.getInputProps('minGroupSize')}
@@ -244,8 +264,8 @@ export default function Filter(data) {
              <NumberInput
               label="Max Group Size"
               placeholder="Enter a value"
-              description="Include yourself"
-              min={1}
+              description="Include yourself (2-20)"
+              min={2}
               max={20}
               maw={150}
               {...form.getInputProps('maxGroupSize')}
@@ -254,6 +274,15 @@ export default function Filter(data) {
 
           <Text fw={700} mt={30}>Noise Level</Text>
           <SegmentedControl color="#800000" data={[
+            {
+              value: '',
+              label: (
+                <Center style={{ gap: 10 }}>
+                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
+                  <span>No Preference</span>
+                </Center>
+              ),
+            },
             {
               value: '1',
               label: (
