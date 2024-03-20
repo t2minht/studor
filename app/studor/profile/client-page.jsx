@@ -22,6 +22,7 @@ import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/back
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
+import Modalview from "../../ui/modalview";
 
 let formValues = {};
 
@@ -37,7 +38,7 @@ const courseSectionData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
-export default function ClientPage({ sessions, user }) {
+export default function ClientPage({ sessions, user, tutor_sessions }) {
     const [data, setData] = useState([]);
 
     const [selection, setSelection] = useState([]);
@@ -56,6 +57,16 @@ export default function ClientPage({ sessions, user }) {
             <Table.Td>{session.topic}</Table.Td>
             <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
             <Table.Td>{session.date}</Table.Td>
+            <Table.Td> <Modalview current={session} /> </Table.Td>
+        </Table.Tr>
+    ));
+
+    const tutoringHistoryRows = tutor_sessions.map((session) => (
+        <Table.Tr key={session.id}>
+            <Table.Td>{session.title}</Table.Td>
+            <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
+            <Table.Td>{session.date}</Table.Td>
+            <Table.Td> <Modalview current={session} /> </Table.Td>
         </Table.Tr>
     ));
 
@@ -187,7 +198,6 @@ export default function ClientPage({ sessions, user }) {
 
     return (
         <>
-            {console.log(selection)}
             <MantineProvider>
                 <Center>
                     <h1>Profile</h1>
@@ -318,21 +328,40 @@ export default function ClientPage({ sessions, user }) {
                     </form>
                 </Stack>
 
-                <Stack mt={50} mx={50}>
-                    <Text ta="center" size="lg" fw={700}>Session History</Text>
-                    <ScrollArea h={250}>
-                        <Table stickyHeader striped withTableBorder highlightOnHover>
-                            <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                <Table.Tr>
-                                    <Table.Th>Topic</Table.Th>
-                                    <Table.Th>Course</Table.Th>
-                                    <Table.Th>Date</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
-                        </Table>
-                    </ScrollArea>
-                </Stack>
+                <Group grow>
+                    <Stack mt={50} pl={50}>
+                        <Text ta="center" size="lg" fw={700}>Study Group History</Text>
+                        <ScrollArea h={250}>
+                            <Table stickyHeader striped withTableBorder highlightOnHover>
+                                <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                    <Table.Tr>
+                                        <Table.Th>Topic</Table.Th>
+                                        <Table.Th>Course</Table.Th>
+                                        <Table.Th>Date</Table.Th>
+                                        <Table.Th>Details</Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
+                            </Table>
+                        </ScrollArea>
+                    </Stack>
+                    <Stack mt={50} pr={50}>
+                        <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
+                        <ScrollArea h={250}>
+                            <Table stickyHeader striped withTableBorder highlightOnHover>
+                                <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                    <Table.Tr>
+                                        <Table.Th>Topic</Table.Th>
+                                        <Table.Th>Course</Table.Th>
+                                        <Table.Th>Date</Table.Th>
+                                        <Table.Th>Details</Table.Th>
+                                    </Table.Tr>
+                                </Table.Thead>
+                                <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
+                            </Table>
+                        </ScrollArea>
+                    </Stack>
+                </Group>
                 <Space h='xl' />
             </MantineProvider>
         </>
