@@ -26,7 +26,6 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 
 export default function Modaltutor(session) {
-  console.log(session)
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [participants, setParticipants] = useState([]);

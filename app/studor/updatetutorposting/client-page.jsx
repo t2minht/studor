@@ -17,348 +17,350 @@ export default function Page(data) {
   const { height, width } = useViewportSize();
   const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
+
+  const supabase = createClientComponentClient();
+  const [selectedDepartment, setSelectedDepartment] = useState(searchParams.get('department'));
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState(searchParams.get('course_number'));
+  const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
+  const [courseNumbers, setCourseNumbers] = useState([]);
+  const [courseSections, setCourseSections] = useState([]);
+
+  useEffect(() => {
+    const getSectionsInitial = async () => {
+      const sections = await getSectionNumbers(selectedCourseNumber);
+      setCourseSections(sections);
+    }
+    getSectionsInitial();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const numbers = await getCourseNumbers(selectedDepartment);
+      const allNumbers = [''].concat(numbers);
+      setCourseNumbers(allNumbers);
+    };
+
+    fetchData();
+
+    form.values.department = selectedDepartment;
+  }, [selectedDepartment]);
+
+  useEffect(() => {
+  }, [courseNumbers]);
+
+  useEffect(() => {
+    form.values.courseNumber = selectedCourseNumber;
+  }, [selectedCourseNumber]);
+
+  useEffect(() => {
+    form.values.courseSection = selectedCourseSection;
+  }, [selectedCourseSection]);
+
+  const getSectionNumbers = async (courseNumber) => {
+    try {
+      const { data: returned_data, error } = await supabase.from("course_catalog")
+        .select('SectionNum',)
+        .eq('Department', selectedDepartment)
+        .eq('CourseNum', courseNumber);
+
+      if (error) {
+        console.error("Error fetching course sections:", error);
+        return [];
+      }
+
+      const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
+      const sectionNums = Array.from(sectionNumSet);
+      return sectionNums;
+
+    } catch (error) {
+      console.error('Error fetching course sections:', error);
+      return [];
+    }
+
+  }
+
+  const getCourseNumbers = async (department) => {
+    try {
+      const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
+        .select('CourseNum',)
+        .eq('Department', department);
+
+      if (error1) {
+        console.error('Error fetching course numbers:', error1);
+        return [];
+      }
+
+      const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
+      const courseNums = Array.from(courseNumSet);
+      return courseNums;
+
+    } catch (error) {
+      console.error('Error fetching course numbers:', error);
+      return [];
+    }
+  }
+
+  const handleDepartmentChange = async (selectedDepartment) => {
+    try {
+      const numbers = await getCourseNumbers(selectedDepartment);
+      setCourseNumbers(numbers);
+    } catch (error) {
+      console.error('Error updating course numbers:', error);
+    }
+  }
+
+  const handleCourseNumberChange = async (selectedCourseNumber) => {
+    try {
+      const sections = await getSectionNumbers(selectedCourseNumber);
+      const allSections = [''].concat(sections);
+      setCourseSections(allSections);
+    } catch (error) {
+      console.error('Error updating course sections:', error);
+    }
+  }
+
   if (searchParams.get('title') == null) {
     window.location.href = '/';
     return;
   }
+  const departmentData = Array(100)
+    .fill(0)
+    .map((_, index) => `Option ${index}`);
+
+  const courseNumberData = Array(100)
+    .fill(0)
+    .map((_, index) => `Option ${index}`);
+
+  const courseSectionData = Array(100)
+    .fill(0)
+    .map((_, index) => `Option ${index}`);
+
+  Date.prototype.addDays = function (days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+
+  var date = new Date(searchParams.get('date'));
+  var description_details = searchParams.get('description') || '';
+  var fix_start_time = searchParams.get('start_time').slice(0, 5);
+  var fix_end_time = searchParams.get('end_time').slice(0, 5);
+
+  var fix_section = "";
+  if (searchParams.get('section') == "0") {
+    fix_section = "";
+  }
   else {
-    const departmentData = Array(100)
-      .fill(0)
-      .map((_, index) => `Option ${index}`);
+    fix_section = searchParams.get('section');
+  }
 
-    const courseNumberData = Array(100)
-      .fill(0)
-      .map((_, index) => `Option ${index}`);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const form = useForm({
+    validateInputOnChange: true,
 
-    const courseSectionData = Array(100)
-      .fill(0)
-      .map((_, index) => `Option ${index}`);
+    initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
 
-    Date.prototype.addDays = function (days) {
-      var date = new Date(this.valueOf());
-      date.setDate(date.getDate() + days);
-      return date;
-    }
+    validate: {
+      title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
+      description: (value, allValues) => (
+        allValues.description && (value.length > 500) ? 'Invalid Description' : null
+      ),
+      department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
+      courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
+      courseSection: (value, allValues) => (
+        allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
+      ),
+      location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
+      groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
+      date: (value) => {
 
-    var date = new Date(searchParams.get('date'));
-    var description_details = searchParams.get('description') || '';
-    var fix_start_time = searchParams.get('start_time').slice(0, 5);
-    var fix_end_time = searchParams.get('end_time').slice(0, 5);
+        const currentDate = new Date();
+        const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
 
-    var fix_section = "";
-    if (searchParams.get('section') == "0") {
-      fix_section = "";
-    }
-    else {
-      fix_section = searchParams.get('section');
-    }
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const form = useForm({
-      validateInputOnChange: true,
-
-      initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
-
-      validate: {
-        title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
-        description: (value, allValues) => (
-          allValues.description && (value.length > 500) ? 'Invalid Description' : null
-        ),
-        department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-        courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
-        courseSection: (value, allValues) => (
-          allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
-        ),
-        location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
-        groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
-        date: (value) => {
-
-          const currentDate = new Date();
-          const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
-
-          if (value < today) {
-            return 'Date must be in the future';
-          }
-          return null;
-        },
-        startTime: (value, allValues) => {
-          const selectedDate = new Date(allValues.date);
-          const selectedTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), ...value.split(':').map(Number));
-          // Construct Date object for the selected time
-          if (selectedTime < new Date()) { // Check if selected time is in the past
-            return 'Start time must be in the future'; // Return error message if it is
-          }
-          return null; // Return null if start time is valid
-        },
-        endTime: (value, allValues) => (
-          allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
-        ),
-
+        if (value < today) {
+          return 'Date must be in the future';
+        }
+        return null;
       },
-    });
+      startTime: (value, allValues) => {
+        const selectedDate = new Date(allValues.date);
+        const selectedTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), ...value.split(':').map(Number));
+        // Construct Date object for the selected time
+        if (selectedTime < new Date()) { // Check if selected time is in the past
+          return 'Start time must be in the future'; // Return error message if it is
+        }
+        return null; // Return null if start time is valid
+      },
+      endTime: (value, allValues) => (
+        allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
+      ),
 
-    const handleSubmit = (event) => {
-      event.preventDefault(); // Prevent default form submission
+    },
+  });
 
-      if (!form.isValid()) {
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent default form submission
 
-        notifications.show({
-          withBorder: true,
-          color: "red",
-          radius: "md",
-          icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-          title: "Incorrect Inputs",
-          message: "Please make sure all inputs are correctly formatted",
-        });
-        return;
-      }
-
-
-      form.values.date = form.values.date.toJSON().substring(0, 10);
-      form.values.startTime = form.values.startTime + ':00';
-      form.values.endTime = form.values.endTime + ':00';
-      form.values.id = searchParams.get('id');
-
-      formValues = form.values;
-      updateTutoringSessionData(formValues);
+    if (!form.isValid()) {
 
       notifications.show({
         withBorder: true,
-        color: "green",
+        color: "red",
         radius: "md",
-        icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-        title: 'Session Updated! Redirecting...',
-        message: "Now redirecting to Landing Page",
+        icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
+        title: "Incorrect Inputs",
+        message: "Please make sure all inputs are correctly formatted",
       });
-
-      // Redirect to the new page after a short delay
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 5000);
-    };
-
-    const supabase = createClientComponentClient();
-    const [selectedDepartment, setSelectedDepartment] = useState(searchParams.get('department'));
-    const [selectedCourseNumber, setSelectedCourseNumber] = useState(searchParams.get('course_number'));
-    const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
-    const [courseNumbers, setCourseNumbers] = useState([]);
-    const [courseSections, setCourseSections] = useState([]);
-
-    useEffect(() => {
-      const getSectionsInitial = async () => {
-        const sections = await getSectionNumbers(selectedCourseNumber);
-        setCourseSections(sections);
-      }
-      getSectionsInitial();
-    }, []);
-
-    useEffect(() => {
-      const fetchData = async () => {
-        const numbers = await getCourseNumbers(selectedDepartment);
-        const allNumbers = [''].concat(numbers);
-        setCourseNumbers(allNumbers);
-      };
-
-      fetchData();
-
-      form.values.department = selectedDepartment;
-    }, [selectedDepartment]);
-
-    useEffect(() => {
-    }, [courseNumbers]);
-
-    useEffect(() => {
-      form.values.courseNumber = selectedCourseNumber;
-    }, [selectedCourseNumber]);
-
-    useEffect(() => {
-      form.values.courseSection = selectedCourseSection;
-    }, [selectedCourseSection]);
-
-    const getSectionNumbers = async (courseNumber) => {
-      try {
-        const { data: returned_data, error } = await supabase.from("course_catalog")
-          .select('SectionNum',)
-          .eq('Department', selectedDepartment)
-          .eq('CourseNum', courseNumber);
-
-        if (error) {
-          console.error("Error fetching course sections:", error);
-          return [];
-        }
-
-        const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
-        const sectionNums = Array.from(sectionNumSet);
-        return sectionNums;
-
-      } catch (error) {
-        console.error('Error fetching course sections:', error);
-        return [];
-      }
-
-    }
-
-    const getCourseNumbers = async (department) => {
-      try {
-        const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
-          .select('CourseNum',)
-          .eq('Department', department);
-
-        if (error1) {
-          console.error('Error fetching course numbers:', error1);
-          return [];
-        }
-
-        const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
-        const courseNums = Array.from(courseNumSet);
-        return courseNums;
-
-      } catch (error) {
-        console.error('Error fetching course numbers:', error);
-        return [];
-      }
-    }
-
-    const handleDepartmentChange = async (selectedDepartment) => {
-      try {
-        const numbers = await getCourseNumbers(selectedDepartment);
-        setCourseNumbers(numbers);
-      } catch (error) {
-        console.error('Error updating course numbers:', error);
-      }
-    }
-
-    const handleCourseNumberChange = async (selectedCourseNumber) => {
-      try {
-        const sections = await getSectionNumbers(selectedCourseNumber);
-        const allSections = [''].concat(sections);
-        setCourseSections(allSections);
-      } catch (error) {
-        console.error('Error updating course sections:', error);
-      }
+      return;
     }
 
 
-    return (
-      <MantineProvider>
-        <Center>
-          <h1>Update a Tutor Session</h1>
-        </Center>
+    form.values.date = form.values.date.toJSON().substring(0, 10);
+    form.values.startTime = form.values.startTime + ':00';
+    form.values.endTime = form.values.endTime + ':00';
+    form.values.id = searchParams.get('id');
 
-        <Center mx={25}>
-          <Stack miw={(width > 754) ? 680 : null}>
-            <form onSubmit={handleSubmit}>
-              <TextInput
-                label="Title"
-                description="Limit of 50 characters"
-                placeholder="Title of Session"
+    formValues = form.values;
+    updateTutoringSessionData(formValues);
+
+    notifications.show({
+      withBorder: true,
+      color: "green",
+      radius: "md",
+      icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
+      title: 'Session Updated! Redirecting...',
+      message: "Now redirecting to Landing Page",
+    });
+
+    // Redirect to the new page after a short delay
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 5000);
+  };
+
+
+
+
+  return (
+    <MantineProvider>
+      <Center>
+        <h1>Update a Tutor Session</h1>
+      </Center>
+
+      <Center mx={25}>
+        <Stack miw={(width > 754) ? 680 : null}>
+          <form onSubmit={handleSubmit}>
+            <TextInput
+              label="Title"
+              description="Limit of 50 characters"
+              placeholder="Title of Session"
+              required
+              {...form.getInputProps('title')}
+            />
+            <Textarea
+              label="Description"
+              description="Limit of 500 characters"
+              placeholder="Write a description of the session here"
+              mt={15}
+              {...form.getInputProps('description')}
+            />
+            <Group grow mt={15}>
+              <NativeSelect
+                label="Department"
+                placeholder="Enter Four Letters"
+                data={data.departments.map((department) => ({ value: department, label: department }))}
+                maxDropdownHeight={200}
                 required
-                {...form.getInputProps('title')}
-              />
-              <Textarea
-                label="Description"
-                description="Limit of 500 characters"
-                placeholder="Write a description of the session here"
-                mt={15}
-                {...form.getInputProps('description')}
-              />
-              <Group grow mt={15}>
-                <NativeSelect
-                  label="Department"
-                  placeholder="Enter Four Letters"
-                  data={data.departments.map((department) => ({ value: department, label: department }))}
-                  maxDropdownHeight={200}
-                  required
-                  {...form.getInputProps('department')}
-                  onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
+                {...form.getInputProps('department')}
+                onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
 
-                />
-                <NativeSelect
-                  label="Course #"
-                  placeholder="Enter Three Numbers"
-                  data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
-                  maxDropdownHeight={200}
-                  disabled={!selectedDepartment}
-                  required
-                  {...form.getInputProps('courseNumber')}
-                  onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
-                  value={selectedCourseNumber}
-                />
-                <NativeSelect
-                  label="Course Section"
-                  placeholder="Enter Three Numbers"
-                  data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
-                  maxDropdownHeight={200}
-                  disabled={!selectedCourseNumber}
-                  {...form.getInputProps('courseSection')}
-                />
-              </Group>
-              <TextInput
-                label="Location"
-                description="Limit of 50 characters"
-                placeholder="Location of Session"
-                mt={15}
+              />
+              <NativeSelect
+                label="Course #"
+                placeholder="Enter Three Numbers"
+                data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
+                maxDropdownHeight={200}
+                disabled={!selectedDepartment}
                 required
-                {...form.getInputProps('location')}
+                {...form.getInputProps('courseNumber')}
+                onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                value={selectedCourseNumber}
               />
-              <Group grow mt={15}>
-                <NumberInput
+              <NativeSelect
+                label="Course Section"
+                placeholder="Enter Three Numbers"
+                data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
+                maxDropdownHeight={200}
+                disabled={!selectedCourseNumber}
+                {...form.getInputProps('courseSection')}
+              />
+            </Group>
+            <TextInput
+              label="Location"
+              description="Limit of 50 characters"
+              placeholder="Location of Session"
+              mt={15}
+              required
+              {...form.getInputProps('location')}
+            />
+            <Group grow mt={15}>
+              <NumberInput
 
-                  label="Group Size"
-                  placeholder="Enter a Value 2-20"
-                  description="Include yourself"
-                  min={1}
-                  max={20}
-                  required
-                  {...form.getInputProps('groupSize')}
-                />
-                <DatePickerInput
-                  allowDeselect
-                  valueFormat="YYYY MMM DD"
-                  label="Date"
-                  description="Select Date"
-                  minDate={new Date()}
-                  required
-                  {...form.getInputProps('date')}
+                label="Group Size"
+                placeholder="Enter a Value 2-20"
+                description="Include yourself"
+                min={1}
+                max={20}
+                required
+                {...form.getInputProps('groupSize')}
+              />
+              <DatePickerInput
+                allowDeselect
+                valueFormat="YYYY MMM DD"
+                label="Date"
+                description="Select Date"
+                minDate={new Date()}
+                required
+                {...form.getInputProps('date')}
 
-                />
-              </Group >
-              <Group grow mt={15}>
-                <TimeInput
-                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                  label="Start Time"
-                  withAsterisk
-                  description="Enter AM or PM"
-                  required
-                  {...form.getInputProps('startTime')}
-                />
-                <TimeInput
-                  leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-                  label="End Time"
-                  withAsterisk
-                  description="Enter AM or PM"
-                  required
-                  {...form.getInputProps('endTime')}
-                />
+              />
+            </Group >
+            <Group grow mt={15}>
+              <TimeInput
+                leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                label="Start Time"
+                withAsterisk
+                description="Enter AM or PM"
+                required
+                {...form.getInputProps('startTime')}
+              />
+              <TimeInput
+                leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                label="End Time"
+                withAsterisk
+                description="Enter AM or PM"
+                required
+                {...form.getInputProps('endTime')}
+              />
+            </Group>
+            <Stack align="center" mt={20}>
+              <Group mt='md'>
+                <Modaldelete id={searchParams.get("id")} />
+                <Button
+                  type='submit'
+                  variant="filled"
+                  color='blue'
+                  radius="xl"
+                >
+                  Update Session
+                </Button>
               </Group>
-              <Stack align="center" mt={20}>
-                <Group mt='md'>
-                  <Modaldelete id={searchParams.get("id")} />
-                  <Button
-                    type='submit'
-                    variant="filled"
-                    color='blue'
-                    radius="xl"
-                  >
-                    Update Session
-                  </Button>
-                </Group>
-              </Stack>
-            </form>
-          </Stack>
-        </Center>
-        <Space h='xl' />
-      </MantineProvider>
-    )
-  }
+            </Stack>
+          </form>
+        </Stack>
+      </Center>
+      <Space h='xl' />
+    </MantineProvider>
+  )
+
 }
