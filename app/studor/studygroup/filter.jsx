@@ -23,9 +23,13 @@ export default function Filter(data) {
   const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
   const [selectedCourseSection, setSelectedCourseSection] = useState('');
 
+  var currentDate = new Date();
+  var currentDay = currentDate.getDate();
+  currentDate.setDate(currentDay + 1);
+
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: new Date(), startTime: '', endTime: '', noiseLevel: '' },
+    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', noiseLevel: 'None' },
 
     validate: {
       department: (value, allValues) =>  allValues.department && ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
@@ -34,7 +38,7 @@ export default function Filter(data) {
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
       minGroupSize: (value, allValues) => allValues.minGroupSize && ((allValues.minGroupSize>= 2 && allValues.minGroupSize <= 20) ? null : 'Invalid Group Size'),
-      maxGroupSize: (value, allValues) => allValues.maxGroupSize && ((allValues.maxGroupSize >= 2 && allValues.maxGroupSize <= 20) ? null : 'Invalid Group Size'),
+      maxGroupSize: (value, allValues) => allValues.maxGroupSize && ((allValues.maxGroupSize >= 2 && allValues.maxGroupSize <= 20 && allValues.maxGroupSize >= allValues.minGroupSize) ? null : 'Invalid Group Size'),
       noiseLevel: (value) => (( value > 5 || value < 1 || value != '') ? 'Invalid Noise Level' : null),
       startDate: (value) => {
 
@@ -46,24 +50,15 @@ export default function Filter(data) {
         }
         return null;
       },
-      endDate: (value) => {
+      endDate: (value, allValues) => {
 
         const currentDate = new Date();
         const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
         
-        if (value < today){
+        if (value < today || value < allValues.startDate){
           return 'Date must be in the future';
         }
         return null;
-      },
-      startTime: (value, allValues) => {
-        const selectedDate = new Date(allValues.date);
-        const selectedTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), ...value.split(':').map(Number));
-        // Construct Date object for the selected time
-        if (selectedTime < new Date()) { // Check if selected time is in the past
-            return 'Start time must be in the future'; // Return error message if it is
-        }
-        return null; // Return null if start time is valid
       },
       endTime: (value, allValues) => (
         allValues.startTime && allValues.endTime && allValues.endTime <= allValues.startTime ? 'End time must be after start time' : null
@@ -143,9 +138,15 @@ export default function Filter(data) {
     event.preventDefault();
 
     form.reset();
+    form.setFieldValue('department', '');
+    form.setFieldValue('courseNumber', '');
+    form.setFieldValue('courseSection', '');
     form.setInitialValues({ values: 'object' });
     form.setFieldValue('minGroupSize', '');
     form.setFieldValue('maxGroupSize', '');
+    form.setFieldValue('startTime', '');
+    form.setFieldValue('endTime', '');
+    form.setFieldValue('noiseLevel', 'None');
   }
 
   return(
@@ -228,8 +229,8 @@ export default function Filter(data) {
               allowDeselect
               valueFormat="YYYY MMM DD"
               label="End Date"
-              defaultValue={new Date()}
-              minDate={new Date()}
+              defaultValue={currentDate}
+              minDate={currentDate}
               {...form.getInputProps('endDate')}
             />
           </Group>
@@ -275,7 +276,7 @@ export default function Filter(data) {
           <Text fw={700} mt={30}>Noise Level</Text>
           <SegmentedControl color="#800000" data={[
             {
-              value: '',
+              value: 'None',
               label: (
                 <Center style={{ gap: 10 }}>
                   <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
