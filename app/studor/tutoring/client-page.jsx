@@ -158,11 +158,7 @@ export default function ClientPage(data) {
                           <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size-1}</Text>
                           <Group mt={-15}>
                             <Text>Tutor: {session.users.full_name}</Text>
-<<<<<<< Updated upstream
-                            {session.verified && <IconDiscountCheckFilled />}
-=======
-                            <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />
->>>>>>> Stashed changes
+                            {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />}
                           </Group>
                           <Group mt={-15}>
                             <Text>Tutor Rating: 3.5</Text>

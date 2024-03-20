@@ -24,12 +24,8 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
-<<<<<<< Updated upstream
-import Modaltutor from "@/app/ui/modaltutor";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-=======
 import Modaltprofile from "@/app/ui/modaltprofile";
->>>>>>> Stashed changes
 
 let formValues = {};
 

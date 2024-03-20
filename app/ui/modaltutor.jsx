@@ -99,11 +99,7 @@ export default function Modaltutor(session) {
               <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
               <Group mt={-15}>
                 <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-<<<<<<< Updated upstream
-                {session.current.verified && <IconDiscountCheckFilled />}
-=======
-                <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />
->>>>>>> Stashed changes
+                {session.current.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />}
               </Group>
               <Group mt={-15}>
                 <Text><b>Tutor Rating:</b> 3.5</Text>
