@@ -26,6 +26,8 @@ import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
 import Modaltutor from "@/app/ui/modaltutor";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
+
 
 let formValues = {};
 
@@ -40,6 +42,35 @@ const courseNumberData = Array(100)
 const courseSectionData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
+
+
+    function parseICS(icsString) {
+        let reader = new FileReader();
+        reader.readAsText(icsString);
+        let results;
+        reader.onload = function() {
+          console.log("results")
+          
+          // results = JSON.stringify(parseICS(reader.result))
+          const lines = reader.result.split('\n'); 
+          const events = []; 
+          let event; 
+          for (let i = 0; i < lines.length; i++) { 
+            const line = lines[i].trim(); 
+            if (line === 'BEGIN:VEVENT') { event = {}; } 
+            else if (line === 'END:VEVENT') { events.push(event); } 
+            else if (event) { const match = /^([A-Z]+):(.*)$/.exec(line); 
+            if (match) { const [, key, value] = match; event[key] = value; } } 
+          } 
+          // return events; 
+          console.log(events);
+          results = JSON.stringify(events);
+          sendEvents(results);
+        };
+        reader.onerror = function() {
+            console.log(reader.error);
+        };
+    };
 
 export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
     const [data, setData] = useState([]);
@@ -103,6 +134,15 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const clearSchedule = () => {
         setSchedule(null);
         resetSchedule.current?.();
+    };
+
+    const uploadSchedule = (event) =>{
+
+        const file = schedule;
+        console.log("sending file");
+
+        let eve = parseICS(file);
+        console.log(eve);
     };
 
     const form = useForm({
@@ -330,16 +370,19 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                 <Text>{userData.email}</Text>
                             </Group>
                             <Group justify="center">
-                                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
-                                    {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
                                 </FileButton>
+                                <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                                Upload
+                                </Button>
                                 <Button disabled={!schedule} color="red" onClick={clearSchedule}>
-                                    Reset
+                                Reset
                                 </Button>
                             </Group>
                             {schedule && (
                                 <Text size="sm" mt={-10} ta="center">
-                                    Selected file: {schedule.name}
+                                Selected file: {schedule.name}
                                 </Text>
                             )}
                             <Group justify="center">

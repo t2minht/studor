@@ -1,9 +1,13 @@
 // Import necessary modules
+'use server'
 import { NextResponse } from "next/server";
 import path from "path";
 import { exit } from "process";
+import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from 'next/headers'
 
-export async function calendarDataUpload(data) {
+
+export async function calendarDataUpload() {
   console.log("arrived at function");
   let reader = new FileReader();
   reader.readAsText(data);
@@ -11,7 +15,8 @@ export async function calendarDataUpload(data) {
   reader.onload = function() {
     console.log("results")
     results = JSON.stringify(parseICS(reader.result))
-    // console.log(readable(results));
+    console.log(results);
+    sendEvents(results);
   };
 
   reader.onerror = function() {
@@ -45,60 +50,20 @@ function parseICS(icsString) {
   } 
   return events; 
 }
-export async function retrieveEvents() {
+export async function sendEvents(data) {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
-  const currentTime = currentDateTime.toTimeString().split(' ')[0];
+  const {error: error1 } = await supabase
+    .from('calendar')
+    .upsert([
+      {
+        user_id: user.id,
+        events: data,
+      }
+    ])
+    .eq('id', data.id)
+    .select();
 
-
-
-  try {
-    const notParticipantSessionsQuery = supabase
-      .from('participants_in_study_session')
-      .select('study_session_id')
-      .neq('user_id', user.id);
-
-    const { data: notParticipantSessionsData, error: notParticipantSessionsError } = await notParticipantSessionsQuery;
-    const notParticipantSessionIdsSet = new Set(notParticipantSessionsData.map(entry => entry.study_session_id));
-
-    const participantSessionsQuery = supabase
-      .from('participants_in_study_session')
-      .select('study_session_id')
-      .eq('user_id', user.id);
-
-    const { data: participantSessionsData, error: participantSessionsError } = await participantSessionsQuery;
-    const participantSessionIdsSet = new Set(participantSessionsData.map(entry => entry.study_session_id));
-
-    const notInSessionsSet = setDifference(notParticipantSessionIdsSet, participantSessionIdsSet);
-    const notInSessionsArray = Array.from(notInSessionsSet);
-
-
-    const { data: futureData, error: error1 } = await supabase
-      .from('study_sessions')
-      .select()
-      .gt('date', currentDate)
-      .in('id', notInSessionsArray)
-      .order('date')
-      .order('end_time');
-
-    const { data: todaysData, error: error2 } = await supabase
-      .from('study_sessions')
-      .select()
-      .eq('date', currentDate)
-      .gte('end_time', currentTime)
-      .in('id', notInSessionsArray)
-      .order('date')
-      .order('end_time');
-
-    const data = todaysData.concat(futureData);
-    return data;
-
-
-  } catch (error) {
-    console.log('error', error);
-    throw error;
-  }
+    console.log("uploaded");
 }
