@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
+import { MantineProvider, Container} from "@mantine/core";
 
 const Calendar = () => {
 

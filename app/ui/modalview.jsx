@@ -38,7 +38,7 @@ export default function Modalview(session) {
 
   useEffect(() => {
     getParticipants();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getParticipants = async () => {
@@ -48,7 +48,6 @@ export default function Modalview(session) {
         .select('users(*)')
         .eq('study_session_id', session.current.id);
     setParticipants(result);
-    console.log(result)
   }
 
   function convertTo12HourFormat(timeString) {
@@ -93,7 +92,7 @@ export default function Modalview(session) {
 
         <Group justify="center" gap={75} p={20}>
           <Stack>
-            <Text fw={700}>
+            <Text>
               <b>Class:</b>{" "}
               {session.current.department +
                 " " +
@@ -108,7 +107,7 @@ export default function Modalview(session) {
               <b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}
             </Text>
             <Text mt={-15}>
-              <b>Available:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
+              <b>Remaining:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
               {session.current.max_group_size}{" "}
             </Text>
             <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
@@ -119,21 +118,21 @@ export default function Modalview(session) {
           </Stack>
 
           <Stack>
-            <Text fw={700} mt={-75} ml={5}>Participants:</Text>
-              {participants.map((participant) => (
-                <>
-                  <Group ml={25} mt={-8}>
-                    <Stack>
-                      <Avatar
-                        size={30}
-                      />
-                    </Stack>
-                    <Stack mt={10} ml={-10} align="center">
-                      <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
-                    </Stack>
-                  </Group>
-                </>
-              ))}
+            <Text fw={700} ml={5}>Participants:</Text>
+            {participants.map((participant) => (
+              <>
+                <Group ml={25} >
+                  <Stack>
+                    <Avatar
+                      size={30} src={participant?.users?.avatar_url}
+                    />
+                  </Stack>
+                  <Stack mt={10} ml={-10} align="center">
+                    <Text key={participant?.users?.id} mt={-15}>{participant?.users?.full_name}</Text>
+                  </Stack>
+                </Group>
+              </>
+            ))}
           </Stack>
 
         </Group>

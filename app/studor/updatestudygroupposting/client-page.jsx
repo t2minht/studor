@@ -1,28 +1,69 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, Modal } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, Modal, NativeSelect } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { updateStudyGroupSessionData } from '../../backend/study-session-backend';
-import { useDisclosure } from '@mantine/hooks';
-import Modaldelete from"../updatestudygroupposting/modalfordelete";
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
+import Modaldelete from "../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 let formValues = {};
 
-export default function Page() {
+export default function Page(data) {
+
+  const { height, width } = useViewportSize();
   const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
+
+  const supabase = createClientComponentClient();
+  const [selectedDepartment, setSelectedDepartment] = useState(searchParams.get('department'));
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState(searchParams.get('course_number'));
+  const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
+  const [courseNumbers, setCourseNumbers] = useState([]);
+  const [courseSections, setCourseSections] = useState([]);
+
+  useEffect(() => {
+    const getSectionsInitial = async () => {
+      const sections = await getSectionNumbers(selectedCourseNumber);
+      setCourseSections(sections);
+    }
+    getSectionsInitial();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const numbers = await getCourseNumbers(selectedDepartment);
+      const allNumbers = [''].concat(numbers);
+      setCourseNumbers(allNumbers);
+    };
+
+    fetchData();
+
+    form.values.department = selectedDepartment;
+  }, [selectedDepartment]);
+
+  useEffect(() => {
+  }, [courseNumbers]);
+
+  useEffect(() => {
+    form.values.courseNumber = selectedCourseNumber;
+  }, [selectedCourseNumber]);
+
+  useEffect(() => {
+    form.values.courseSection = selectedCourseSection;
+  }, [selectedCourseSection]);
+
   if (searchParams.get('topic') == null) {
     window.location.href = '/';
     return;
   }
-  else {
 
-  
-  
+
+
   const departmentData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
@@ -35,17 +76,19 @@ export default function Page() {
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
-  Date.prototype.addDays = function(days) {
+  Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
   }
 
   var date = new Date(searchParams.get('date'));
+
   var description_details = searchParams.get('description') || '';
-  var fix_start_time = searchParams.get('start_time').slice(0,5);
-  var fix_end_time = searchParams.get('end_time').slice(0,5);
+  var fix_start_time = searchParams.get('start_time').slice(0, 5);
+  var fix_end_time = searchParams.get('end_time').slice(0, 5);
   var fix_section = "";
+  var current_group_size = searchParams.get('current_group_size');
 
   if (searchParams.get('section') == "0") {
     fix_section = "";
@@ -61,7 +104,7 @@ export default function Page() {
     initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
     validate: {
-      title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+      title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
       description: (value, allValues) => (
         allValues.description && (value.length > 500) ? 'Invalid Description' : null
       ),
@@ -70,15 +113,15 @@ export default function Page() {
       courseSection: (value, allValues) => (
         allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
       ),
-      location: (value) => ((value.length < 2 || value.length > 100) ? 'Invalid Location' : null),
-      groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
-      noiseLevel: (value) => (( value > 5 || value < 1) ? 'Invalid Noise Level' : null),
+      location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
+      groupSize: (value) => ((value >= current_group_size && value <= 20) ? null : 'Invalid Group Size'),
+      noiseLevel: (value) => ((value > 5 || value < 1) ? 'Invalid Noise Level' : null),
       date: (value) => {
 
         const currentDate = new Date();
         const today = new Date(currentDate.getFullYear, currentDate.getMonth(), currentDate.getDate());
-        
-        if (value < today){
+
+        if (value < today) {
           return 'Date must be in the future';
         }
         return null;
@@ -88,10 +131,10 @@ export default function Page() {
         const selectedTime = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), ...value.split(':').map(Number));
         // Construct Date object for the selected time
         if (selectedTime < new Date()) { // Check if selected time is in the past
-            return 'Start time must be in the future'; // Return error message if it is
+          return 'Start time must be in the future'; // Return error message if it is
         }
         return null; // Return null if start time is valid
-    },
+      },
       endTime: (value, allValues) => (
         allValues.startTime && value && value <= allValues.startTime ? 'End time must be after start time' : null
       ),
@@ -100,7 +143,7 @@ export default function Page() {
   });
 
   const handleDelete = () => {
-    {console.log(1)}
+    { console.log(1) }
   }
 
   const handleSubmit = (event) => {
@@ -144,6 +187,75 @@ export default function Page() {
     }, 5000);
   };
 
+
+
+
+
+
+  const getSectionNumbers = async (courseNumber) => {
+    try {
+      const { data: returned_data, error } = await supabase.from("course_catalog")
+        .select('SectionNum',)
+        .eq('Department', selectedDepartment)
+        .eq('CourseNum', courseNumber);
+
+      if (error) {
+        console.error("Error fetching course sections:", error);
+        return [];
+      }
+
+      const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
+      const sectionNums = Array.from(sectionNumSet);
+      return sectionNums;
+
+    } catch (error) {
+      console.error('Error fetching course sections:', error);
+      return [];
+    }
+
+  }
+
+  const getCourseNumbers = async (department) => {
+    try {
+      const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
+        .select('CourseNum',)
+        .eq('Department', department);
+
+      if (error1) {
+        console.error('Error fetching course numbers:', error1);
+        return [];
+      }
+
+      const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
+      const courseNums = Array.from(courseNumSet);
+      return courseNums;
+
+    } catch (error) {
+      console.error('Error fetching course numbers:', error);
+      return [];
+    }
+  }
+
+  const handleDepartmentChange = async (selectedDepartment) => {
+    try {
+      const numbers = await getCourseNumbers(selectedDepartment);
+      setCourseNumbers(numbers);
+    } catch (error) {
+      console.error('Error updating course numbers:', error);
+    }
+  }
+
+  const handleCourseNumberChange = async (selectedCourseNumber) => {
+    try {
+      const sections = await getSectionNumbers(selectedCourseNumber);
+      const allSections = [''].concat(sections);
+      setCourseSections(allSections);
+    } catch (error) {
+      console.error('Error updating course sections:', error);
+    }
+  }
+
+
   return (
     <MantineProvider>
       <Center>
@@ -151,11 +263,11 @@ export default function Page() {
       </Center>
 
       <Center mx={25}>
-        <Stack>
+        <Stack miw={(width > 754) ? 680 : null}>
           <form onSubmit={handleSubmit}>
             <TextInput
               label="Title"
-              description="Limit of 100 characters"
+              description="Limit of 50 characters"
               placeholder="Title of Session"
               required
               {...form.getInputProps('title')}
@@ -168,33 +280,39 @@ export default function Page() {
               {...form.getInputProps('description')}
             />
             <Group grow mt={15}>
-              <Autocomplete
+              <NativeSelect
                 label="Department"
                 placeholder="Enter Four Letters"
-                data={departmentData}
+                data={data.departments.map((department) => ({ value: department, label: department }))}
                 maxDropdownHeight={200}
                 required
                 {...form.getInputProps('department')}
+                onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
+
               />
-              <Autocomplete
-                label="Course Number"
+              <NativeSelect
+                label="Course #"
                 placeholder="Enter Three Numbers"
-                data={courseNumberData}
+                data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
                 maxDropdownHeight={200}
+                disabled={!selectedDepartment}
                 required
                 {...form.getInputProps('courseNumber')}
+                onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                value={selectedCourseNumber}
               />
-              <Autocomplete
+              <NativeSelect
                 label="Course Section"
                 placeholder="Enter Three Numbers"
-                data={courseSectionData}
+                data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                 maxDropdownHeight={200}
+                disabled={!selectedCourseNumber}
                 {...form.getInputProps('courseSection')}
               />
             </Group>
             <TextInput
               label="Location"
-              description="Limit of 100 characters"
+              description="Limit of 50 characters"
               placeholder="Location of Session"
               mt={15}
               required
@@ -316,5 +434,5 @@ export default function Page() {
       </Center>
       <Space h='xl' />
     </MantineProvider>
-  )}
+  )
 }

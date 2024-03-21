@@ -3,8 +3,9 @@ import { useDisclosure } from "@mantine/hooks";
 import { Modal, Text, Group, Button, MantineProvider, rem } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { deleteSession } from "@/app/backend/tutoring-backend";
 
-export default function Modaldelete() {
+export default function Modaldelete(data) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -25,11 +26,14 @@ export default function Modaldelete() {
                 title: 'Session Deleted! Redirecting...',
                 message: "Now redirecting to Landing Page",
               });
+
+              console.log(data)
+              deleteSession(data.id)
           
               // Redirect to the new page after a short delay
               setTimeout(() => {
               window.location.href = '/';
-            }, 5000);
+            }, 1000);
             }}
             >Yes</Button>
         </Group>
