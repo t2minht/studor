@@ -56,13 +56,12 @@ export async function sendEvents(data) {
 
   const {error: error1 } = await supabase
     .from('calendar')
-    .upsert([
+    .insert([
       {
         user_id: user.id,
         events: data,
       }
     ])
-    .eq('id', data.id)
     .select();
 
     console.log("uploaded");
