@@ -49,7 +49,8 @@ const courseSectionData = Array(100)
         reader.readAsText(icsString);
         let results;
         reader.onload = function() {
-          console.log("results")
+          console.log("results");
+          console.log(reader.result);
           
           // results = JSON.stringify(parseICS(reader.result))
           const lines = reader.result.split('\n'); 

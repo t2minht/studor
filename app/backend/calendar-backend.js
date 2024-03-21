@@ -5,6 +5,7 @@ import path from "path";
 import { exit } from "process";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
+import { error } from "console";
 
 
 export async function calendarDataUpload() {
@@ -23,19 +24,19 @@ export async function calendarDataUpload() {
     console.log(reader.error);
   };
 };
-/*
-// function readable(data){
-//   let events = []
-//   for(let i = 0; i < data.length; i++){
-//     console.log(data[i]);
-//     events[i] = {};
-//     events[i]["title"] = data[i]["SUMMARY"].substring(0,data[i]["SUMMARY"].lastIndexOf("-"));
-//     events[i]["dtstart"] = data[i]["DTSTART"]
-//     events[i]["dtend"] = data[i]["DTEND"]
-//   }
-//   return events;
-// }
-*/
+
+function readable(data){
+  let events = []
+  for(let i = 0; i < data.length; i++){
+    console.log(data[i]);
+    events[i] = {};
+    events[i]["title"] = data[i]["SUMMARY"].substring(0,data[i]["SUMMARY"].lastIndexOf("-"));
+    events[i]["dtstart"] = data[i]["DTSTART"]
+    events[i]["dtend"] = data[i]["DTEND"]
+  }
+  return events;
+}
+
 
 function parseICS(icsString) { 
   const lines = icsString.split('\n'); 
@@ -56,13 +57,14 @@ export async function sendEvents(data) {
 
   const {error: error1 } = await supabase
     .from('calendar')
-    .insert([
+    .upsert([
       {
         user_id: user.id,
         events: data,
       }
     ])
+    .eq("user_id", user.id)
     .select();
 
-    console.log("uploaded");
+    console.log(error1);
 }
