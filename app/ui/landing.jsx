@@ -22,7 +22,7 @@ import { useState, useEffect } from "react";
 import Landingsg from "./landingsg";
 import Landingt from "./landingt";
 import Calendar from "@/app/ui/calendar";
-import { retrieveEvents } from "@/app/backend/calendar-backend";
+// import { retrieveEvents } from "@/app/backend/calendar-backend";
 
 
 export default function Landing(data) {
@@ -30,21 +30,8 @@ export default function Landing(data) {
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState('sg');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const sessions = await retrieveProfileStudySession();
-        const user = await retrieveUserProfileInfo();
-        setUserData(user)
-        setStudySessions(sessions);
-      } catch (error) {
-        console.error('Error fetching sessions:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  // console.log("landing");
+  // console.log(data.events);
   return (
     <MantineProvider>
       <Grid overflow="hidden">
@@ -92,7 +79,7 @@ export default function Landing(data) {
 
         {checked && (
           <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700}>
-            <Calendar></Calendar>
+            <Calendar events = {data.events}></Calendar>
           </Grid.Col>
         )}
       </Grid>

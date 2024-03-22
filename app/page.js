@@ -7,6 +7,7 @@ import Navbar from "./ui/navbar";
 import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions } from "./backend/study-session-backend";
 import { retrieveExistingJoinedSessions as getJoinedTutoring, retrieveFutureHostedSessions as getHostedTutoring } from "./backend/tutoring-backend";
 import Landing from "./ui/landing";
+import { retrieveUserEvents } from "./backend/calendar-backend";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
@@ -18,6 +19,7 @@ export default async function Home() {
 
   const hosted_study_sessions = await getHostedStudySessions();
   const joined_study_sessions = await getJoinedStudySessions();
+  
 
   const study_sessions = {};
   study_sessions.hosted = hosted_study_sessions;
@@ -29,6 +31,10 @@ export default async function Home() {
   const tutoring = {};
   tutoring.hosted = hosted_tutoring_sessions;
   tutoring.joined = joined_tutoring_sessions;
+
+  const fetchedEvents = await retrieveUserEvents();
+  // console.log("page.js");
+  // console.log(fetchedEvents);
 
   return (
     <>
@@ -59,7 +65,7 @@ export default async function Home() {
             </>
           )}
         </Center> */}
-        <Landing study_sessions={study_sessions} tutoring={tutoring}></Landing>
+        <Landing study_sessions={study_sessions} tutoring={tutoring} events = {fetchedEvents}></Landing>
       </MantineProvider>
     </>
   );

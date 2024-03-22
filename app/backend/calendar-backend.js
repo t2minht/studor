@@ -25,17 +25,17 @@ export async function calendarDataUpload() {
   };
 };
 
-function readable(data){
-  let events = []
-  for(let i = 0; i < data.length; i++){
-    console.log(data[i]);
-    events[i] = {};
-    events[i]["title"] = data[i]["SUMMARY"].substring(0,data[i]["SUMMARY"].lastIndexOf("-"));
-    events[i]["dtstart"] = data[i]["DTSTART"]
-    events[i]["dtend"] = data[i]["DTEND"]
-  }
-  return events;
-}
+// function readable(data){
+//   let events = []
+//   for(let i = 0; i < data.length; i++){
+//     console.log(data[i]);
+//     events[i] = {};
+//     events[i]["title"] = data[i]["SUMMARY"].substring(0,data[i]["SUMMARY"].lastIndexOf("-"));
+//     events[i]["dtstart"] = data[i]["DTSTART"]
+//     events[i]["dtend"] = data[i]["DTEND"]
+//   }
+//   return events;
+// }
 
 
 function parseICS(icsString) { 
@@ -55,9 +55,16 @@ export async function sendEvents(data) {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  const {error: error1 } = await supabase
+  
+
+  const { data: returned_data, data: error1 } = await supabase.from("calendar")
+    .delete()
+    .eq('user_id', user.id)
+  console.log(error1);
+
+  const {error: error2 } = await supabase
     .from('calendar')
-    .upsert([
+    .insert([
       {
         user_id: user.id,
         events: data,
@@ -66,5 +73,38 @@ export async function sendEvents(data) {
     .eq("user_id", user.id)
     .select();
 
-    console.log(error1);
+    console.log(error2);
+}
+
+// export async function deleteEvents() {
+//   const supabase = createServerActionClient({ cookies });
+  
+//   const { data: { user } } = await supabase.auth.getUser();
+// }
+
+export async function retrieveUserEvents() {
+  const supabase = createServerActionClient({ cookies });
+  const { data: { user } } = await supabase.auth.getUser();
+
+  try {
+    const userEventsQuery = supabase
+      .from('calendar')
+      .select('events')
+      .eq('user_id', user.id)
+      .single();
+
+    const { data: data1, error: error1 } = await userEventsQuery;
+
+    if (error1) {
+      throw error1;
+    }
+
+    // console.log(data1);
+
+    return data1;
+
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
 }

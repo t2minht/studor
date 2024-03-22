@@ -66,6 +66,7 @@ const courseSectionData = Array(100)
           // return events; 
           console.log(events);
           results = JSON.stringify(events);
+          
           sendEvents(results);
         };
         reader.onerror = function() {
