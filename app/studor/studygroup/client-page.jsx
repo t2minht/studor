@@ -172,7 +172,7 @@ export default function ClientPage(data) {
 
                 {checked && (
                     <Grid.Col span="content" order={{ base: 2 }} maw={700}>
-                        <Calendar></Calendar>
+                        <Calendar events = {data.events}></Calendar>
                     </Grid.Col>
                 )}
             </Grid>

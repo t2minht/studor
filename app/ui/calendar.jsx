@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DayPilotCalendar } from "@daypilot/daypilot-lite-react";
+import { DayPilotCalendar } from 'daypilot-pro-react';
 import { MantineProvider, Container} from "@mantine/core";
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
@@ -11,8 +11,7 @@ const Calendar = ({events}) => {
         viewType: "Week",
         durationBarVisible: false,
         headerDateFormat:"ddd \n MM/dd/yyyy",
-        useEventBoxes: "Never",
-        snapToGrid: false
+        // useEventBoxes: "Never",
     });
 
     const [startDate, setStartDate] = useState(new Date()); // Initial date for the calendar
@@ -30,15 +29,14 @@ const Calendar = ({events}) => {
     };
 
     function getDatesForWeek() {
-        const currentDate = new Date();
-        const currentDay = currentDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+        const currentDay = startDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
         const days = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
     
         const datesForWeek = [];
         for (let i = 0; i < 7; i++) {
             const diff = i - currentDay;
-            const date = new Date(currentDate);
-            date.setDate(currentDate.getDate() + diff);
+            const date = new Date(startDate);
+            date.setDate(startDate.getDate() + diff);
             datesForWeek[days[i]] = date;
         }
     
@@ -80,6 +78,7 @@ const Calendar = ({events}) => {
                 dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
                 let semesterEndDate = new Date(dateString);
 
+                console.log("current startDate: " + startDate);
                 if(startDate > semesterStartDate && startDate < semesterEndDate){
                     temp = parser[i].DTSTART;
                     // console.log(parser[i].SUMMARY);
@@ -102,7 +101,7 @@ const Calendar = ({events}) => {
                         let dy = dates[day].getDate() + "";
                         let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
                         // console.log("DoWDay: " + DoWday);
-                        eventsList.push({id: id++, text: dtstart, start: DoWday + dtstart, end: DoWday + dtend});
+                        eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
                         // console.log({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
 
                         // console.log(parser[i].SUMMARY + " " + day);
@@ -118,7 +117,7 @@ const Calendar = ({events}) => {
         }
         console.log(eventsList);
         setEvents(eventsList);
-    }, []);
+    }, [startDate]);
 
 
     /*
@@ -144,13 +143,12 @@ const Calendar = ({events}) => {
             <div>
                 <button onClick={handlePreviousWeek}>Previous Week</button>
                 <button onClick={handleNextWeek}>Next Week</button>
-            </div>j
+            </div>
             <DayPilotCalendar
              {...config} 
                 events={calendarEvents} 
                 startDate = {startDate} 
                 useEventBoxes={"Never"}
-                snapToGrid={false}
             />
         </div>
     );
