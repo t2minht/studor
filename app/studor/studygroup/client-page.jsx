@@ -27,7 +27,7 @@ export default function ClientPage(data) {
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(true);
 
-    const [possible_study_sessions, setStudySessions] = useState(data.possible_study_sessions);
+    const [study_sessions, setStudySessions] = useState(data.study_sessions);
     const [update_events, setUpdateEvents] = useState(false);    
 
     const joinHandler = async (session) => {
@@ -36,7 +36,7 @@ export default function ClientPage(data) {
         if (!joined) {
             alert("Study session is currently full, sorry!")
         } else {
-            const updatedSessions = possible_study_sessions.filter((item) => item.id !== session.id);
+            const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
             setStudySessions(updatedSessions);
         }
         setUpdateEvents(false);
@@ -53,7 +53,7 @@ export default function ClientPage(data) {
         // setStudySessions(updatedSessions);
     }
 
-    if (possible_study_sessions === null) {
+    if (study_sessions === null) {
         return (
 
             (
@@ -127,7 +127,7 @@ export default function ClientPage(data) {
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group>
-                                {possible_study_sessions
+                                {study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
                                         <Group p={30} key={session.topic} maw={400}>
@@ -174,7 +174,7 @@ export default function ClientPage(data) {
 
                 {checked && (
                     <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
-                        <Calendar events = {data.events} study_sessions = {data.study_sessions} update_events = {update_events}> </Calendar>
+                        <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
                     </Grid.Col>
                 )}
             </Grid>
