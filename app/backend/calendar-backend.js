@@ -37,7 +37,7 @@ export async function calendarDataUpload() {
 //   return events;
 // }
 
-
+/*
 function parseICS(icsString) { 
   const lines = icsString.split('\n'); 
   const events = []; 
@@ -51,7 +51,8 @@ function parseICS(icsString) {
   } 
   return events; 
 }
-export async function sendEvents(data) {
+*/
+export async function sendEvents(data) {                      // deletes all current events for user and replaces them with calendar
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 

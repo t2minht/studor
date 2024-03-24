@@ -3,7 +3,7 @@ import { DayPilotCalendar } from 'daypilot-pro-react';
 import { MantineProvider, Container} from "@mantine/core";
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
-const Calendar = ({events}) => {
+const Calendar = ({events, study_sessions}) => {
 
     const calendarRef = useRef();
 
@@ -43,16 +43,37 @@ const Calendar = ({events}) => {
         return datesForWeek;
     }
 
+    function addSession(eventsList, sessions){
+        sessions.map((session) =>{
+            // console.log(session.date + "T" + session.start_time);
+            // console.log(session.date + "T" + session.end_time);
+            let dateString = session.date + "T" + session.end_time;
+            let eventDate = new Date(dateString);
+            
+            const newStartDate = new Date(startDate);
+            newStartDate.setDate(newStartDate.getDate() + 7);
+
+            if( startDate < eventDate && eventDate < newStartDate ){
+                eventsList.push({id: id, text: session.topic, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time});
+                setID(id+1);
+                // console.log();
+            }
+        });
+        return eventsList;
+    }
+
     const [calendarEvents, setEvents] = useState([]);
+    const [id, setID] = useState(0);
 
     // console.log(events.events);
     // setEvents(events.events);
 
-    useEffect(() => {
+    useEffect(() => {                               // displays events
         let parser = JSON.parse(events.events);
-        console.log(parser[1]);
-        let id = 1;
-        console.log(startDate);
+        // console.log(parser[1]);
+        setID(1);
+        // console.log(startDate);
+        console.log(study_sessions);
 
         // var pre = 
         // startDate.getFullYear().toString() +
@@ -67,7 +88,7 @@ const Calendar = ({events}) => {
 
         let eventsList = [];
 
-        for(let i = 0; i < parser.length; i++){
+        for(let i = 0; i < parser.length; i++){   //adds ics and manually added classes
             if(parser[i].RRULE != ""){  // recursion rule exists -> ics/class data
                 let temp = parser[i].DTSTART
                 let dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
@@ -101,7 +122,8 @@ const Calendar = ({events}) => {
                         let dy = dates[day].getDate() + "";
                         let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
                         // console.log("DoWDay: " + DoWday);
-                        eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
+                        eventsList.push({id: id, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
+                        setID(id+1);
                         // console.log({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
 
                         // console.log(parser[i].SUMMARY + " " + day);
@@ -115,7 +137,12 @@ const Calendar = ({events}) => {
             }
             // console.log(eventsList);
         }
-        console.log(eventsList);
+        // console.log(eventsList);
+        console.log(study_sessions);
+        // console.log(eventsList);
+        addSession(eventsList, study_sessions.hosted);
+        addSession(eventsList, study_sessions.joined);
+        // console.log(eventsList);
         setEvents(eventsList);
     }, [startDate]);
 

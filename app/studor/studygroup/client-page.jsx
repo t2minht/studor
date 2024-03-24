@@ -27,15 +27,17 @@ export default function ClientPage(data) {
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(true);
 
-    const [study_sessions, setStudySessions] = useState(data.study_sessions);
+    const [possible_study_sessions, setStudySessions] = useState(data.possible_study_sessions);
+    
 
     const joinHandler = async (session) => {
 
+        
         const joined = await joinSession(data = { session });
         if (!joined) {
             alert("Study session is currently full, sorry!")
         } else {
-            const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+            const updatedSessions = possible_study_sessions.filter((item) => item.id !== session.id);
             setStudySessions(updatedSessions);
         }
 
@@ -51,7 +53,7 @@ export default function ClientPage(data) {
         // setStudySessions(updatedSessions);
     }
 
-    if (study_sessions === null) {
+    if (possible_study_sessions === null) {
         return (
 
             (
@@ -125,7 +127,7 @@ export default function ClientPage(data) {
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group>
-                                {study_sessions
+                                {possible_study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
                                         <Group p={30} key={session.topic} maw={400}>
@@ -171,8 +173,8 @@ export default function ClientPage(data) {
                 </Grid.Col>
 
                 {checked && (
-                    <Grid.Col span="content" order={{ base: 2 }} maw={700}>
-                        <Calendar events = {data.events}></Calendar>
+                    <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
+                        <Calendar events = {data.events} study_sessions = {data.study_sessions}> </Calendar>
                     </Grid.Col>
                 )}
             </Grid>
