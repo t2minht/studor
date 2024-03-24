@@ -105,7 +105,7 @@ export default function Landingsg(data) {
                   <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
                   <Text mt={-15}>
                     Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size}{" "}
+                    {session.max_group_size-1}{" "}
                   </Text>
                 </Stack>
                 <Group>
@@ -145,7 +145,7 @@ export default function Landingsg(data) {
                   <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
                   <Text mt={-15}>
                     Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size}{" "}
+                    {session.max_group_size-1}{" "}
                   </Text>
                 </Stack>
                 <Group>

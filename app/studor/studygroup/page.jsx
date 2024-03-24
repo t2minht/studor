@@ -1,11 +1,14 @@
 import { retrieveExistingNotJoinedSessions, updateAllSessionSizes, retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions  } from "@/app/backend/study-session-backend"
 import { MantineProvider } from "@mantine/core";
 import ClientPage from "./client-page";
+import { getDepartmentNames } from "@/app/backend/tutoring-backend";
 import { retrieveUserEvents } from "../../backend/calendar-backend";
 
 
 export default async function Page() {
   const possible_study_sessions = await retrieveExistingNotJoinedSessions();
+  const departments = await getDepartmentNames();
+  const departmentsAndNull = [''].concat(departments);
   const fetchedEvents = await retrieveUserEvents();
 
   const hosted_study_sessions = await getHostedStudySessions();
@@ -18,7 +21,7 @@ export default async function Page() {
 
   return (
     <MantineProvider>
-      <ClientPage possible_study_sessions={possible_study_sessions} events = {fetchedEvents} study_sessions = {study_sessions}></ClientPage>
+      <ClientPage possible_study_sessions={possible_study_sessions} events = {fetchedEvents} study_sessions = {study_sessions} departments={departmentsAndNull}></ClientPage>
     </MantineProvider>
   )
 }

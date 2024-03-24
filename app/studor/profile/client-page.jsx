@@ -24,10 +24,10 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
-import Modaltutor from "@/app/ui/modaltutor";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
 
+import Modaltprofile from "@/app/ui/modaltprofile";
 
 let formValues = {};
 
@@ -103,7 +103,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             <Table.Td>{session.title}</Table.Td>
             <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
             <Table.Td>{session.date}</Table.Td>
-            <Table.Td> <Modaltutor current={session} /> </Table.Td>
+            <Table.Td> <Modaltprofile current={session} /> </Table.Td>
         </Table.Tr>
     ));
 
