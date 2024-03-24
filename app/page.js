@@ -35,8 +35,8 @@ export default async function Home() {
   const fetchedEvents = await retrieveUserEvents();
   const fetchedStudySessions = await retrieveProfileStudySession();
   const fetchedTutorSessions = await retrieveProfileTutoringSessions();
-  console.log(fetchedStudySessions);
-  console.log(fetchedTutorSessions);
+  // console.log(fetchedStudySessions);
+  // console.log(fetchedTutorSessions);
 
   return (
     <>

@@ -119,7 +119,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         // console.log(tutoring);
         eventsList = addSession(eventsList, study_sessions);
         eventsList = addSession(eventsList, tutoring);
-        console.log(eventsList);
+        // console.log(eventsList);
 
         setEvents(eventsList)
     }, [startDate]);

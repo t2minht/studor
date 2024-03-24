@@ -45,7 +45,7 @@ export default function ClientPage(data) {
 
     const handleRemoveSession = (session) => {
         // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-        console.log('howdy')
+        // console.log('howdy')
         // Log the updated study_sessions
         // console.log("Updated study_sessions:", updatedSessions);
 

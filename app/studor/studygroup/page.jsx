@@ -14,8 +14,6 @@ export default async function Page() {
   const fetchedEvents = await retrieveUserEvents();
   const fetchedStudySessions = await retrieveProfileStudySession();
   const fetchedTutorSessions = await retrieveProfileTutoringSessions();
-  // console.log(fetchedStudySessions);
-  // console.log(fetchedTutorSessions);
 
   return (
     <MantineProvider>
