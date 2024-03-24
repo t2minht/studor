@@ -28,11 +28,10 @@ export default function ClientPage(data) {
     const [checked, setChecked] = useState(true);
 
     const [possible_study_sessions, setStudySessions] = useState(data.possible_study_sessions);
-    
+    const [update_events, setUpdateEvents] = useState(false);    
 
     const joinHandler = async (session) => {
-
-        
+        setUpdateEvents(true);        
         const joined = await joinSession(data = { session });
         if (!joined) {
             alert("Study session is currently full, sorry!")
@@ -40,6 +39,7 @@ export default function ClientPage(data) {
             const updatedSessions = possible_study_sessions.filter((item) => item.id !== session.id);
             setStudySessions(updatedSessions);
         }
+        setUpdateEvents(false);
 
     }
 
@@ -174,7 +174,7 @@ export default function ClientPage(data) {
 
                 {checked && (
                     <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
-                        <Calendar events = {data.events} study_sessions = {data.study_sessions}> </Calendar>
+                        <Calendar events = {data.events} study_sessions = {data.study_sessions} update_events = {update_events}> </Calendar>
                     </Grid.Col>
                 )}
             </Grid>

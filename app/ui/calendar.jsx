@@ -3,7 +3,7 @@ import { DayPilotCalendar } from 'daypilot-pro-react';
 import { MantineProvider, Container} from "@mantine/core";
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
-const Calendar = ({events, study_sessions}) => {
+const Calendar = ({events, study_sessions, update_events}) => {
 
     const calendarRef = useRef();
 
@@ -64,6 +64,7 @@ const Calendar = ({events, study_sessions}) => {
 
     const [calendarEvents, setEvents] = useState([]);
     const [id, setID] = useState(0);
+    const [update, setUpdateEvents] = useState(update_events);
 
     // console.log(events.events);
     // setEvents(events.events);
@@ -144,7 +145,7 @@ const Calendar = ({events, study_sessions}) => {
         addSession(eventsList, study_sessions.joined);
         // console.log(eventsList);
         setEvents(eventsList);
-    }, [startDate]);
+    }, [startDate, update_events]);
 
 
     /*
