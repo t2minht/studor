@@ -14,9 +14,9 @@ export async function calendarDataUpload() {
   reader.readAsText(data);
   let results;
   reader.onload = function() {
-    console.log("results")
+    // console.log("results")
     results = JSON.stringify(parseICS(reader.result))
-    console.log(results);
+    // console.log(results);
     sendEvents(results);
   };
 
@@ -61,7 +61,7 @@ export async function sendEvents(data) {                      // deletes all cur
   const { data: returned_data, data: error1 } = await supabase.from("calendar")
     .delete()
     .eq('user_id', user.id)
-  console.log(error1);
+  // console.log(error1);
 
   const {error: error2 } = await supabase
     .from('calendar')
@@ -74,7 +74,7 @@ export async function sendEvents(data) {                      // deletes all cur
     .eq("user_id", user.id)
     .select();
 
-    console.log(error2);
+    // console.log(error2);
 }
 
 // export async function deleteEvents() {
@@ -97,7 +97,9 @@ export async function retrieveUserEvents() {
     const { data: data1, error: error1 } = await userEventsQuery;
 
     if (error1) {
-      throw error1;
+      const blank_data = {};
+      blank_data.events = JSON.stringify([{}]);
+      return blank_data
     }
 
     // console.log(data1);

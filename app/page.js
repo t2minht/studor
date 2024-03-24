@@ -34,7 +34,7 @@ export default async function Home() {
 
   const fetchedEvents = await retrieveUserEvents();
   // console.log("page.js");
-  // console.log(fetchedEvents);
+  console.log(fetchedEvents);
 
   return (
     <>
