@@ -14,7 +14,8 @@ import {
     FileButton,
     Checkbox,
     rem,
-    Autocomplete
+    Autocomplete,
+    NativeSelect
 } from "@mantine/core";
 import { IconAt, IconCalendarPlus, IconCircleCheck, IconCircleX, IconPencil, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
@@ -23,6 +24,10 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
+
+import Modaltprofile from "@/app/ui/modaltprofile";
 
 let formValues = {};
 
@@ -38,8 +43,40 @@ const courseSectionData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
-export default function ClientPage({ sessions, user, tutor_sessions }) {
+
+    function parseICS(icsString) {
+        let reader = new FileReader();
+        reader.readAsText(icsString);
+        let results;
+        reader.onload = function() {
+          console.log("results");
+          console.log(reader.result);
+          
+          // results = JSON.stringify(parseICS(reader.result))
+          const lines = reader.result.split('\n'); 
+          const events = []; 
+          let event; 
+          for (let i = 0; i < lines.length; i++) { 
+            const line = lines[i].trim(); 
+            if (line === 'BEGIN:VEVENT') { event = {}; } 
+            else if (line === 'END:VEVENT') { events.push(event); } 
+            else if (event) { const match = /^([A-Z]+):(.*)$/.exec(line); 
+            if (match) { const [, key, value] = match; event[key] = value; } } 
+          } 
+          // return events; 
+          console.log(events);
+          results = JSON.stringify(events);
+          
+          sendEvents(results);
+        };
+        reader.onerror = function() {
+            console.log(reader.error);
+        };
+    };
+
+export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
     const [data, setData] = useState([]);
+
 
     const [selection, setSelection] = useState([]);
     const toggleRow = (id) =>
@@ -66,7 +103,7 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
             <Table.Td>{session.title}</Table.Td>
             <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
             <Table.Td>{session.date}</Table.Td>
-            <Table.Td> <Modalview current={session} /> </Table.Td>
+            <Table.Td> <Modaltprofile current={session} /> </Table.Td>
         </Table.Tr>
     ));
 
@@ -99,6 +136,15 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
     const clearSchedule = () => {
         setSchedule(null);
         resetSchedule.current?.();
+    };
+
+    const uploadSchedule = (event) =>{
+
+        const file = schedule;
+        console.log("sending file");
+
+        let eve = parseICS(file);
+        console.log(eve);
     };
 
     const form = useForm({
@@ -166,6 +212,9 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
         setData([...data, newCourseWithId]); // Update data with the new course
 
         form.reset(); // Reset form fields
+        setSelectedDepartment('');
+        setSelectedCourseNumber('');
+        setSelectedCourseSection('');
 
         notifications.show({
             withBorder: true,
@@ -196,6 +245,108 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
 
     };
 
+    const supabase = createClientComponentClient();
+    const [selectedDepartment, setSelectedDepartment] = useState('');
+    const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
+    const [selectedCourseSection, setSelectedCourseSection] = useState('');
+    const [courseNumbers, setCourseNumbers] = useState([]);
+    const [courseSections, setCourseSections] = useState([]);
+
+
+    useEffect(() => {
+        const getSectionsInitial = async () => {
+            const sections = await getSectionNumbers(selectedCourseNumber);
+            setCourseSections(sections);
+        }
+        getSectionsInitial();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const numbers = await getCourseNumbers(selectedDepartment);
+            const allNumbers = [''].concat(numbers);
+            setCourseNumbers(allNumbers);
+        };
+
+        fetchData();
+
+        form.values.department = selectedDepartment;
+    }, [selectedDepartment]);
+
+    useEffect(() => {
+    }, [courseNumbers]);
+
+    useEffect(() => {
+        form.values.courseNumber = selectedCourseNumber;
+    }, [selectedCourseNumber]);
+
+    useEffect(() => {
+        form.values.courseSection = selectedCourseSection;
+    }, [selectedCourseSection]);
+
+    const getSectionNumbers = async (courseNumber) => {
+        try {
+            const { data: returned_data, error } = await supabase.from("course_catalog")
+                .select('SectionNum',)
+                .eq('Department', selectedDepartment)
+                .eq('CourseNum', courseNumber);
+
+            if (error) {
+                console.error("Error fetching course sections:", error);
+                return [];
+            }
+
+            const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
+            const sectionNums = Array.from(sectionNumSet);
+            return sectionNums;
+
+        } catch (error) {
+            console.error('Error fetching course sections:', error);
+            return [];
+        }
+
+    }
+
+    const getCourseNumbers = async (department) => {
+        try {
+            const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
+                .select('CourseNum',)
+                .eq('Department', department);
+
+            if (error1) {
+                console.error('Error fetching course numbers:', error1);
+                return [];
+            }
+
+            const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
+            const courseNums = Array.from(courseNumSet);
+            return courseNums;
+
+        } catch (error) {
+            console.error('Error fetching course numbers:', error);
+            return [];
+        }
+    }
+
+    const handleDepartmentChange = async (selectedDepartment) => {
+        try {
+            const numbers = await getCourseNumbers(selectedDepartment);
+            setCourseNumbers(numbers);
+        } catch (error) {
+            console.error('Error updating course numbers:', error);
+        }
+    }
+
+    const handleCourseNumberChange = async (selectedCourseNumber) => {
+        try {
+            const sections = await getSectionNumbers(selectedCourseNumber);
+            const allSections = [''].concat(sections);
+            setCourseSections(allSections);
+        } catch (error) {
+            console.error('Error updating course sections:', error);
+        }
+    }
+
     return (
         <>
             <MantineProvider>
@@ -221,16 +372,19 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
                                 <Text>{userData.email}</Text>
                             </Group>
                             <Group justify="center">
-                                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics">
-                                    {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
                                 </FileButton>
+                                <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                                Upload
+                                </Button>
                                 <Button disabled={!schedule} color="red" onClick={clearSchedule}>
-                                    Reset
+                                Reset
                                 </Button>
                             </Group>
                             {schedule && (
                                 <Text size="sm" mt={-10} ta="center">
-                                    Selected file: {schedule.name}
+                                Selected file: {schedule.name}
                                 </Text>
                             )}
                             <Group justify="center">
@@ -254,28 +408,33 @@ export default function ClientPage({ sessions, user, tutor_sessions }) {
                     <form onSubmit={handleSubmit}>
                         <Group grow mt={0}>
                             <Stack>
-                                <Autocomplete
+                                <NativeSelect
                                     label="Department"
                                     placeholder="Enter Four Letters"
-                                    data={departmentData}
+                                    data={departments.map((department) => ({ value: department, label: department }))}
                                     maxDropdownHeight={200}
                                     required
                                     {...form.getInputProps('department')}
+                                    onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
+
                                 />
-                                <Autocomplete
-                                    label="Course Number"
+                                <NativeSelect
+                                    label="Course #"
                                     placeholder="Enter Three Numbers"
-                                    data={courseNumberData}
+                                    data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
                                     maxDropdownHeight={200}
+                                    disabled={!selectedDepartment}
                                     required
                                     {...form.getInputProps('courseNumber')}
+                                    onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                                    value={selectedCourseNumber}
                                 />
-                                <Autocomplete
+                                <NativeSelect
                                     label="Course Section"
                                     placeholder="Enter Three Numbers"
-                                    data={courseSectionData}
+                                    data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                                     maxDropdownHeight={200}
-                                    required
+                                    disabled={!selectedCourseNumber}
                                     {...form.getInputProps('courseSection')}
                                 />
                                 <Stack align="center">

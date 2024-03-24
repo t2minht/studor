@@ -12,6 +12,7 @@ import {
   Text,
   Button,
   ScrollArea,
+  Rating,
 } from "@mantine/core";
 import {
   IconXboxX,
@@ -154,18 +155,14 @@ export default function ClientPage(data) {
                           <Text mt={-15}>Location: {session.location}</Text>
                           <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                           <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                          <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size}</Text>
+                          <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size-1}</Text>
                           <Group mt={-15}>
                             <Text>Tutor: {session.users.full_name}</Text>
-                            <IconDiscountCheckFilled />
+                            {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />}
                           </Group>
                           <Group mt={-15}>
-                            <Text>Tutor Rating: TBD</Text>
-                            <IconStarFilled />
-                            <IconStarFilled />
-                            <IconStarFilled />
-                            <IconStarHalfFilled />
-                            <IconStar />
+                            <Text>Tutor Rating: 3.5</Text>
+                            <Rating value={3.5} fractions={2} ml={-10} readOnly />
                           </Group>
                         </Stack>
                         <Group>
@@ -189,8 +186,8 @@ export default function ClientPage(data) {
         </Grid.Col>
 
         {checked && (
-          <Grid.Col span={6} order={{ base: 2 }}>
-            <Calendar></Calendar>
+          <Grid.Col span={6} order={{ base: 2 }} mt={30} maw={600} miw={600}>
+            <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
           </Grid.Col>
         )}
       </Grid>

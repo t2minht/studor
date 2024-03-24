@@ -16,9 +16,6 @@ export async function retrieveProfileStudySession() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
-  const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
     const participantSessionsQuery = supabase
@@ -137,7 +134,7 @@ export async function retrieveExistingNotJoinedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentDate = currentDateTime.toDateString().split('T')[0];
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
 
@@ -195,7 +192,7 @@ export async function retrieveExistingJoinedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentDate = currentDateTime.toDateString().split('T')[0];
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
@@ -313,10 +310,11 @@ export async function retrieveFutureHostedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentDate = currentDateTime.toDateString().split('T')[0];
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
+
 
     const { data: futureData, error: error1 } = await supabase
       .from('study_sessions')
@@ -326,6 +324,7 @@ export async function retrieveFutureHostedSessions() {
       .order('date')
       .order('end_time');
 
+
     const { data: todaysData, error: error2 } = await supabase
       .from('study_sessions')
       .select()
@@ -334,6 +333,7 @@ export async function retrieveFutureHostedSessions() {
       .gte('end_time', currentTime)
       .order('date')
       .order('end_time');
+
 
     const data = todaysData.concat(futureData);
     return data;

@@ -28,9 +28,10 @@ export default function ClientPage(data) {
     const [checked, setChecked] = useState(true);
 
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
+    const [update_events, setUpdateEvents] = useState(false);    
 
     const joinHandler = async (session) => {
-
+        setUpdateEvents(true);        
         const joined = await joinSession(data = { session });
         if (!joined) {
             alert("Study session is currently full, sorry!")
@@ -38,12 +39,13 @@ export default function ClientPage(data) {
             const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
             setStudySessions(updatedSessions);
         }
+        setUpdateEvents(false);
 
     }
 
     const handleRemoveSession = (session) => {
         // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-        console.log('howdy')
+        // console.log('howdy')
         // Log the updated study_sessions
         // console.log("Updated study_sessions:", updatedSessions);
 
@@ -99,7 +101,7 @@ export default function ClientPage(data) {
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
                     <Stack pl={20}>
-                        <Filter/>
+                        <Filter departments={data.departments} />
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
@@ -171,8 +173,8 @@ export default function ClientPage(data) {
                 </Grid.Col>
 
                 {checked && (
-                    <Grid.Col span="content" order={{ base: 2 }} maw={700}>
-                        <Calendar></Calendar>
+                    <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
+                        <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
                     </Grid.Col>
                 )}
             </Grid>

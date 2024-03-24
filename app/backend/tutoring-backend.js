@@ -30,7 +30,7 @@ export async function retrieveProfileTutoringSessions() {
 
         const { data, error } = await supabase
             .from('tutoring_sessions')
-            .select()
+            .select('*, users(full_name)')
             .in('id', participantSessionIds)
             .order('date', { ascending: false })
             .order('end_time', { ascending: false });
@@ -48,6 +48,25 @@ export async function submitTutoringSession(data) {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
 
+
+    // check if tutor is verified for the course
+    const department = data.department
+    const courseNumber = data.courseNumber
+    const courseCode = department + ' ' + courseNumber
+
+    const { data: courseID, error: courseError } = await supabase.from('tutor_course_catalog').
+        select('id')
+        .eq('coursecode', courseCode)
+    const course_id = courseID[0].id
+
+    const { data: tutorCourseData, error: tutorCourseError } = await supabase.from('tutor_courses')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('course_id', course_id)
+
+    const verified = tutorCourseData.length !== 0;
+
+
     const { data: newTutoringSession, error } = await supabase.from('tutoring_sessions').insert([
         {
             title: data.title,
@@ -62,6 +81,7 @@ export async function submitTutoringSession(data) {
             end_time: data.endTime,
             tutor_user_id: user.id,
             tutor_avatar_url: user.user_metadata.avatar_url,
+            verified: verified
         }
     ])
         .select();
