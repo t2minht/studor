@@ -22,24 +22,26 @@ export async function insertRatings(studentId, tutorId, sessionId, rating) {
         .eq('session_id', sessionId)
 
 
-    console.log(returned_data)
-    // const { data, error } = await supabase.from("tutor_ratings")
-    //     .upsert([
-    //         {
-    //             student_id: studentId,
-    //             tutor_id: tutorId,
-    //             session_id: sessionId,
-    //             rating: rating
-    //         },
+    if (returned_data.length === 0) {
+        const { data, error } = await supabase.from("tutor_ratings")
+            .insert([
+                {
+                    student_id: studentId,
+                    tutor_id: tutorId,
+                    session_id: sessionId,
+                    rating: rating
+                },
 
-    //     ],
-    //         {
-    //             onConflict: 'student_id, session_id',
-    //             ignoreDuplicates: true
-    //         }
-    //     )
-    //     .select();
-
+            ])
+            .select();
+    }
+    else {
+        const { data, error } = await supabase.from("tutor_ratings")
+            .update({ rating: rating })
+            .eq('student_id', studentId)
+            .eq('session_id', sessionId)
+            .select();
+    }
 
 }
 
