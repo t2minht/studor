@@ -28,6 +28,7 @@ import { useState } from "react";
 import Calendar from "@/app/ui/calendar";
 import { joinSession } from "@/app/backend/tutoring-backend";
 import Modaltutor from "@/app/ui/modaltutor";
+import TutorFilter from "@/app/studor/tutoring/tutorFilter"
 
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -91,26 +92,9 @@ export default function ClientPage(data) {
 
       <Grid overflow="hidden">
         <Grid.Col span="content">
-          <Drawer
-            opened={opened}
-            onClose={close}
-            title="Filter"
-            closeButtonProps={{
-              icon: <IconXboxX size={20} stroke={1.5} />,
-            }}
-          >
-            Filters coming soon
-          </Drawer>
           <Stack pl={20}>
-            <ActionIcon
-              onClick={open}
-              variant="filled"
-              size="xl"
-              color="#800000"
-              aria-label="Filter"
-            >
-              <IconFilter style={{ width: "90%", height: "90%" }} stroke={2} />
-            </ActionIcon>
+            {console.log(data)}
+            <TutorFilter departments={data.departments} />
             <Switch
               checked={checked}
               onChange={(event) => setChecked(event.currentTarget.checked)}
