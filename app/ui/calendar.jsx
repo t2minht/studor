@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DayPilotCalendar } from 'daypilot-pro-react';
-import { MantineProvider, Container} from "@mantine/core";
+import { MantineProvider, Container, Group, Button, Text, Stack} from "@mantine/core";
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
 const Calendar = ({events, study_sessions, tutoring}) => {
@@ -144,18 +144,36 @@ const Calendar = ({events, study_sessions, tutoring}) => {
     */
 
     return (
-        <div>
-            <div>
-                <button onClick={handlePreviousWeek}>Previous Week</button>
-                <button onClick={handleNextWeek}>Next Week</button>
-            </div>
-            <DayPilotCalendar
-             {...config} 
-                events={calendarEvents} 
-                startDate = {startDate} 
-                useEventBoxes={"Never"}
-            />
-        </div>
+        <>
+            <Stack>
+                <Group justify="space-between">
+                    <Button
+                        type='submit'
+                        variant="filled"
+                        color='#800000'
+                        onClick={handlePreviousWeek}
+                    >
+                        Previous Week
+                    </Button>
+                    {/* Tuong put year change here if possible */}
+                    <Text fw={700} size='xl'>2024</Text> 
+                    <Button
+                        type='submit'
+                        variant="filled"
+                        color='#800000'
+                        onClick={handleNextWeek}
+                    >
+                        Next Week
+                    </Button>
+                </Group>
+                <DayPilotCalendar
+                {...config} 
+                    events={calendarEvents} 
+                    startDate = {startDate} 
+                    useEventBoxes={"Never"}
+                />
+            </Stack>
+        </>
     );
 }
 
