@@ -79,7 +79,7 @@ export default function Landing(data) {
 
         {checked && (
           <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700} miw={600}>
-            <Calendar events = {data.events} study_sessions={data.study_sessions}></Calendar>
+            <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
           </Grid.Col>
         )}
       </Grid>

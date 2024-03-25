@@ -9,7 +9,7 @@ import { error } from "console";
 
 
 export async function calendarDataUpload() {
-  console.log("arrived at function");
+  // console.log("arrived at function");
   let reader = new FileReader();
   reader.readAsText(data);
   let results;

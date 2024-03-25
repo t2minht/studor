@@ -3,7 +3,7 @@ import { DayPilotCalendar } from 'daypilot-pro-react';
 import { MantineProvider, Container} from "@mantine/core";
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
-const Calendar = ({events, study_sessions, update_events}) => {
+const Calendar = ({events, study_sessions, tutoring}) => {
 
     const calendarRef = useRef();
 
@@ -52,42 +52,28 @@ const Calendar = ({events, study_sessions, update_events}) => {
             
             const newStartDate = new Date(startDate);
             newStartDate.setDate(newStartDate.getDate() + 7);
-
-            if( startDate < eventDate && eventDate < newStartDate ){
-                eventsList.push({id: id, text: session.topic, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time});
-                setID(id+1);
-                // console.log();
+            let title = session.title;
+            if(title === undefined){
+                title = session.topic;
             }
+
+            // if( startDate < eventDate && eventDate < newStartDate ){
+                eventsList.push({id: id, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time});
+                setID(id+1);
+            // }
         });
         return eventsList;
     }
 
     const [calendarEvents, setEvents] = useState([]);
     const [id, setID] = useState(0);
-    const [update, setUpdateEvents] = useState(update_events);
-
-    // console.log(events.events);
-    // setEvents(events.events);
 
     useEffect(() => {                               // displays events
-        console.log("events");
-        console.log(events);
+        // console.log("events");
+        // console.log(events);
         let parser = JSON.parse(events.events);
-        // console.log(parser[1]);
         setID(1);
-        // console.log(startDate);
-        console.log(study_sessions);
-
-        // var pre = 
-        // startDate.getFullYear().toString() +
-        // ((startDate.getMonth() + 1)<10? "0" + (startDate.getMonth() + 1).toString():(startDate.getMonth() + 1).toString()) + 
-        // ((startDate.getDate() + 1)<10? "0" + startDate.getDate().toString():startDate.getDate().toString());
-
-        // var post = (startDate.getHours()).toString().padStart(2, '0') + startDate.getMinutes().toString().padStart(2, '0') + "00";
-
-        // console.log(startDate.getHours());
-        // console.log(startDate.getMinutes());
-        // console.log(pre + "T" + post + "Z");
+        // console.log(study_sessions);
 
         let eventsList = [];
         if (events.events != '[{}]' ){
@@ -102,53 +88,41 @@ const Calendar = ({events, study_sessions, update_events}) => {
                     dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
                     let semesterEndDate = new Date(dateString);
     
-                    console.log("current startDate: " + startDate);
                     if(startDate > semesterStartDate && startDate < semesterEndDate){
                         temp = parser[i].DTSTART;
-                        // console.log(parser[i].SUMMARY);
-                        // console.log( temp.substr(8,3) );
                         let dtstart = "T" + ( ( Number(temp.substr(9,2) ) - 6 ) + "" ).padStart(2, '0') + ":" + temp.substr(11,2) + ":" + temp.substr(13,3);
                         temp = parser[i].DTEND;
                         let dtend = "T" + ( ( Number( temp.substr(9,2) ) - 6 ) + "" ).padStart(2, '0') + ":" + temp.substr(11,2) + ":" + temp.substr(13,3);
-                        // console.log(dtstart);
-                        // console.log(dtend);
-    
                         temp = parser[i].RRULE;
                         let dates = getDatesForWeek();
-                        // console.log(dates);
                         temp.substring(temp.search("BYDAY") + 6).split(",").map((day) => {
-                            // console.log("Day: " + dates[day]);
-                            // console.log("Month: " + (dates[day].getMonth() + 1) );
-                            // console.log(typeof dates[day].getMonth());
                             let year = dates[day].getFullYear() + "";
                             let month = dates[day].getMonth() + 1 + "";
                             let dy = dates[day].getDate() + "";
                             let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
-                            // console.log("DoWDay: " + DoWday);
                             eventsList.push({id: id, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
                             setID(id+1);
-                            // console.log({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
-    
-                            // console.log(parser[i].SUMMARY + " " + day);
-                            // console.log(DoWday + dtstart);
-    
-                            // console.log(new Date(DoWday + dtstart));
-                            // console.log(eventsList);
                         });
                         
                     }
                 }
-                // console.log(eventsList);
             }
         }
+        // addSession(eventsList, study_sessions.hosted);
+        // addSession(eventsList, study_sessions.joined);
+        // addSession(eventsList, tutoring.hosted);
+        // addSession(eventsList, tutoring.joined);
         // console.log(eventsList);
+        // console.log("SS");
         // console.log(study_sessions);
+        // console.log("TS");
+        // console.log(tutoring);
+        eventsList = addSession(eventsList, study_sessions);
+        eventsList = addSession(eventsList, tutoring);
         // console.log(eventsList);
-        addSession(eventsList, study_sessions.hosted);
-        addSession(eventsList, study_sessions.joined);
-        // console.log(eventsList);
-        setEvents(eventsList);
-    }, [startDate, update_events]);
+
+        setEvents(eventsList)
+    }, [startDate]);
 
 
     /*
