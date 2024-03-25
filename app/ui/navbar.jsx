@@ -83,7 +83,6 @@ export default function Navbar() {
         title="Navigation"
         hiddenFrom="sm"
         zIndex={1000000}
-        overlayColor={'#800000'}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md" bg={'#800000'}>
           <Divider my="sm" color="rgba(255, 255, 255, 1)" />

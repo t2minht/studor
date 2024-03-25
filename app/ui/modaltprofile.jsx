@@ -30,7 +30,7 @@ export default function Modaltutor(session) {
   useEffect(() => {
     getParticipants();
   }, []);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState();
 
   // console.log('CURRENTcurrent', session.current.tutor_user_id);
   // console.log('auth', supabase.auth.getUser());
@@ -115,8 +115,8 @@ export default function Modaltutor(session) {
                 <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />
               </Group>
               <Group mt={-15}>
-                <Text><b>Tutor Rating:</b> 3.5</Text>
-                <Rating value={3.5} fractions={2} ml={-10} readOnly />
+                {session.current.averageRating && <Text><b>Tutor Rating:</b> {session.current.averageRating}</Text>}
+                {session.current.averageRating && <Rating value={session.current.averageRating} fractions={4} ml={-10} readOnly />}
               </Group>
             </Stack>
           </Stack>

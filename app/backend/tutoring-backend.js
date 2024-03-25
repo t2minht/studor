@@ -64,7 +64,7 @@ export async function retrieveProfileTutoringSessions() {
 
         const { data, error } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .in('id', participantSessionIds)
             .order('date', { ascending: false })
             .order('end_time', { ascending: false });
@@ -191,17 +191,16 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .gt('date', currentDate)
             .in('id', participantSessionIds)
             .neq('tutor_user_id', user.id)
             .order('date')
             .order('end_time');
 
-
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', participantSessionIds)
@@ -289,7 +288,7 @@ export async function getExistingNotJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .gt('date', currentDate)
             .in('id', notInSessionsArray)
             .order('date')
