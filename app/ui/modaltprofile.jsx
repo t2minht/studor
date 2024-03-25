@@ -21,6 +21,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
+import { insertRatings } from "../backend/tutoring-backend";
 
 export default function Modaltutor(session) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -65,6 +66,9 @@ export default function Modaltutor(session) {
     var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
 
     return formattedTime;
+  }
+  function handleRatingSubmit(rating) {
+    insertRatings(session.userID, session.current.tutor_user_id, session.current.id, rating);
   }
 
   function formatDate(inputDate) {
@@ -154,7 +158,7 @@ export default function Modaltutor(session) {
 
             </Group>
             <Group ml={25}>
-              <Button variant="filled" size="sm" color="#009020" radius="xl">Submit</Button>
+              <Button variant="filled" size="sm" color="#009020" radius="xl" onClick={() => { handleRatingSubmit(rating) }}>Submit</Button>
             </Group>
 
           </Stack>}
