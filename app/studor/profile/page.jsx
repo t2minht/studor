@@ -4,6 +4,7 @@ import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/back
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
+import { calendarDataUpload } from '../../backend/calendar-backend';
 import Modalview from "../../ui/modalview";
 import { getDepartmentNames, getTutorCourses, retrieveProfileTutoringSessions } from "@/app/backend/tutoring-backend";
 

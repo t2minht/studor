@@ -18,16 +18,20 @@ import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Landingsg from "./landingsg";
 import Landingt from "./landingt";
 import Calendar from "@/app/ui/calendar";
+// import { retrieveEvents } from "@/app/backend/calendar-backend";
+
 
 export default function Landing(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
   const [activeTab, setActiveTab] = useState('sg');
 
+  // console.log("landing");
+  // console.log(data.events);
   return (
     <MantineProvider>
       <Grid overflow="hidden">
@@ -74,8 +78,8 @@ export default function Landing(data) {
         </Grid.Col>
 
         {checked && (
-          <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700}>
-            <Calendar></Calendar>
+          <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700} miw={600}>
+            <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
           </Grid.Col>
         )}
       </Grid>
