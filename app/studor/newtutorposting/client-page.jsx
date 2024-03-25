@@ -1,37 +1,25 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, NativeSelect } from '@mantine/core'
+
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, Select, NativeSelect } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { updateTutoringSessionData } from '../../backend/tutoring-backend';
-import { useDisclosure, useViewportSize } from '@mantine/hooks';
-import Modaldelete from "../updatetutorposting/modalfordelete";
-import { useSearchParams } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { getCourseNumbersForDepartment, submitTutoringSession } from '../../backend/tutoring-backend';
 import { useEffect, useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useViewportSize } from "@mantine/hooks";
 
 let formValues = {};
 
-export default function Page(data) {
+export default function ClientPage(data) {
   const { height, width } = useViewportSize();
-  const searchParams = useSearchParams();
-  const [opened, { open, close }] = useDisclosure(false);
-
   const supabase = createClientComponentClient();
-  const [selectedDepartment, setSelectedDepartment] = useState(searchParams.get('department'));
-  const [selectedCourseNumber, setSelectedCourseNumber] = useState(searchParams.get('course_number'));
-  const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
+  const [selectedCourseSection, setSelectedCourseSection] = useState('');
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
-
-  useEffect(() => {
-    const getSectionsInitial = async () => {
-      const sections = await getSectionNumbers(selectedCourseNumber);
-      setCourseSections(sections);
-    }
-    getSectionsInitial();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +67,7 @@ export default function Page(data) {
 
   }
 
+
   const getCourseNumbers = async (department) => {
     try {
       const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
@@ -119,13 +108,7 @@ export default function Page(data) {
     }
   }
 
-  if (searchParams.get('title') == null) {
-    window.location.href = '/';
-    return;
-  }
-  const departmentData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
+
 
   const courseNumberData = Array(100)
     .fill(0)
@@ -135,42 +118,24 @@ export default function Page(data) {
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
-  Date.prototype.addDays = function (days) {
-    var date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-  }
-
-  var date = new Date(searchParams.get('date'));
-  var description_details = searchParams.get('description') || '';
-  var fix_start_time = searchParams.get('start_time').slice(0, 5);
-  var fix_end_time = searchParams.get('end_time').slice(0, 5);
-
-  var fix_section = "";
-  if (searchParams.get('section') == "0") {
-    fix_section = "";
-  }
-  else {
-    fix_section = searchParams.get('section');
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validateInputOnChange: true,
-
-    initialValues: { title: searchParams.get('title'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: searchParams.get('max_group_size'), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time },
+    initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '' },
 
     validate: {
       title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
       description: (value, allValues) => (
         allValues.description && (value.length > 500) ? 'Invalid Description' : null
       ),
-      department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-      courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
+      // !(/^[a-zA-Z]+$/.test(value))
+      department: (value) => ((value.length !== 4) ? 'Invalid Department' : null),
+      // !(/^\d{3}$/.test(Number(value)))
+      courseNumber: (value) => ((value.length !== 3) ? 'Invalid Course Number' : null),
       courseSection: (value, allValues) => (
-        allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
+        // !(/^\d{3}$/.test(Number(value))
+        allValues.courseSection && (value.length !== 3) ? 'Invalid Course Section' : null
       ),
-      location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
+      location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location' : null),
       groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
       date: (value) => {
 
@@ -202,7 +167,8 @@ export default function Page(data) {
     event.preventDefault(); // Prevent default form submission
 
     if (!form.isValid()) {
-
+      console.error(form.values)
+      console.error('Form is invalid');
       notifications.show({
         withBorder: true,
         color: "red",
@@ -211,24 +177,24 @@ export default function Page(data) {
         title: "Incorrect Inputs",
         message: "Please make sure all inputs are correctly formatted",
       });
+
       return;
     }
-
 
     form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
-    form.values.id = searchParams.get('id');
+
 
     formValues = form.values;
-    updateTutoringSessionData(formValues);
+    submitTutoringSession(formValues);
 
     notifications.show({
       withBorder: true,
       color: "green",
       radius: "md",
       icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-      title: 'Session Updated! Redirecting...',
+      title: 'New Session Created! Redirecting...',
       message: "Now redirecting to Landing Page",
     });
 
@@ -238,18 +204,15 @@ export default function Page(data) {
     }, 5000);
   };
 
-
-
-
   return (
     <MantineProvider>
       <Center>
-        <h1>Update a Tutor Session</h1>
+        <h1>Create a Tutoring Session</h1>
       </Center>
 
       <Center mx={25}>
         <Stack miw={(width > 754) ? 680 : null}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} >
             <TextInput
               label="Title"
               description="Limit of 50 characters"
@@ -267,13 +230,12 @@ export default function Page(data) {
             <Group grow mt={15}>
               <NativeSelect
                 label="Department"
-                placeholder="Enter Four Letters"
+                placeholder="Select a Department"
                 data={data.departments.map((department) => ({ value: department, label: department }))}
-                maxDropdownHeight={200}
                 required
                 {...form.getInputProps('department')}
+                value={selectedDepartment}
                 onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
-
               />
               <NativeSelect
                 label="Course #"
@@ -305,7 +267,6 @@ export default function Page(data) {
             />
             <Group grow mt={15}>
               <NumberInput
-
                 label="Group Size"
                 placeholder="Enter a Value 2-20"
                 description="Include yourself"
@@ -319,10 +280,10 @@ export default function Page(data) {
                 valueFormat="YYYY MMM DD"
                 label="Date"
                 description="Select Date"
+                defaultValue={new Date()}
                 minDate={new Date()}
                 required
                 {...form.getInputProps('date')}
-
               />
             </Group >
             <Group grow mt={15}>
@@ -344,23 +305,22 @@ export default function Page(data) {
               />
             </Group>
             <Stack align="center" mt={20}>
-              <Group mt='md'>
-                <Modaldelete id={searchParams.get("id")} />
-                <Button
-                  type='submit'
-                  variant="filled"
-                  color='blue'
-                  radius="xl"
-                >
-                  Update Session
-                </Button>
-              </Group>
+              <Button
+                type='submit'
+                mt="md"
+                variant="filled"
+                color='#800000'
+                radius="xl"
+              >
+                Post Session
+              </Button>
             </Stack>
           </form>
         </Stack>
       </Center>
       <Space h='xl' />
     </MantineProvider>
-  )
 
+
+  )
 }

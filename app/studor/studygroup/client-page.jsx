@@ -20,6 +20,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import { joinSession } from "@/app/backend/study-session-backend";
 import Calendar from "@/app/ui/calendar";
+import Filter from "@/app/studor/studygroup/filter"
 
 export default function ClientPage(data) {
     const [opened, { open, close }] = useDisclosure(false);
@@ -27,18 +28,24 @@ export default function ClientPage(data) {
     const [checked, setChecked] = useState(true);
 
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
+    const [update_events, setUpdateEvents] = useState(false);    
 
     const joinHandler = async (session) => {
-
-        await joinSession(data = { session });
-        const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-        setStudySessions(updatedSessions);
+        setUpdateEvents(true);        
+        const joined = await joinSession(data = { session });
+        if (!joined) {
+            alert("Study session is currently full, sorry!")
+        } else {
+            const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+            setStudySessions(updatedSessions);
+        }
+        setUpdateEvents(false);
 
     }
 
     const handleRemoveSession = (session) => {
         // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-        console.log('howdy')
+        // console.log('howdy')
         // Log the updated study_sessions
         // console.log("Updated study_sessions:", updatedSessions);
 
@@ -72,18 +79,18 @@ export default function ClientPage(data) {
         var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
 
         return formattedTime;
-      }
-    
-      function formatDate(inputDate) {
+    }
+
+    function formatDate(inputDate) {
         // Create a new Date object from the input string
         var dateObj = new Date(inputDate);
         dateObj.setDate(dateObj.getDate() + 1);
         // Format the date using options
         var options = { month: 'long', day: '2-digit', year: 'numeric' };
         var formattedDate = dateObj.toLocaleDateString('en-US', options);
-    
+
         return formattedDate;
-      }
+    }
 
     return (
         <MantineProvider>
@@ -91,30 +98,10 @@ export default function ClientPage(data) {
                 <h1>Study Groups</h1>
             </Center>
 
-
-
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
-                    <Drawer
-                        opened={opened}
-                        onClose={close}
-                        title="Filter"
-                        closeButtonProps={{
-                            icon: <IconXboxX size={20} stroke={1.5} />,
-                        }}
-                    >
-                        Filters coming soon
-                    </Drawer>
                     <Stack pl={20}>
-                        <ActionIcon
-                            onClick={open}
-                            variant="filled"
-                            size="xl"
-                            color="#800000"
-                            aria-label="Filter"
-                        >
-                            <IconFilter style={{ width: "90%", height: "90%" }} stroke={2} />
-                        </ActionIcon>
+                        <Filter departments={data.departments} />
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
@@ -136,7 +123,7 @@ export default function ClientPage(data) {
                     </Stack>
                 </Grid.Col>
 
-                <Grid.Col span="auto" order={{ base: 3 }}>
+                <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group>
@@ -145,7 +132,7 @@ export default function ClientPage(data) {
                                     .map((session) => (
                                         <Group p={30} key={session.topic} maw={400}>
                                             <Stack>
-                                                <Avatar size={100} />
+                                                <Avatar size={100} src={session.host_avatar_url} />
                                             </Stack>
                                             <Stack maw={210}>
                                                 <Stack>
@@ -158,10 +145,10 @@ export default function ClientPage(data) {
                                                     <Text mt={-15}>Location: {session.location}</Text>
                                                     <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                                                     <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                                                    <Text mt={-15}>Available: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
+                                                    <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
                                                 </Stack>
                                                 <Group align="center">
-                                                    <Modalview current={session}/>
+                                                    <Modalview current={session} />
                                                     {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
                                                     <Button
                                                         variant="filled"
@@ -172,7 +159,6 @@ export default function ClientPage(data) {
                                                     >
                                                         Join
                                                     </Button>
-
                                                 </Group>
                                             </Stack>
                                         </Group>
@@ -187,8 +173,8 @@ export default function ClientPage(data) {
                 </Grid.Col>
 
                 {checked && (
-                    <Grid.Col span={6} order={{ base: 2 }}>
-                        <Calendar></Calendar>
+                    <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
+                        <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
                     </Grid.Col>
                 )}
             </Grid>

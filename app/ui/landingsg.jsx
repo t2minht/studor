@@ -31,20 +31,11 @@ export default function Landingsg(data) {
   const [study_sessions_joined, setJoinedStudySessions] = useState(data.study_sessions.joined);
 
   if (data.study_sessions === null) {
-    console.log("hi");
     return (
       <Group>
         <Text>Nothing to see here</Text>
       </Group>
     );
-  }
-
-  const deleteHandler = async (session) => {
-
-    // await joinSession(data = { session });
-    // const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-    // setStudySessions(updatedSessions);
-
   }
 
   const leaveHandler = async (session) => {
@@ -89,7 +80,7 @@ export default function Landingsg(data) {
           {study_sessions_hosted.map((session) => (
             <Group p={30} key={session.topic} maw={400}>
               <Stack>
-                <Avatar size={100} />
+                <Avatar size={100} src={session.host_avatar_url} />
               </Stack>
               <Stack maw={210}>
                 <Stack>
@@ -103,23 +94,23 @@ export default function Landingsg(data) {
                       session.course_number +
                       (session.section ? " - " + session.section : "")}{" "}
                   </Text>
-                  <Text mt={-15}>Location: {session.location}</Text>
+                  <Text aria-label="Location" mt={-15}>Location: {session.location}</Text>
                   <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                   <Text mt={-15}>
                     Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}
                   </Text>
                   <Text mt={-15}>
-                    Available: {session.max_group_size - session.current_group_size} /{" "}
+                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
                     {session.max_group_size}{" "}
                   </Text>
                 </Stack>
                 <Group>
                   <Modalview current={session} />
                   <Link
-                  href={{
-                    pathname:"/studor/updatestudygroupposting",
-                    query: session
-                  }}
+                    href={{
+                      pathname: "/studor/updatestudygroupposting",
+                      query: session
+                    }}
                   ><Button color="yellow" radius="xl">Edit</Button></Link>
                 </Group>
               </Stack>
@@ -131,7 +122,7 @@ export default function Landingsg(data) {
           {study_sessions_joined.map((session) => (
             <Group p={30} key={session.topic} maw={400}>
               <Stack>
-                <Avatar size={100} />
+                <Avatar size={100} src={session.host_avatar_url} />
               </Stack>
               <Stack maw={210}>
                 <Stack>
@@ -152,13 +143,13 @@ export default function Landingsg(data) {
                     {convertTo12HourFormat(session.end_time)}
                   </Text>
                   <Text mt={-15}>
-                    Available: {session.max_group_size - session.current_group_size} /{" "}
+                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
                     {session.max_group_size}{" "}
                   </Text>
                 </Stack>
                 <Group>
                   <Modalview current={session} />
-                  <Button color="red" radius="xl" onClick={ () => leaveHandler(session)}>Leave</Button>
+                  <Button color="red" radius="xl" onClick={() => leaveHandler(session)}>Leave</Button>
                 </Group>
               </Stack>
             </Group>

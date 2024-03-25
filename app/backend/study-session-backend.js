@@ -16,9 +16,6 @@ export async function retrieveProfileStudySession() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
-  const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
     const participantSessionsQuery = supabase
@@ -63,6 +60,7 @@ export async function submitStudyGroupSessionData(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
+
   const { data: returned_session, error: error1 } = await supabase
     .from('study_sessions')
     .insert([
@@ -78,10 +76,12 @@ export async function submitStudyGroupSessionData(data) {
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
         host_user_id: user.id,
-        description : data.description
+        description: data.description,
+        host_avatar_url: user.user_metadata.avatar_url
       }
     ])
     .select();
+
 
   const { data: returned_participant, data: error2 } = await supabase.from('participants_in_study_session')
     .insert([
@@ -112,8 +112,8 @@ export async function updateStudyGroupSessionData(data) {
         max_group_size: data.groupSize,
         noise_level: data.noiseLevel,
         host_user_id: user.id,
-        description : data.description
-  
+        description: data.description
+
       }
     ])
     .eq('id', data.id)
@@ -134,7 +134,7 @@ export async function retrieveExistingNotJoinedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentDate = currentDateTime.toDateString().split('T')[0];
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
 
@@ -192,7 +192,7 @@ export async function retrieveExistingJoinedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentDate = currentDateTime.toDateString().split('T')[0];
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
@@ -242,8 +242,8 @@ export async function deleteSession(id) {
   const supabase = createServerActionClient({ cookies });
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
-  .delete()
-  .eq('id', id)
+    .delete()
+    .eq('id', id)
 }
 /*
 if I click "Delete Session" 
@@ -256,6 +256,17 @@ export async function joinSession(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
+  // need to check if session is full first
+  const { data: sessionData, error: sessionError } = await supabase
+    .from('study_sessions')
+    .select('current_group_size, max_group_size')
+    .eq('id', data.session.id);
+
+
+  if (sessionData[0].current_group_size >= sessionData[0].max_group_size) {
+    return false
+  }
+
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
     .insert([
       {
@@ -267,6 +278,8 @@ export async function joinSession(data) {
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
     .update({ current_group_size: data.session.current_group_size + 1 })
     .eq('id', data.session.id)
+
+  return true
 }
 
 export async function leaveSession(data) {
@@ -274,7 +287,6 @@ export async function leaveSession(data) {
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
 
-  console.log(data)
 
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
     .delete()
@@ -298,10 +310,11 @@ export async function retrieveFutureHostedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toISOString().split('T')[0];
+  const currentDate = currentDateTime.toDateString().split('T')[0];
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
+
 
     const { data: futureData, error: error1 } = await supabase
       .from('study_sessions')
@@ -311,6 +324,7 @@ export async function retrieveFutureHostedSessions() {
       .order('date')
       .order('end_time');
 
+
     const { data: todaysData, error: error2 } = await supabase
       .from('study_sessions')
       .select()
@@ -319,6 +333,7 @@ export async function retrieveFutureHostedSessions() {
       .gte('end_time', currentTime)
       .order('date')
       .order('end_time');
+
 
     const data = todaysData.concat(futureData);
     return data;
