@@ -1,4 +1,4 @@
-import { ActionIcon, Autocomplete, Button, Center, Checkbox, Drawer, Group, NativeSelect, NumberInput, SegmentedControl, Stack, Text, rem } from "@mantine/core";
+import { ActionIcon, Autocomplete, Button, Center, Checkbox, Drawer, Group, NativeSelect, NumberInput, Rating, SegmentedControl, Stack, Text, rem } from "@mantine/core";
 import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -18,7 +18,7 @@ const courseSectionData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
 
-export default function Filter({ departments }) {
+export default function TutorFilter({ departments }) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -27,6 +27,7 @@ export default function Filter({ departments }) {
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
   const [coursesList, setCoursesList] = useState([]);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,7 +121,7 @@ export default function Filter({ departments }) {
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', noiseLevel: 'None' },
+    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', tutorRating: 0, tutorVerified: false},
 
     validate: {
       department: (value, allValues) => allValues.department && ((allValues.department.length !== 4 || !(/^[a-zA-Z]+$/.test(allValues.department))) ? 'Invalid Department' : null),
@@ -130,7 +131,6 @@ export default function Filter({ departments }) {
       ),
       minGroupSize: (value, allValues) => allValues.minGroupSize && ((allValues.minGroupSize >= 2 && allValues.minGroupSize <= 20) ? null : 'Invalid Group Size'),
       maxGroupSize: (value, allValues) => allValues.maxGroupSize && ((allValues.maxGroupSize >= 2 && allValues.maxGroupSize <= 20 && allValues.maxGroupSize >= allValues.minGroupSize) ? null : 'Invalid Group Size'),
-      noiseLevel: (value) => ((value > 5 || value < 1 || value != '') ? 'Invalid Noise Level' : null),
       startDate: (value) => {
 
         const currentDate = new Date();
@@ -205,7 +205,8 @@ export default function Filter({ departments }) {
     form.setFieldValue('maxGroupSize', '');
     form.setFieldValue('startTime', '');
     form.setFieldValue('endTime', '');
-    form.setFieldValue('noiseLevel', 'None');
+    form.setFieldValue('tutorRating', 0);
+    form.setFieldValue('tutorVerified', false);
   }
 
   return (
@@ -328,62 +329,13 @@ export default function Filter({ departments }) {
             />
           </Group>
 
-          <Text fw={700} mt={30}>Noise Level</Text>
-          <SegmentedControl color="#800000" data={[
-            {
-              value: 'None',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                  <span>No Preference</span>
-                </Center>
-              ),
-            },
-            {
-              value: '1',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                  <span>1</span>
-                </Center>
-              ),
-            },
-            {
-              value: '2',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <span>2</span>
-                </Center>
-              ),
-            },
-            {
-              value: '3',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolume2 style={{ width: rem(16), height: rem(16) }} />
-                  <span>3</span>
-                </Center>
-              ),
-            },
-            {
-              value: '4',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <span>4</span>
-                </Center>
-              ),
-            },
-            {
-              value: '5',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolume style={{ width: rem(16), height: rem(16) }} />
-                  <span>5</span>
-                </Center>
-              ),
-            },
-          ]}
-            {...form.getInputProps('noiseLevel')} />
+          <Text fw={700} mt={30}>Tutor Information</Text>
+          <Group>
+            <Rating fractions={2} size={"lg"} {...form.getInputProps('tutorRating')}/>
+            <Text>{form.values.tutorRating} and above</Text>
+          </Group>
+          <Checkbox mt="sm" size="sm" checked={form.values.tutorVerified} label="Verified Tutor" {...form.getInputProps('tutorVerified')}/>
+          
           <Group justify="center" mt="lg">
             <Button
               onClick={handleReset}

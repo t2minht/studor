@@ -153,7 +153,7 @@ export default function Modaltutor(session) {
             <Text fw={700} ml={5}>Rate Tutor:</Text>
             <Text ml={25}>Rate your session with this tutor</Text>
             <Group ml={25}>
-              <Rating rating={rating} fractions={4} defaultValue={null} onChange={setRating} size={"lg"} />
+              <Rating rating={rating} fractions={2} defaultValue={null} onChange={setRating} size={"lg"} />
               <Text>{rating}</Text>
 
             </Group>
