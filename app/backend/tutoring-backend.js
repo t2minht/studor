@@ -11,6 +11,40 @@ function setDifference(setA, setB) {
     return difference;
 }
 
+export async function insertRatings(studentId, tutorId, sessionId, rating) {
+
+    const supabase = createServerActionClient({ cookies });
+
+    const { data: returned_data, error: error1 } = await supabase
+        .from("tutor_ratings")
+        .select()
+        .eq('student_id', studentId)
+        .eq('session_id', sessionId)
+
+
+    if (returned_data.length === 0) {
+        const { data, error } = await supabase.from("tutor_ratings")
+            .insert([
+                {
+                    student_id: studentId,
+                    tutor_id: tutorId,
+                    session_id: sessionId,
+                    rating: rating
+                },
+
+            ])
+            .select();
+    }
+    else {
+        const { data, error } = await supabase.from("tutor_ratings")
+            .update({ rating: rating })
+            .eq('student_id', studentId)
+            .eq('session_id', sessionId)
+            .select();
+    }
+
+}
+
 export async function retrieveProfileTutoringSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();

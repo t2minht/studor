@@ -44,37 +44,40 @@ const courseSectionData = Array(100)
     .map((_, index) => `Option ${index}`);
 
 
-    function parseICS(icsString) {
-        let reader = new FileReader();
-        reader.readAsText(icsString);
-        let results;
-        reader.onload = function() {
-          console.log("results");
-          console.log(reader.result);
-          
-          // results = JSON.stringify(parseICS(reader.result))
-          const lines = reader.result.split('\n'); 
-          const events = []; 
-          let event; 
-          for (let i = 0; i < lines.length; i++) { 
-            const line = lines[i].trim(); 
-            if (line === 'BEGIN:VEVENT') { event = {}; } 
-            else if (line === 'END:VEVENT') { events.push(event); } 
-            else if (event) { const match = /^([A-Z]+):(.*)$/.exec(line); 
-            if (match) { const [, key, value] = match; event[key] = value; } } 
-          } 
-          // return events; 
-          console.log(events);
-          results = JSON.stringify(events);
-          
-          sendEvents(results);
-        };
-        reader.onerror = function() {
-            console.log(reader.error);
-        };
+function parseICS(icsString) {
+    let reader = new FileReader();
+    reader.readAsText(icsString);
+    let results;
+    reader.onload = function () {
+        console.log("results");
+        console.log(reader.result);
+
+        // results = JSON.stringify(parseICS(reader.result))
+        const lines = reader.result.split('\n');
+        const events = [];
+        let event;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (line === 'BEGIN:VEVENT') { event = {}; }
+            else if (line === 'END:VEVENT') { events.push(event); }
+            else if (event) {
+                const match = /^([A-Z]+):(.*)$/.exec(line);
+                if (match) { const [, key, value] = match; event[key] = value; }
+            }
+        }
+        // return events; 
+        console.log(events);
+        results = JSON.stringify(events);
+
+        sendEvents(results);
     };
+    reader.onerror = function () {
+        console.log(reader.error);
+    };
+};
 
 export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
+
     const [data, setData] = useState([]);
 
 
@@ -103,7 +106,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             <Table.Td>{session.title}</Table.Td>
             <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
             <Table.Td>{session.date}</Table.Td>
-            <Table.Td> <Modaltprofile current={session} /> </Table.Td>
+            <Table.Td> <Modaltprofile current={session} userID={user.id} /> </Table.Td>
         </Table.Tr>
     ));
 
@@ -138,7 +141,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         resetSchedule.current?.();
     };
 
-    const uploadSchedule = (event) =>{
+    const uploadSchedule = (event) => {
 
         const file = schedule;
         console.log("sending file");
@@ -373,18 +376,18 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                             </Group>
                             <Group justify="center">
                                 <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
-                                {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                    {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
                                 </FileButton>
                                 <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
-                                Upload
+                                    Upload
                                 </Button>
                                 <Button disabled={!schedule} color="red" onClick={clearSchedule}>
-                                Reset
+                                    Reset
                                 </Button>
                             </Group>
                             {schedule && (
                                 <Text size="sm" mt={-10} ta="center">
-                                Selected file: {schedule.name}
+                                    Selected file: {schedule.name}
                                 </Text>
                             )}
                             <Group justify="center">
