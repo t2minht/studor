@@ -51,7 +51,9 @@ export async function retrieveUserProfileInfo() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
   let metadata = user.user_metadata
+  metadata.id = user.id
   return metadata
 }
 

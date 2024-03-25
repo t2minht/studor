@@ -23,7 +23,6 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 
 export default function Modaltutor(session) {
-  console.log(session)
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [participants, setParticipants] = useState([]);
@@ -32,6 +31,13 @@ export default function Modaltutor(session) {
   }, []);
   const [rating, setRating] = useState(0);
 
+  // console.log('CURRENTcurrent', session.current.tutor_user_id);
+  // console.log('auth', supabase.auth.getUser());
+
+  // const getUserId = async () => {
+  //   const { data: user, error } = await supabase
+  //     .from('users')
+  //     .select('id')
 
   const getParticipants = async () => {
     var { data: result, error } =
@@ -98,11 +104,11 @@ export default function Modaltutor(session) {
               <Text mt={-15}><b>Date:</b> {formatDate(session.current.date)}</Text>
               <Text mt={-15}><b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}</Text>
               <Text mt={-15}> <b>Remaining:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
-                {session.current.max_group_size-1}{" "}</Text>
+                {session.current.max_group_size - 1}{" "}</Text>
               <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
               <Group mt={-15}>
                 <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-                <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />
+                <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />
               </Group>
               <Group mt={-15}>
                 <Text><b>Tutor Rating:</b> 3.5</Text>
@@ -137,20 +143,21 @@ export default function Modaltutor(session) {
               })}
           </Stack>
         </Group>
-        
-        <Stack ml={27} mt={20}>
-          <Text fw={700} ml={5}>Rate Tutor:</Text>
-          <Text ml={25}>Rate your session with this tutor</Text>
-          <Group ml={25}>
-            <Rating rating={rating} fractions={4} defaultValue={null} onChange={setRating} size={"lg"}/>
-            <Text>{rating}</Text>
-            
-          </Group>
-          <Group ml={25}> 
-            <Button variant="filled" size="sm" color="#009020" radius="xl">Submit</Button>
-          </Group>
-          
-        </Stack>
+
+        {session.current.tutor_user_id != session.userID &&
+          <Stack ml={27} mt={20}>
+            <Text fw={700} ml={5}>Rate Tutor:</Text>
+            <Text ml={25}>Rate your session with this tutor</Text>
+            <Group ml={25}>
+              <Rating rating={rating} fractions={4} defaultValue={null} onChange={setRating} size={"lg"} />
+              <Text>{rating}</Text>
+
+            </Group>
+            <Group ml={25}>
+              <Button variant="filled" size="sm" color="#009020" radius="xl">Submit</Button>
+            </Group>
+
+          </Stack>}
 
       </Modal>
       <Button
