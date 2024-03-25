@@ -19,7 +19,7 @@ export default async function Home() {
 
   const hosted_study_sessions = await getHostedStudySessions();
   const joined_study_sessions = await getJoinedStudySessions();
-  
+
 
   const study_sessions = {};
   study_sessions.hosted = hosted_study_sessions;
@@ -67,7 +67,7 @@ export default async function Home() {
             </>
           )}
         </Center> */}
-        <Landing study_sessions={study_sessions} tutoring={tutoring} events = {fetchedEvents} all_study_sessions = {fetchedStudySessions} all_tutoring = {fetchedTutorSessions}></Landing>
+        <Landing study_sessions={study_sessions} tutoring={tutoring} events={fetchedEvents} all_study_sessions={fetchedStudySessions} all_tutoring={fetchedTutorSessions}></Landing>
       </MantineProvider>
     </>
   );

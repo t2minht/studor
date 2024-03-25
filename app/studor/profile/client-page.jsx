@@ -101,14 +101,21 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         </Table.Tr>
     ));
 
-    const tutoringHistoryRows = tutor_sessions.map((session) => (
-        <Table.Tr key={session.id}>
-            <Table.Td>{session.title}</Table.Td>
-            <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
-            <Table.Td>{session.date}</Table.Td>
-            <Table.Td> <Modaltprofile current={session} userID={user.id} /> </Table.Td>
-        </Table.Tr>
-    ));
+    const tutoringHistoryRows = tutor_sessions.map((session) => {
+        const ratings = session.tutor_ratings.map(ratingObj => ratingObj.rating);
+        const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
+        const averageRating = sumOfRatings / ratings.length;
+        session.averageRating = averageRating;
+        return (
+            <Table.Tr key={session.id}>
+
+                <Table.Td>{session.title}</Table.Td>
+                <Table.Td> {session?.department + ' ' + session?.course_number + (session.section ? ' - ' + session?.section : '')}</Table.Td>
+                <Table.Td>{session.date}</Table.Td>
+                <Table.Td> <Modaltprofile current={session} userID={user.id} /> </Table.Td>
+            </Table.Tr>
+        )
+    });
 
     const coursesRows = data.map((item) => {
         const selected = selection.includes(item.id);

@@ -93,7 +93,6 @@ export default function ClientPage(data) {
       <Grid overflow="hidden">
         <Grid.Col span="content">
           <Stack pl={20}>
-            {console.log(data)}
             <TutorFilter departments={data.departments} />
             <Switch
               checked={checked}
@@ -123,47 +122,53 @@ export default function ClientPage(data) {
 
                 {tutor_sessions
                   .filter((session) => session.current_group_size < session.max_group_size)
-                  .map((session) => (
-                    <Group p={30} key={session.id}>
-                      <Stack>
-                        <Avatar size={100} src={session.tutor_avatar_url} />
-                      </Stack>
-                      <Stack>
+                  .map((session) => {
+                    const ratings = session.tutor_ratings.map(ratingObj => ratingObj.rating);
+                    const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
+                    const averageRating = sumOfRatings / ratings.length;
+                    session.averageRating = averageRating;
+                    return (
+                      <Group p={30} key={session.id}>
                         <Stack>
-                          <Text fw={700} size="xl">
-                            {session.title}
-                          </Text>
-                          <Text mt={-10} fw={700}>
-                            Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
-                          </Text>
-                          <Text mt={-15}>Location: {session.location}</Text>
-                          <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                          <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                          <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size-1}</Text>
-                          <Group mt={-15}>
-                            <Text>Tutor: {session.users.full_name}</Text>
-                            {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />}
-                          </Group>
-                          <Group mt={-15}>
-                            <Text>Tutor Rating: 3.5</Text>
-                            <Rating value={3.5} fractions={2} ml={-10} readOnly />
+                          <Avatar size={100} src={session.tutor_avatar_url} />
+                        </Stack>
+                        <Stack>
+                          <Stack>
+                            <Text fw={700} size="xl">
+                              {session.title}
+                            </Text>
+                            <Text mt={-10} fw={700}>
+                              Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
+                            </Text>
+                            <Text mt={-15}>Location: {session.location}</Text>
+                            <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                            <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                            <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size - 1}</Text>
+                            <Group mt={-15}>
+                              <Text>Tutor: {session.users.full_name}</Text>
+                              {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
+                            </Group>
+                            <Group mt={-15}>
+                              {session.averageRating && <Text>Tutor Rating: {session.averageRating}</Text>}
+                              {session.averageRating && <Rating value={session.averageRating} fractions={4} ml={-10} readOnly />}
+                            </Group>
+                          </Stack>
+                          <Group>
+                            <Modaltutor current={session} />
+                            <Button
+                              variant="filled"
+                              size="sm"
+                              color="#009020"
+                              radius="xl"
+                              onClick={() => joinHandler(session)}
+                            >
+                              Join
+                            </Button>
                           </Group>
                         </Stack>
-                        <Group>
-                          <Modaltutor current={session} />
-                          <Button
-                            variant="filled"
-                            size="sm"
-                            color="#009020"
-                            radius="xl"
-                            onClick={() => joinHandler(session)}
-                          >
-                            Join
-                          </Button>
-                        </Group>
-                      </Stack>
-                    </Group>
-                  ))}
+                      </Group>
+                    )
+                  })}
               </Group>
             </ScrollArea>
           </Group>
@@ -171,7 +176,7 @@ export default function ClientPage(data) {
 
         {checked && (
           <Grid.Col span={6} order={{ base: 2 }} mt={30} maw={600} miw={600}>
-            <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
+            <Calendar events={data.events} study_sessions={data.all_study_sessions} tutoring={data.all_tutoring}></Calendar>
           </Grid.Col>
         )}
       </Grid>
