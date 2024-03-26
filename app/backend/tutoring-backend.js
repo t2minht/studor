@@ -11,6 +11,64 @@ function setDifference(setA, setB) {
     return difference;
 }
 
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+function convertTo12HourFormat(timeString) {
+    // Split the string into hours and minutes
+    var parts = timeString.split(":");
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Convert hours to 12-hour format
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+    // Construct the new time string
+    var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+    return formattedTime;
+}
+function formatDate(inputDate) {
+    // Create a new Date object from the input string
+    var dateObj = new Date(inputDate);
+    dateObj.setDate(dateObj.getDate() + 1);
+    // Format the date using options
+    var options = { month: 'long', day: '2-digit', year: 'numeric' };
+    var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+    return formattedDate;
+}
+
+function sendEmail(participantEmail, sessionInfo) {
+    const msg = {
+        to: participantEmail,
+        from: 'studorcapstone@gmail.com',
+        subject: 'One Of Your Tutoring Sessions Has Been Updated!',
+        text: `The following tutoring session you joined has been updated on Studor:\n\n
+              Title: ${sessionInfo.title}\n
+              Description: ${sessionInfo.description || 'N/A'}\n
+              Department: ${sessionInfo.department}\n
+              Course Number: ${sessionInfo.courseNumber}\n
+              Section: ${sessionInfo.courseSection || 'N/A'}\n
+              Location: ${sessionInfo.location}\n
+              Date: ${formatDate(sessionInfo.date)}\n
+              Start Time: ${convertTo12HourFormat(sessionInfo.startTime)}\n
+              End Time: ${convertTo12HourFormat(sessionInfo.endTime)}\n
+              Max Group Size: ${sessionInfo.groupSize}\n`
+    }
+
+    sgMail
+        .send(msg)
+        .then(() => {
+            console.log('Email sent')
+        })
+        .catch((error) => {
+            console.error(error.response.body.errors)
+        })
+}
+
 export async function insertRatings(studentId, tutorId, sessionId, rating) {
 
     const supabase = createServerActionClient({ cookies });
@@ -136,7 +194,7 @@ export async function retrieveFutureHostedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toISOString().split('T')[0];
+    const currentDate = currentDateTime.toDateString();
     const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
     try {
@@ -172,7 +230,7 @@ export async function retrieveExistingJoinedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toISOString().split('T')[0];
+    const currentDate = currentDateTime.toDateString();
     const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
     try {
@@ -260,7 +318,7 @@ export async function getExistingNotJoinedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toISOString().split('T')[0];
+    const currentDate = currentDateTime.toDateString();
     const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
 
@@ -362,6 +420,16 @@ export async function updateTutoringSessionData(data) {
         ])
         .eq('id', data.id)
         .select();
+
+    const { data: returned_participants, error: error2 } = await supabase
+        .from('participants_in_tutor_session')
+        .select('users(email)')
+        .eq('tutoring_session_id', data.id);
+
+    const participants = returned_participants.map(entry => entry.users.email);
+    for (const participant of participants) {
+        sendEmail(participant, data);
+    }
 
 }
 

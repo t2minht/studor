@@ -2,6 +2,65 @@
 
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+function convertTo12HourFormat(timeString) {
+  // Split the string into hours and minutes
+  var parts = timeString.split(":");
+  var hours = parseInt(parts[0]);
+  var minutes = parseInt(parts[1]);
+
+  // Convert hours to 12-hour format
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+  // Construct the new time string
+  var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+  return formattedTime;
+}
+function formatDate(inputDate) {
+  // Create a new Date object from the input string
+  var dateObj = new Date(inputDate);
+  dateObj.setDate(dateObj.getDate() + 1);
+  // Format the date using options
+  var options = { month: 'long', day: '2-digit', year: 'numeric' };
+  var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+  return formattedDate;
+}
+
+
+function sendEmail(participantEmail, sessionInfo) {
+  const msg = {
+    to: participantEmail,
+    from: 'studorcapstone@gmail.com',
+    subject: 'One Of Your Study Sessions Has Been Updated!',
+    text: `The following study session you joined has been updated on Studor:\n\n
+            Topic: ${sessionInfo.title}\n
+            Description: ${sessionInfo.description || 'N/A'}\n
+            Department: ${sessionInfo.department}\n
+            Course Number: ${sessionInfo.courseNumber}\n
+            Section: ${sessionInfo.courseSection || 'N/A'}\n
+            Location: ${sessionInfo.location}\n
+            Date: ${formatDate(sessionInfo.date)}\n
+            Start Time: ${convertTo12HourFormat(sessionInfo.startTime)}\n
+            End Time: ${convertTo12HourFormat(sessionInfo.endTime)}\n
+            Max Group Size: ${sessionInfo.groupSize}\n
+            Noise Level: ${sessionInfo.noiseLevel}\n`
+  }
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log('Email sent')
+    })
+    .catch((error) => {
+      console.error(error.response.body.errors)
+    })
+}
 
 function setDifference(setA, setB) {
   const difference = new Set(setA);
@@ -120,6 +179,17 @@ export async function updateStudyGroupSessionData(data) {
     ])
     .eq('id', data.id)
     .select();
+
+  // i need to go to the participants table, get all the participants in the session, get their email from users table, and then send email to all of them
+  const { data: participantsData, error: participantsError } = await supabase
+    .from('participants_in_study_session')
+    .select('users(email)')
+    .eq('study_session_id', data.id);
+
+  const participantEmails = participantsData.map(entry => entry.users.email);
+  for (const email of participantEmails) {
+    sendEmail(email, data);
+  }
 }
 /* 
 If I click "Update"
