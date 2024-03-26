@@ -319,7 +319,7 @@ export default function Page(data) {
                 valueFormat="YYYY MMM DD"
                 label="Date"
                 description="Select Date"
-                minDate={new Date()}
+                minDate={date.addDays(1)}
                 required
                 {...form.getInputProps('date')}
 
