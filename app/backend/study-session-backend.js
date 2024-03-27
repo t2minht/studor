@@ -38,19 +38,20 @@ function sendEmail(participantEmail, sessionInfo) {
     to: participantEmail,
     from: 'studorcapstone@gmail.com',
     subject: 'One Of Your Study Sessions Has Been Updated!',
-    text: `The following study session you joined has been updated on Studor:\n\n
-            Topic: ${sessionInfo.title}\n
-            Description: ${sessionInfo.description || 'N/A'}\n
-            Department: ${sessionInfo.department}\n
-            Course Number: ${sessionInfo.courseNumber}\n
-            Section: ${sessionInfo.courseSection || 'N/A'}\n
-            Location: ${sessionInfo.location}\n
-            Date: ${formatDate(sessionInfo.date)}\n
-            Start Time: ${convertTo12HourFormat(sessionInfo.startTime)}\n
-            End Time: ${convertTo12HourFormat(sessionInfo.endTime)}\n
-            Max Group Size: ${sessionInfo.groupSize}\n
-            Noise Level: ${sessionInfo.noiseLevel}\n`
+    html: `The following study session you joined has been updated on Studor:<br><br>
+           <b>Topic:</b> ${sessionInfo.title}<br>
+           <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+           <b>Department:</b> ${sessionInfo.department}<br>
+           <b>Course Number:</b> ${sessionInfo.courseNumber}<br>
+           <b>Section:</b> ${sessionInfo.courseSection || 'N/A'}<br>
+           <b>Location:</b> ${sessionInfo.location}<br>
+           <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+           <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.startTime)}<br>
+           <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.endTime)}<br>
+           <b>Max Group Size:</b> ${sessionInfo.groupSize}<br>
+           <b>Noise Level:</b> ${sessionInfo.noiseLevel}<br>`
   }
+
 
   sgMail
     .send(msg)
