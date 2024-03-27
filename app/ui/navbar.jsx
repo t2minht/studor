@@ -23,7 +23,7 @@ import {
 import classes from './navbar.module.css';
 import LightOrDarkMode from './lightordarkmode';
 import LogoutButtonClient from './logout-button-client';
-import logo from '@/app/ui/logo1.png';
+import logo from '@/app/ui/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
