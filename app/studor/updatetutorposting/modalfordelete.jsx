@@ -33,7 +33,7 @@ export default function Modaldelete(data) {
               // Redirect to the new page after a short delay
               setTimeout(() => {
               window.location.href = '/';
-            }, 1000);
+            }, 0);
             }}
             >Yes</Button>
         </Group>
