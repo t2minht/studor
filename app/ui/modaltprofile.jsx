@@ -112,7 +112,7 @@ export default function Modaltutor(session) {
               <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
               <Group mt={-15}>
                 <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-                <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />
+                {session.current.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
               </Group>
               <Group mt={-15}>
                 {session.current.averageRating && <Text><b>Tutor Rating:</b> {session.current.averageRating}</Text>}
