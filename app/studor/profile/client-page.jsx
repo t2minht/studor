@@ -28,6 +28,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
 
 import Modaltprofile from "@/app/ui/modaltprofile";
+import { addTutorCourses } from "@/app/backend/tutoring-backend";
 
 let formValues = {};
 
@@ -146,6 +147,26 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const clearSchedule = () => {
         setSchedule(null);
         resetSchedule.current?.();
+    };
+
+    const uploadTranscript = async (event) => {
+
+        const formData = new FormData();
+        formData.append('pdf', transcript);
+        try {
+            const response = await fetch('http://127.0.0.1:5000/upload_file', {
+                method: 'POST',
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from Flask server');
+            }
+            const classes = await response.json();
+            addTutorCourses(classes);
+
+        } catch (error) {
+            console.error('Error fetching data from Flask server:', error);
+        }
     };
 
     const uploadSchedule = (event) => {
@@ -401,6 +422,9 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                 <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
                                     {(props) => <Button {...props}>Upload Transcript</Button>}
                                 </FileButton>
+                                <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
+                                    Upload
+                                </Button>
                                 <Button disabled={!transcript} color="red" onClick={clearTranscript}>
                                     Reset
                                 </Button>
