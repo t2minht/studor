@@ -154,7 +154,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         const formData = new FormData();
         formData.append('pdf', transcript);
         try {
-            const response = await fetch('http://127.0.0.1:5000/upload_file', {
+            const response = await fetch('https://smmathen.pythonanywhere.com/upload_file', {
                 method: 'POST',
                 body: formData,
             });

@@ -30,7 +30,7 @@ def process_pdf(file_path):
                     classGrades[className] = grade
     return classGrades
 
-    
+
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
     if 'pdf' not in request.files:
