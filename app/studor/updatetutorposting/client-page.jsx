@@ -243,7 +243,7 @@ export default function Page(data) {
 
   return (
     <MantineProvider>
-      <Center>
+      <Center pl={50} pr={50}>
         <h1>Update a Tutor Session</h1>
       </Center>
 

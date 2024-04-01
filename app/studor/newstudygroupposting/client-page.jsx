@@ -192,7 +192,7 @@ export default function ClientPage(data) {
 
     return (
         <MantineProvider>
-            <Center>
+            <Center pl={50} pr={50}>
                 <h1>Create a Study Group Session</h1>
             </Center>
 
