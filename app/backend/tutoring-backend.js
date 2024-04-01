@@ -138,8 +138,8 @@ export async function addTutorCourses(classes) {
                     }
                 ]).select()
 
-            const courseID = data[0].id
-            array.push({ user_id, courseID })
+            const course_id = data[0].id
+            array.push({ user_id, course_id })
 
 
         } else {
