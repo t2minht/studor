@@ -395,6 +395,7 @@ export async function getExistingNotJoinedSessions() {
         const notInSessionsArray = Array.from(notInSessionsSet);
 
 
+
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
             .select('*, users(full_name), tutor_ratings(rating)')
@@ -403,9 +404,10 @@ export async function getExistingNotJoinedSessions() {
             .order('date')
             .order('end_time');
 
+
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', notInSessionsArray)
@@ -413,6 +415,8 @@ export async function getExistingNotJoinedSessions() {
             .order('end_time');
 
         const data = todaysData.concat(futureData);
+        console.log(todaysData)
+
         return data;
 
 
