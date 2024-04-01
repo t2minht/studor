@@ -28,6 +28,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
 
 import Modaltprofile from "@/app/ui/modaltprofile";
+import { addTutorCourses } from "@/app/backend/tutoring-backend";
 
 let formValues = {};
 
@@ -148,6 +149,26 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         resetSchedule.current?.();
     };
 
+    const uploadTranscript = async (event) => {
+
+        const formData = new FormData();
+        formData.append('pdf', transcript);
+        try {
+            const response = await fetch('https://smmathen.pythonanywhere.com/upload_file', {
+                method: 'POST',
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from Flask server');
+            }
+            const classes = await response.json();
+            addTutorCourses(classes);
+            clearTranscript();
+        } catch (error) {
+            console.error('Error fetching data from Flask server:', error);
+        }
+    };
+
     const uploadSchedule = (event) => {
 
         const file = schedule;
@@ -155,6 +176,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
 
         let eve = parseICS(file);
         console.log(eve);
+
+        clearSchedule();
     };
 
     const form = useForm({
@@ -401,6 +424,9 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                 <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
                                     {(props) => <Button {...props}>Upload Transcript</Button>}
                                 </FileButton>
+                                <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
+                                    Upload
+                                </Button>
                                 <Button disabled={!transcript} color="red" onClick={clearTranscript}>
                                     Reset
                                 </Button>

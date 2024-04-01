@@ -103,6 +103,57 @@ export async function insertRatings(studentId, tutorId, sessionId, rating) {
 
 }
 
+export async function addTutorCourses(classes) {
+    const supabase = createServerActionClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+    const user_id = user.id
+    try {
+        const { data: returned_data, error: error1 } = await supabase.from("tutor_courses")
+            .delete()
+            .eq('user_id', user_id)
+
+    } catch (error) {
+        console.log('error', error);
+        throw error;
+    }
+
+    // need to get the course id for each className from tutor_course_catalog and then insert into tutor_courses table
+    let array = []
+    for (const className in classes) {
+        const { data: courseID, error: courseError } = await supabase.from('tutor_course_catalog').
+            select('id')
+            .eq('coursecode', className)
+
+
+
+        if (courseID.length === 0) {
+            console.log("Course not found", className)
+            const deptartment = className.split(' ')[0]
+            const courseNumber = className.split(' ')[1]
+            const { data, error } = await supabase.from("tutor_course_catalog")
+                .insert([
+                    {
+                        Department: deptartment,
+                        CourseNum: courseNumber,
+                    }
+                ]).select()
+
+            const course_id = data[0].id
+            array.push({ user_id, course_id })
+
+
+        } else {
+            const course_id = courseID[0].id
+            array.push({ user_id, course_id })
+
+        }
+    }
+
+    const { error } = await supabase.from("tutor_courses")
+        .insert(array)
+
+}
+
 export async function retrieveProfileTutoringSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -344,6 +395,7 @@ export async function getExistingNotJoinedSessions() {
         const notInSessionsArray = Array.from(notInSessionsSet);
 
 
+
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
             .select('*, users(full_name), tutor_ratings(rating)')
@@ -352,9 +404,10 @@ export async function getExistingNotJoinedSessions() {
             .order('date')
             .order('end_time');
 
+
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', notInSessionsArray)
@@ -362,6 +415,8 @@ export async function getExistingNotJoinedSessions() {
             .order('end_time');
 
         const data = todaysData.concat(futureData);
+        console.log(todaysData)
+
         return data;
 
 
