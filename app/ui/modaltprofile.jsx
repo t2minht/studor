@@ -69,6 +69,7 @@ export default function Modaltutor(session) {
   }
   function handleRatingSubmit(rating) {
     insertRatings(session.userID, session.current.tutor_user_id, session.current.id, rating);
+    alert("Rating submitted! Refresh the page to see the effect")
   }
 
   function formatDate(inputDate) {
