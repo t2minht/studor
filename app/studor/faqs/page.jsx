@@ -1,6 +1,13 @@
 'use client'
 import { Container, Title, Accordion, Center, Space, Image, ScrollArea } from '@mantine/core';
+import howdyScheduleImage from './images/howdySchedule.png';
 import uploadScheduleImage from './images/uploadSchedule.png';
+import uploadTranscriptImage1 from './images/uploadTranscript1.png';
+import uploadTranscriptImage2 from './images/uploadTranscript2.png';
+import uploadSessionHistoryImage from './images/SessionHistory.png'
+import uploadVerifiedTutorImage from './images/verifiedTutor.png'
+import uploadNonverifiedTutorImage from './images/nonverifiedTutor.png'
+import uploadTutorRatingsImage from './images/tutorRatings.png'
 import NextImage from 'next/image';
 
 const uploadSchedule =
@@ -16,7 +23,7 @@ const uploadTranscript =
   "Go to your Profile page and select the button 'Upload Transcript'. This takes in only *.pdf files which can be downloaded from Howdy. This can be official or unofficial transcripts.";
 
 const optionalTranscript =
-  "You don't have to upload your transcript to participate in any study/tutor sessions or to become a tutor. However, if you choose to become a tutor and have not uploaded a transcript for a class you have taken and gotten a B or A, then you will not be considered a 'Verified Tutor'. People can see whether or not you are a 'Verified Tutor' for the course you'd like to tutor.";
+  "You don't have to upload your transcript to participate in any study/tutor sessions or to become a tutor. However, if you choose to become a tutor and have not uploaded a transcript for a class you have taken and gotten a B or A, then you will not be considered a 'Verified Tutor'. People can see whether or not you are a 'Verified Tutor' for the course you'd like to tutor. Image of a verified and non-verified tutor indicator is below:";
 
 const transcriptData =
   "Any official or unofficial transcript will work to verify you as a tutor. No personal information such as UIN or grades will be stored. The transcript is solely used to check whether or not you have taken the course and received a B or an A, then afterwards, the transcript will be discarded. If you don't feel comfortable doing this, you can still be a tutor for any course without uploading a transcript, you'll just be not verified by us.";
@@ -30,10 +37,11 @@ const deletePost =
 const joinedSessions =
   "Your own postings will be shown first on your landing page. To see your joined sessions (not created by you), you can scroll down until you see 'Joined Sessions'.";
 
+const sessionHistory =
+  "Go to your Profile page and scroll down until you find the 'Tutoring History' or 'Study Group History' table. Click the 'View' button on the specific session you want to view more details about.";
+
 const tutorRatings =
   "Go to your Profile page and scroll down until you find the 'Tutoring History' table. Click the 'View' button on the specific session you want to rate. At the very bottom of the popup/modal there should be a 'Rate Tutor' section. Once you click the 'Submit' button, your rating of the tutor will be sent. Note that you will only be able to submit a rating once per session.";
-
-  const uploadImage = ``;
 
 export default function FaqSimple() {
   return (
@@ -48,13 +56,16 @@ export default function FaqSimple() {
             <Accordion.Control>How can I upload my schedule?</Accordion.Control>
             <Accordion.Panel>{uploadSchedule}</Accordion.Panel>
             <Accordion.Panel> 
-              <Image component={NextImage} maw={300} mah={300} src={uploadScheduleImage} alt="My image" />
+              <Image component={NextImage} maw={300} mah={200} src={uploadScheduleImage} alt="Upload Schedule on TAMU Studor" />
             </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item value="howdy-schedule">
             <Accordion.Control>How can I get my *.ics calendar file from Howdy?</Accordion.Control>
             <Accordion.Panel>{howdySchedule}</Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={300} src={howdyScheduleImage} alt="Howdy Schedule" />
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item value="noshow-course">
@@ -65,11 +76,21 @@ export default function FaqSimple() {
           <Accordion.Item value="upload-transcript">
             <Accordion.Control>Where and what kind of transcript can I upload?</Accordion.Control>
             <Accordion.Panel>{uploadTranscript}</Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={200} src={uploadTranscriptImage1} alt="Download Transcript from Howdy" />
+            </Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={300} src={uploadTranscriptImage2} alt="Upload Transcript on TAMU Studor" />
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item value="optional-transcript">
             <Accordion.Control>Do I have to upload my transcript?</Accordion.Control>
             <Accordion.Panel>{optionalTranscript}</Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={150} mah={250} src={uploadNonverifiedTutorImage} alt="Non-verified Tutor" />
+              <Image component={NextImage} maw={150} mah={225} src={uploadVerifiedTutorImage} alt="Verified Tutor" />
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item value="transcript-data">
@@ -82,9 +103,23 @@ export default function FaqSimple() {
             <Accordion.Panel>{tamuEmail}</Accordion.Panel>
           </Accordion.Item>
 
+          <Accordion.Item value="session-history">
+            <Accordion.Control>How can I view past tutoring/study group sessions?</Accordion.Control>
+            <Accordion.Panel>{sessionHistory}</Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={250} src={uploadSessionHistoryImage} alt="Session History" />
+            </Accordion.Panel>
+          </Accordion.Item>
+
           <Accordion.Item value="tutor-ratings">
             <Accordion.Control>How can I rate my tutor?</Accordion.Control>
             <Accordion.Panel>{tutorRatings}</Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={250} src={uploadSessionHistoryImage} alt="Session History" />
+            </Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={450} src={uploadTutorRatingsImage} alt="Rate Tutor" />  
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item value="delete-post">
