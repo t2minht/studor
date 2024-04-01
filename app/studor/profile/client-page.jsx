@@ -44,31 +44,88 @@ const courseSectionData = Array(100)
     .map((_, index) => `Option ${index}`);
 
 
+// function parseICS(icsString) {
+//     let reader = new FileReader();
+//     reader.readAsText(icsString);
+//     let results;
+//     reader.onload = function () {
+//         console.log("results");
+//         console.log(reader.result);
+
+//         // results = JSON.stringify(parseICS(reader.result))
+//         const lines = reader.result.split('\n');
+//         const events = [];
+//         let event;
+//         for (let i = 0; i < lines.length; i++) {
+//             // console.log(lines[i]);
+//             const line = lines[i].trim();
+//             // console.log(line);
+//             if (line === 'BEGIN:VEVENT') { event = {}; }
+//             else if (line === 'END:VEVENT') { events.push(event); }
+//             else if (event) {
+//                 console.log("event: "  + JSON.stringify(event));
+//                 console.log(line);
+//                 const match = /^([A-Z]+):(.*)$/.exec(line);
+//                 console.log(match);
+//                 if (match) {const [, key, value] = match; event[key] = value; }
+//             }
+//         }
+//         // return events; 
+//         console.log(events);
+//         results = JSON.stringify(events);
+
+//         sendEvents(results);
+//     };
+//     reader.onerror = function () {
+//         console.log(reader.error);
+//     };
+// };
+
 function parseICS(icsString) {
     let reader = new FileReader();
     reader.readAsText(icsString);
-    let results;
     reader.onload = function () {
-        console.log("results");
         console.log(reader.result);
-
-        // results = JSON.stringify(parseICS(reader.result))
-        const lines = reader.result.split('\n');
+        const lines = reader.result.split("\n");
         const events = [];
         let event;
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
+        lines.map( (line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
+            line = line.trim();
             if (line === 'BEGIN:VEVENT') { event = {}; }
-            else if (line === 'END:VEVENT') { events.push(event); }
+            else if (line === 'END:VEVENT') { event["color"] = "#FFFFFF"; events.push(event); }
             else if (event) {
-                const match = /^([A-Z]+):(.*)$/.exec(line);
-                if (match) { const [, key, value] = match; event[key] = value; }
+                if(line.includes("SUMMARY")){
+                    event["text"] = line.split("SUMMARY:")[1];
+                }else if(line.toLowerCase().includes("dtstart")){
+                    let temp = line.split(":")[1];
+                    if(temp.includes("Z")){
+                        let oldDate = new Date(temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z");
+                        oldDate = new Date(oldDate.toLocaleString("en-US", {timeZone: 'America/Chicago'}));
+                        temp = oldDate.getFullYear() + "-" + ( (oldDate.getMonth() + 1) + "").padStart(2,'0') + "-" + (oldDate.getDate() + "").padStart(2,'0') + "T" + oldDate.toTimeString().substr(0,8);
+                    }else{
+                        temp = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2);
+                    }
+            
+                    event["start"] = temp;
+                }else if(line.toLowerCase().includes("dtend")){
+                    let temp = line.split(":")[1];
+                    if(temp.includes("Z")){
+                        let oldDate = new Date(temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z");
+                        oldDate = new Date(oldDate.toLocaleString("en-US", {timeZone: 'America/Chicago'}));
+                        temp = oldDate.getFullYear() + "-" + ( (oldDate.getMonth() + 1) + "").padStart(2,'0') + "-" + (oldDate.getDate() + "").padStart(2,'0') + "T" + oldDate.toTimeString().substr(0,8);
+                    }else{
+                        temp = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2);
+                    }
+                    event["end"] = temp;
+                }else if(line.toLowerCase().includes("rrule")){
+                    event["rrule"] = line.split(":")[1];
+                }
             }
-        }
-        // return events; 
+        });
         console.log(events);
-        results = JSON.stringify(events);
-
+        let results = JSON.stringify(events);
+        console.log("results");
+        console.log(results);
         sendEvents(results);
     };
     reader.onerror = function () {
@@ -154,7 +211,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         console.log("sending file");
 
         let eve = parseICS(file);
-        console.log(eve);
+        // console.log(eve);
     };
 
     const form = useForm({

@@ -56,7 +56,7 @@ export async function sendEvents(data) {                      // deletes all cur
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
 
-  
+  console.log(data);
 
   const { data: returned_data, data: error1 } = await supabase.from("calendar")
     .delete()

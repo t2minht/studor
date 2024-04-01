@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { DayPilotCalendar } from 'daypilot-pro-react';
-import { MantineProvider, Container, Group, Button, Text, Stack} from "@mantine/core";
+import { DayPilotCalendar, DayPilot } from 'daypilot-pro-react';
+import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker} from "@mantine/core";
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
 const Calendar = ({events, study_sessions, tutoring}) => {
 
-    const calendarRef = useRef();
+    const [calendar, setCalendar] = useState();
 
-    const [config, setConfig] = useState({
-        viewType: "Week",
-        durationBarVisible: false,
-        headerDateFormat:"ddd \n MM/dd/yyyy",
-        // useEventBoxes: "Never",
-    });
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
+    const [value, onChange] = useState("#FFFFFF");
+
+    const [sunday, setWed] = useState(new Date());
 
     const [startDate, setStartDate] = useState(new Date()); // Initial date for the calendar
 
@@ -20,13 +22,29 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         const newStartDate = new Date(startDate);
         newStartDate.setDate(newStartDate.getDate() - 7); // Go back one week
         setStartDate(newStartDate);
+        getWed(newStartDate);
+
     };
 
     const handleNextWeek = () => {
         const newStartDate = new Date(startDate);
         newStartDate.setDate(newStartDate.getDate() + 7); // Go forward one week
         setStartDate(newStartDate);
+        getWed(newStartDate);
     };
+
+    const getWed = (date) =>{
+        const currDate = date.getDay();
+        console.log(currDate);
+        var diff = 3 - currDate;
+        if (diff < 0) {
+          diff += 7;
+        }
+        const wedDate = new Date(date);
+        wedDate.setDate(date.getDate() + diff);
+        console.log(wedDate);
+        setWed(wedDate);
+    }
 
     function getDatesForWeek() {
         const currentDay = startDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
@@ -43,7 +61,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         return datesForWeek;
     }
 
-    function addSession(eventsList, sessions){
+    function addSession(eventsList, sessions, id){
         sessions.map((session) =>{
             // console.log(session.date + "T" + session.start_time);
             // console.log(session.date + "T" + session.end_time);
@@ -58,70 +76,93 @@ const Calendar = ({events, study_sessions, tutoring}) => {
             }
 
             // if( startDate < eventDate && eventDate < newStartDate ){
-                eventsList.push({id: id, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time});
-                setID(id+1);
+                eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time});
             // }
         });
-        return eventsList;
+        return eventsList, id;
     }
 
     const [calendarEvents, setEvents] = useState([]);
-    const [id, setID] = useState(0);
+    // const [id, setID] = useState(0);
 
     useEffect(() => {                               // displays events
         // console.log("events");
         // console.log(events);
         let parser = JSON.parse(events.events);
-        setID(1);
-        // console.log(study_sessions);
+        let id = 1;
+        console.log(parser);
 
         let eventsList = [];
         if (events.events != '[{}]' ){
-            for(let i = 0; i < parser.length; i++){   //adds ics and manually added classes
-                if(parser[i].RRULE != ""){  // recursion rule exists -> ics/class data
-                    let temp = parser[i].DTSTART
-                    let dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
-                    let semesterStartDate = new Date(dateString);
-    
-                    temp = parser[i].RRULE;
+            for(let i = 0; i < parser.length; i++){
+                let event = parser[i];
+                if('rrule' in event){
+
+                    let semesterStartDate = new Date(event.start + ".000");
+
+                    let temp = event.rrule;
                     temp = temp.substr(temp.search("UNTIL") + 6, 16)
-                    dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
-                    let semesterEndDate = new Date(dateString);
-    
+                    let endString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000";
+                    let semesterEndDate = new Date(endString);
+
                     if(startDate > semesterStartDate && startDate < semesterEndDate){
-                        temp = parser[i].DTSTART;
-                        let dtstart = "T" + ( ( Number(temp.substr(9,2) ) - 6 ) + "" ).padStart(2, '0') + ":" + temp.substr(11,2) + ":" + temp.substr(13,3);
-                        temp = parser[i].DTEND;
-                        let dtend = "T" + ( ( Number( temp.substr(9,2) ) - 6 ) + "" ).padStart(2, '0') + ":" + temp.substr(11,2) + ":" + temp.substr(13,3);
-                        temp = parser[i].RRULE;
                         let dates = getDatesForWeek();
-                        temp.substring(temp.search("BYDAY") + 6).split(",").map((day) => {
+                        event.rrule.substring( event.rrule.search("BYDAY") + 6).split(",").map((day) => {
                             let year = dates[day].getFullYear() + "";
                             let month = dates[day].getMonth() + 1 + "";
                             let dy = dates[day].getDate() + "";
                             let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
-                            eventsList.push({id: id, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
-                            setID(id+1);
+
+                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: "#cccccc"});
                         });
-                        
                     }
+
                 }
             }
-        }
-        // addSession(eventsList, study_sessions.hosted);
-        // addSession(eventsList, study_sessions.joined);
-        // addSession(eventsList, tutoring.hosted);
-        // addSession(eventsList, tutoring.joined);
-        // console.log(eventsList);
-        // console.log("SS");
-        // console.log(study_sessions);
-        // console.log("TS");
-        // console.log(tutoring);
-        eventsList = addSession(eventsList, study_sessions);
-        eventsList = addSession(eventsList, tutoring);
-        // console.log(eventsList);
 
-        setEvents(eventsList)
+        }
+        /*
+        // if (events.events != '[{}]' ){
+        //     for(let i = 0; i < parser.length; i++){   //adds ics and manually added classes
+        //         console.log(parser[i]);
+        //         if(parser[i].RRULE != ""){  // recursion rule exists -> ics/class data
+        //             let temp = parser[i].DTSTART
+        //             let dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
+        //             let semesterStartDate = new Date(dateString);
+    
+        //             temp = parser[i].RRULE;
+        //             temp = temp.substr(temp.search("UNTIL") + 6, 16)
+        //             dateString = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z";
+        //             let semesterEndDate = new Date(dateString);
+    
+        //             if(startDate > semesterStartDate && startDate < semesterEndDate){
+        //                 temp = parser[i].DTSTART;
+        //                 let dtstart = "T" + ( ( Number(temp.substr(9,2) ) - 6 ) + "" ).padStart(2, '0') + ":" + temp.substr(11,2) + ":" + temp.substr(13,3);
+        //                 temp = parser[i].DTEND;
+        //                 let dtend = "T" + ( ( Number( temp.substr(9,2) ) - 6 ) + "" ).padStart(2, '0') + ":" + temp.substr(11,2) + ":" + temp.substr(13,3);
+        //                 temp = parser[i].RRULE;
+        //                 let dates = getDatesForWeek();
+        //                 temp.substring(temp.search("BYDAY") + 6).split(",").map((day) => {
+        //                     let year = dates[day].getFullYear() + "";
+        //                     let month = dates[day].getMonth() + 1 + "";
+        //                     let dy = dates[day].getDate() + "";
+        //                     let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
+        //                     eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
+        //                 });
+                        
+        //             }
+        //         }
+        //     }
+        // }
+        // eventsList, id = addSession(eventsList, study_sessions, id);
+        // eventsList, id = addSession(eventsList, tutoring, id);
+        */
+
+        eventsList, id = addSession(eventsList, study_sessions, id);
+        eventsList, id = addSession(eventsList, tutoring, id);
+        console.log(eventsList);
+
+        setEvents(eventsList);
     }, [startDate]);
 
 
@@ -143,6 +184,27 @@ const Calendar = ({events, study_sessions, tutoring}) => {
 
     */
 
+    const [event, setEvent] = useState();
+
+    const form = [
+        {html: "<ColorPicker />" },
+        {name: "Name", id: "name", type: "text"},
+      ];
+
+    const [config, setConfig] = useState({
+        viewType: "Week",
+        durationBarVisible: false,
+        headerDateFormat:"ddd \n MM/dd",
+        eventClickHandling: "Enabled",
+        modal: new DayPilot.Modal({
+
+        }),
+        onEventClick: (args) => {
+            console.log(args);
+            const data = args.e;
+        },
+    });
+
     return (
         <>
             <Stack>
@@ -155,8 +217,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
                     >
                         Previous Week
                     </Button>
-                    {/* Tuong put year change here if possible */}
-                    <Text fw={700} size='xl'>2024</Text> 
+                    <Text fw={700} size='xl'>{monthNames[(new Date(sunday)).getMonth()] + " " + (new Date(sunday)).getFullYear()}</Text> 
                     <Button
                         type='submit'
                         variant="filled"
@@ -167,10 +228,11 @@ const Calendar = ({events, study_sessions, tutoring}) => {
                     </Button>
                 </Group>
                 <DayPilotCalendar
-                {...config} 
+                    {...config} 
                     events={calendarEvents} 
                     startDate = {startDate} 
                     useEventBoxes={"Never"}
+                    controlRef= {setCalendar}
                 />
             </Stack>
         </>
@@ -178,3 +240,20 @@ const Calendar = ({events, study_sessions, tutoring}) => {
 }
 
 export default Calendar;
+
+/*
+                <ColorPicker 
+                    format="hex"
+
+                    value={value}
+                    onChange={onChange}
+                    withPicker={false}
+                    swatchesPerRow={9}
+                    swatches={[
+                        '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
+                        '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
+                        '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
+                        '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
+                    ]}
+                />
+*/
