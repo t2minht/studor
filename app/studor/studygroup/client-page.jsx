@@ -21,6 +21,7 @@ import { useState } from "react";
 import { joinSession } from "@/app/backend/study-session-backend";
 import Calendar from "@/app/ui/calendar";
 import Filter from "@/app/studor/studygroup/filter"
+import { handleSubmit } from "./filter"
 
 export default function ClientPage(data) {
     const [opened, { open, close }] = useDisclosure(false);
@@ -29,6 +30,11 @@ export default function ClientPage(data) {
 
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
     const [update_events, setUpdateEvents] = useState(false);    
+    const [dataFromChild, setDataFromChild] = useState(data.study_sessions);
+
+    function handleDataFromChild(filtered_posts) {
+        setDataFromChild(filtered_posts);
+    }
 
     const joinHandler = async (session) => {
         setUpdateEvents(true);        
@@ -101,7 +107,7 @@ export default function ClientPage(data) {
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
                     <Stack pl={20}>
-                        <Filter departments={data.departments} />
+                        <Filter departments={data.departments} study_sessions={data.study_sessions} sendDataToParent={handleDataFromChild}/>
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
@@ -127,8 +133,8 @@ export default function ClientPage(data) {
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group>
-                                {study_sessions
-                                    .filter((session) => session.current_group_size < session.max_group_size)
+                                {dataFromChild                                    
+                                    .filter((session) => session.current_group_size < session.max_group_size )
                                     .map((session) => (
                                         <Group p={30} key={session.topic} maw={400}>
                                             <Stack>
