@@ -26,7 +26,7 @@ import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
-
+import { useViewportSize } from '@mantine/hooks';
 import Modaltprofile from "@/app/ui/modaltprofile";
 import { addTutorCourses } from "@/app/backend/tutoring-backend";
 
@@ -78,7 +78,7 @@ function parseICS(icsString) {
 };
 
 export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
-
+    const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
 
 
@@ -522,41 +522,78 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                         </Group>
                     </form>
                 </Stack>
-
-                <Group grow>
-                    <Stack mt={50} pl={50}>
-                        <Text ta="center" size="lg" fw={700}>Study Group History</Text>
-                        <ScrollArea h={250}>
-                            <Table stickyHeader striped withTableBorder highlightOnHover>
-                                <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                    <Table.Tr>
-                                        <Table.Th>Topic</Table.Th>
-                                        <Table.Th>Course</Table.Th>
-                                        <Table.Th>Date</Table.Th>
-                                        <Table.Th>Details</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
-                            </Table>
-                        </ScrollArea>
-                    </Stack>
-                    <Stack mt={50} pr={50}>
-                        <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
-                        <ScrollArea h={250}>
-                            <Table stickyHeader striped withTableBorder highlightOnHover>
-                                <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                    <Table.Tr>
-                                        <Table.Th>Topic</Table.Th>
-                                        <Table.Th>Course</Table.Th>
-                                        <Table.Th>Date</Table.Th>
-                                        <Table.Th>Details</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
-                            </Table>
-                        </ScrollArea>
-                    </Stack>
-                </Group>
+                
+                {width > 1000 ? 
+                    <Group grow>
+                        <Stack mt={50} pl={50}>
+                            <Text ta="center" size="lg" fw={700}>Study Group History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                        <Stack mt={50} pr={50}>
+                            <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                    </Group>
+                    :
+                    <>
+                        <Stack mt={50} pl={50} pr={50}>
+                            <Text ta="center" size="lg" fw={700}>Study Group History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                        <Stack mt={50} pl={50} pr={50}>
+                            <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                    </>
+                }
                 <Space h='xl' />
             </MantineProvider>
         </>
