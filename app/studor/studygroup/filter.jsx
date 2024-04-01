@@ -404,8 +404,11 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     form.setFieldValue('endTime', '');
     form.setFieldValue('noiseLevel', 'None');
     form.setFieldValue('department', '');
+    setSelectedDepartment('');
     form.setFieldValue('courseNumber', '');
+    setSelectedCourseNumber('');
     form.setFieldValue('courseSection', '');
+    setSelectedCourseSection('');
   }
 
   return (
