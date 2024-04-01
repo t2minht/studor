@@ -13,6 +13,7 @@ import {
   Button,
   ScrollArea,
   Rating,
+  Paper,
 } from "@mantine/core";
 import {
   IconXboxX,
@@ -86,7 +87,7 @@ export default function ClientPage(data) {
 
   return (
     <MantineProvider>
-      <Center>
+      <Center pl={50} pr={50}>
         <h1>Tutoring</h1>
       </Center>
 
@@ -118,7 +119,7 @@ export default function ClientPage(data) {
         <Grid.Col span="auto" order={{ base: 3 }}>
           <Group miw={200}>
             <ScrollArea h={height - 180}>
-              <Group>
+              <Group pl={50} pr={50}>
 
                 {tutor_sessions
                   .filter((session) => session.current_group_size < session.max_group_size)
@@ -128,45 +129,47 @@ export default function ClientPage(data) {
                     const averageRating = sumOfRatings / ratings.length;
                     session.averageRating = averageRating;
                     return (
-                      <Group p={30} key={session.id}>
-                        <Stack>
-                          <Avatar size={100} src={session.tutor_avatar_url} />
-                        </Stack>
-                        <Stack>
+                      <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.id}>
+                        <Group p={5} pl={10} pr={10}>
                           <Stack>
-                            <Text fw={700} size="xl">
-                              {session.title}
-                            </Text>
-                            <Text mt={-10} fw={700}>
-                              Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
-                            </Text>
-                            <Text mt={-15}>Location: {session.location}</Text>
-                            <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                            <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                            <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size - 1}</Text>
-                            <Group mt={-15}>
-                              <Text>Tutor: {session.users.full_name}</Text>
-                              {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
-                            </Group>
-                            <Group mt={-15}>
-                              {session.averageRating && <Text>Tutor Rating: {session.averageRating}</Text>}
-                              {session.averageRating && <Rating value={session.averageRating} fractions={4} ml={-10} readOnly />}
+                            <Avatar size={100} src={session.tutor_avatar_url} />
+                          </Stack>
+                          <Stack>
+                            <Stack>
+                              <Text fw={700} size="xl">
+                                {session.title}
+                              </Text>
+                              <Text mt={-10} fw={700}>
+                                Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
+                              </Text>
+                              <Text mt={-15}>Location: {session.location}</Text>
+                              <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                              <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                              <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size - 1}</Text>
+                              <Group mt={-15}>
+                                <Text>Tutor: {session.users.full_name}</Text>
+                                {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
+                              </Group>
+                              <Group mt={-15}>
+                                {session.averageRating && <Text>Tutor Rating: {session.averageRating}</Text>}
+                                {session.averageRating && <Rating value={session.averageRating} fractions={4} ml={-10} readOnly />}
+                              </Group>
+                            </Stack>
+                            <Group>
+                              <Modaltutor current={session} />
+                              <Button
+                                variant="filled"
+                                size="sm"
+                                color="#009020"
+                                radius="xl"
+                                onClick={() => joinHandler(session)}
+                              >
+                                Join
+                              </Button>
                             </Group>
                           </Stack>
-                          <Group>
-                            <Modaltutor current={session} />
-                            <Button
-                              variant="filled"
-                              size="sm"
-                              color="#009020"
-                              radius="xl"
-                              onClick={() => joinHandler(session)}
-                            >
-                              Join
-                            </Button>
-                          </Group>
-                        </Stack>
-                      </Group>
+                        </Group>
+                      </Paper>
                     )
                   })}
               </Group>

@@ -95,7 +95,7 @@ export default function ClientPage(data) {
 
     return (
         <MantineProvider>
-            <Center>
+            <Center pl={50} pr={50}>
                 <h1>Study Groups</h1>
             </Center>
 
@@ -132,7 +132,7 @@ export default function ClientPage(data) {
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
                                         <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.topic}>
-                                            <Group p={10} pl={30} pr={30} maw={400}>
+                                            <Group p={5} pl={10} pr={10} maw={400}>
                                                 <Stack>
                                                     <Avatar size={100} src={session.host_avatar_url} />
                                                 </Stack>
