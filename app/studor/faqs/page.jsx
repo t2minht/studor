@@ -1,5 +1,7 @@
 'use client'
-import { Container, Title, Accordion, Center, Space } from '@mantine/core';
+import { Container, Title, Accordion, Center, Space, Image, ScrollArea } from '@mantine/core';
+import uploadScheduleImage from './images/uploadSchedule.png';
+import NextImage from 'next/image';
 
 const uploadSchedule =
   "Go to your Profile page and select the button 'Import Schedule (*.ics)'. This takes in only *.ics files which can be downloaded from Howdy or any other calendar.";
@@ -31,6 +33,8 @@ const joinedSessions =
 const tutorRatings =
   "Go to your Profile page and scroll down until you find the 'Tutoring History' table. Click the 'View' button on the specific session you want to rate. At the very bottom of the popup/modal there should be a 'Rate Tutor' section. Once you click the 'Submit' button, your rating of the tutor will be sent. Note that you will only be able to submit a rating once per session.";
 
+  const uploadImage = ``;
+
 export default function FaqSimple() {
   return (
     <>
@@ -43,6 +47,9 @@ export default function FaqSimple() {
           <Accordion.Item value="upload-schedule">
             <Accordion.Control>How can I upload my schedule?</Accordion.Control>
             <Accordion.Panel>{uploadSchedule}</Accordion.Panel>
+            <Accordion.Panel> 
+              <Image component={NextImage} maw={300} mah={300} src={uploadScheduleImage} alt="My image" />
+            </Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item value="howdy-schedule">
