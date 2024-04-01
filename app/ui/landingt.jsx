@@ -86,7 +86,7 @@ export default function Landingsg(data) {
         <Group pl={50} pr={50}>
           {tutoring_sessions_hosted.map((session) => (
           <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
-            <Group p={5} pl={10} pr={10} maw={400}>
+            <Group p={5} pl={10} pr={10} miw={350} mih={250}>
               <Stack>
                 <Avatar size={100} src={session.tutor_avatar_url} />
               </Stack>
@@ -125,7 +125,7 @@ export default function Landingsg(data) {
           ))}
         </Group>
         <h1>Joined Sessions</h1>
-        <Group pl={50} pr={50}>
+        <Group pl={50} pr={50} miw={350} mih={250}>
           {tutoring_sessions_joined.map((session) => {
             const ratings = session.tutor_ratings.map(ratingObj => ratingObj.rating);
             const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
