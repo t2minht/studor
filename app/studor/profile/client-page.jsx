@@ -163,7 +163,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             }
             const classes = await response.json();
             addTutorCourses(classes);
-
+            clearTranscript();
         } catch (error) {
             console.error('Error fetching data from Flask server:', error);
         }
@@ -176,6 +176,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
 
         let eve = parseICS(file);
         console.log(eve);
+
+        clearSchedule();
     };
 
     const form = useForm({
