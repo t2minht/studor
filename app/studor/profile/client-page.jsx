@@ -404,33 +404,70 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                 <IconAt size={16} />
                                 <Text>{userData.email}</Text>
                             </Group>
-                            <Group justify="center">
-                                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
-                                    {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
-                                </FileButton>
-                                <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
-                                    Upload
-                                </Button>
-                                <Button disabled={!schedule} color="red" onClick={clearSchedule}>
-                                    Reset
-                                </Button>
-                            </Group>
+                            { width > 420 ? 
+                                <Group justify="center">
+                                    <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                        {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                    </FileButton>
+                                    <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                                        Upload
+                                    </Button>
+                                    <Button disabled={!schedule} color="red" onClick={clearSchedule}>
+                                        Reset
+                                    </Button>
+                                </Group>
+                            :
+                                <>
+                                    <Stack align="center">
+                                        <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                            {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                        </FileButton>
+                                    </Stack>
+                                    <Group justify="center">
+                                        <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                                            Upload
+                                        </Button>
+                                        <Button disabled={!schedule} color="red" onClick={clearSchedule}>
+                                            Reset
+                                        </Button>
+                                    </Group>
+                                </>
+                            }
                             {schedule && (
                                 <Text size="sm" mt={-10} ta="center">
                                     Selected file: {schedule.name}
                                 </Text>
                             )}
-                            <Group justify="center">
-                                <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
-                                    {(props) => <Button {...props}>Upload Transcript</Button>}
-                                </FileButton>
-                                <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
-                                    Upload
-                                </Button>
-                                <Button disabled={!transcript} color="red" onClick={clearTranscript}>
-                                    Reset
-                                </Button>
-                            </Group>
+                            { width > 420 ? 
+                                <Group justify="center">
+                                    <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
+                                        {(props) => <Button {...props}>Upload Transcript</Button>}
+                                    </FileButton>
+                                    <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
+                                        Upload
+                                    </Button>
+                                    <Button disabled={!transcript} color="red" onClick={clearTranscript}>
+                                        Reset
+                                    </Button>
+                                </Group>
+                            :
+                                <>
+                                    <Stack align="center">
+                                        <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
+                                            {(props) => <Button {...props}>Upload Transcript</Button>}
+                                        </FileButton>
+                                    </Stack>
+                                    <Group justify="center">
+                                        <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
+                                            Upload
+                                        </Button>
+                                        <Button disabled={!transcript} color="red" onClick={clearTranscript}>
+                                            Reset
+                                        </Button>
+                                    </Group>
+                                </>
+                            }
+                            
                             {transcript && (
                                 <Text size="sm" mt={-10} ta="center">
                                     Selected file: {transcript.name}
