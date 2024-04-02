@@ -12,6 +12,7 @@ import {
     Text,
     Button,
     ScrollArea,
+    Paper,
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -94,7 +95,7 @@ export default function ClientPage(data) {
 
     return (
         <MantineProvider>
-            <Center>
+            <Center pl={50} pr={50}>
                 <h1>Study Groups</h1>
             </Center>
 
@@ -126,42 +127,44 @@ export default function ClientPage(data) {
                 <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
-                            <Group>
+                            <Group pl={50} pr={50}>
                                 {study_sessions
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Group p={30} key={session.topic} maw={400}>
-                                            <Stack>
-                                                <Avatar size={100} src={session.host_avatar_url} />
-                                            </Stack>
-                                            <Stack maw={210}>
+                                        <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.topic}>
+                                            <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                                                 <Stack>
-                                                    <Text fw={700} size="xl">
-                                                        {session.topic}
-                                                    </Text>
-                                                    <Text mt={-10} fw={700}>
-                                                        Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
-                                                    </Text>
-                                                    <Text mt={-15}>Location: {session.location}</Text>
-                                                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                                                    <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                                                    <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
+                                                    <Avatar size={100} src={session.host_avatar_url} />
                                                 </Stack>
-                                                <Group align="center">
-                                                    <Modalview current={session} />
-                                                    {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
-                                                    <Button
-                                                        variant="filled"
-                                                        size="sm"
-                                                        color="#009020"
-                                                        radius="xl"
-                                                        onClick={() => joinHandler(session)}
-                                                    >
-                                                        Join
-                                                    </Button>
-                                                </Group>
-                                            </Stack>
-                                        </Group>
+                                                <Stack maw={210}>
+                                                    <Stack>
+                                                        <Text fw={700} size="xl">
+                                                            {session.topic}
+                                                        </Text>
+                                                        <Text mt={-10} fw={700}>
+                                                            Class: {session.department + ' ' + session.course_number + (session.section ? ' - ' + session.section : '')}
+                                                        </Text>
+                                                        <Text mt={-15}>Location: {session.location}</Text>
+                                                        <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                                                        <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                                                        <Text mt={-15}>Remaining: {session.max_group_size - session.current_group_size} / {session.max_group_size} </Text>
+                                                    </Stack>
+                                                    <Group align="center">
+                                                        <Modalview current={session} />
+                                                        {/* <JoinSessionButton session={session} onClick={() => handleRemoveSession(session)} /> */}
+                                                        <Button
+                                                            variant="filled"
+                                                            size="sm"
+                                                            color="#009020"
+                                                            radius="xl"
+                                                            onClick={() => joinHandler(session)}
+                                                        >
+                                                            Join
+                                                        </Button>
+                                                    </Group>
+                                                </Stack>
+                                            </Group>
+                                        </Paper>
 
 
 

@@ -28,7 +28,13 @@ import Calendar from "@/app/ui/calendar";
 export default function Landing(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
-  const [activeTab, setActiveTab] = useState('sg');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem("activeTab") || "sg";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   // console.log("landing");
   // console.log(data.events);
@@ -49,7 +55,7 @@ export default function Landing(data) {
               <Button
                 variant="filled"
                 component="a"
-                href= {activeTab == 'tutor' ? "/studor/newtutorposting" : "/studor/newstudygroupposting"}
+                href={activeTab == 'tutor' ? "/studor/newtutorposting" : "/studor/newstudygroupposting"}
                 color="#800000"
               >
                 {activeTab == 'tutor' ? 'New Tutor Post' : 'New Study Group Post'}
@@ -79,7 +85,7 @@ export default function Landing(data) {
 
         {checked && (
           <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700} miw={600}>
-            <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
+            <Calendar events={data.events} study_sessions={data.all_study_sessions} tutoring={data.all_tutoring}></Calendar>
           </Grid.Col>
         )}
       </Grid>

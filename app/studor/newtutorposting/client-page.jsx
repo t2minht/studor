@@ -206,7 +206,7 @@ export default function ClientPage(data) {
 
   return (
     <MantineProvider>
-      <Center>
+      <Center pl={50} pr={50}>
         <h1>Create a Tutoring Session</h1>
       </Center>
 
