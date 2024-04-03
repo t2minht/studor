@@ -135,7 +135,7 @@ export default function Landingsg(data) {
             session.averageRating = session.users.tutor_rating;
             return (
               <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
-                <Group p={5} pl={10} pr={10} miw={350} mih={250}>
+                <Group p={5} pl={10} pr={10} miw={350} mih={300}>
                   <Stack>
                     <Avatar size={100} src={session.tutor_avatar_url} />
                   </Stack>
