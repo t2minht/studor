@@ -37,7 +37,9 @@ export default function ClientPage(data) {
   const [checked, setChecked] = useState(true);
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
-
+  function handleDataFromChild(filtered_posts) {
+    setTutorSessions(filtered_posts);
+  }
 
   const joinHandler = async (session) => {
     const joined = await joinSession(data = { session });
@@ -94,7 +96,7 @@ export default function ClientPage(data) {
       <Grid overflow="hidden">
         <Grid.Col span="content">
           <Stack pl={20}>
-            <TutorFilter departments={data.departments} />
+            <TutorFilter departments={data.departments} study_sessions={data.tutor_sessions} sendDataToParent={handleDataFromChild} />
             <Switch
               checked={checked}
               onChange={(event) => setChecked(event.currentTarget.checked)}
