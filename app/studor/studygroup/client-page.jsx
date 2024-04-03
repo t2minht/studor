@@ -124,7 +124,7 @@ export default function ClientPage(data) {
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
                     <Stack pl={20}>
-                        <Filter departments={data.departments} study_sessions={study_sessions} sendDataToParent={handleDataFromChild} />
+                        <Filter departments={data.departments} study_sessions={data.study_sessions} sendDataToParent={handleDataFromChild} />
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
