@@ -129,6 +129,28 @@ export async function insertRatings(studentId, tutorId, sessionId, rating) {
             .select();
     }
 
+    // in users table, update average rating for tutor
+    const { data: tutorRatings, error: tutorRatingsError } = await supabase.from('tutor_ratings')
+        .select('rating')
+        .eq('tutor_id', tutorId)
+
+    if (!tutorRatings) {
+        const { data: returned_data2, error2 } = await supabase.from("users")
+            .update({ tutor_rating: null })
+            .eq('id', tutorId)
+            .select();
+        return
+    } else {
+        const ratings = tutorRatings.map(entry => entry.rating);
+        const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
+        const averageRating = sumOfRatings / ratings.length;
+
+        const { data: returned_data2, error: error2 } = await supabase.from("users")
+            .update({ tutor_rating: averageRating })
+            .eq('id', tutorId)
+            .select();
+
+    }
 }
 
 export async function addTutorCourses(classes) {
@@ -201,7 +223,7 @@ export async function retrieveProfileTutoringSessions() {
 
         const { data, error } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .in('id', participantSessionIds)
             .order('date', { ascending: false })
             .order('end_time', { ascending: false });
@@ -280,7 +302,7 @@ export async function retrieveFutureHostedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('tutor_user_id', user.id)
             .gt('date', currentDate)
             .order('date')
@@ -288,7 +310,7 @@ export async function retrieveFutureHostedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('tutor_user_id', user.id)
             .eq('date', currentDate)
             .gte('end_time', currentTime)
@@ -328,7 +350,7 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .gt('date', currentDate)
             .in('id', participantSessionIds)
             .neq('tutor_user_id', user.id)
@@ -337,7 +359,7 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', participantSessionIds)
@@ -426,7 +448,7 @@ export async function getExistingNotJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .gt('date', currentDate)
             .in('id', notInSessionsArray)
             .order('date')
@@ -435,7 +457,7 @@ export async function getExistingNotJoinedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', notInSessionsArray)
@@ -443,7 +465,7 @@ export async function getExistingNotJoinedSessions() {
             .order('end_time');
 
         const data = todaysData.concat(futureData);
-        console.log(todaysData)
+        console.log("data", data)
 
         return data;
 
@@ -457,12 +479,12 @@ export async function getExistingNotJoinedSessions() {
 export async function deleteSession(id) {
     const supabase = createServerActionClient({ cookies });
 
-    const {data : sessionData} = await supabase.from('tutoring_sessions').select().eq('id', id).single();
+    const { data: sessionData } = await supabase.from('tutoring_sessions').select().eq('id', id).single();
 
     const { data: returned_participants, error: error2 } = await supabase
-    .from('participants_in_tutor_session')
-    .select('users(email)')
-    .eq('tutoring_session_id', id);
+        .from('participants_in_tutor_session')
+        .select('users(email)')
+        .eq('tutoring_session_id', id);
 
     const participants = returned_participants.map(entry => entry.users.email);
     for (const participant of participants) {
