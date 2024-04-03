@@ -81,6 +81,10 @@ export default function ClientPage(data) {
     return formattedDate;
   }
 
+  useEffect(() => {
+    // Update the calendar when the tutoring sessions change
+    setCalendarKey(calendarKey + 1);
+  }, [all_tutoring])
   if (data.tutor_sessions === null) {
     return (
       <Group>
@@ -89,10 +93,6 @@ export default function ClientPage(data) {
     );
   }
 
-  useEffect(() => {
-    // Update the calendar when the tutoring sessions change
-    setCalendarKey(calendarKey + 1);
-  }, [all_tutoring])
 
   return (
     <MantineProvider>
