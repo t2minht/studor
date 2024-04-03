@@ -497,6 +497,7 @@ export async function deleteSession(id) {
 
 export async function leaveSession(data) {
 
+
     const supabase = createServerActionClient({ cookies })
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -504,11 +505,11 @@ export async function leaveSession(data) {
     const { data: returned_participant, data: error } = await supabase.from('participants_in_tutor_session')
         .delete()
         .eq('user_id', user.id)
-        .eq('tutoring_session_id', data.session.id)
+        .eq('tutoring_session_id', data.id)
 
     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
-        .update({ current_group_size: data.session.current_group_size - 1 })
-        .eq('id', data.session.id)
+        .update({ current_group_size: data.current_group_size - 1 })
+        .eq('id', data.id)
 }
 
 export async function updateTutoringSessionData(data) {

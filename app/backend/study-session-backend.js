@@ -65,10 +65,10 @@ function sendEmailOnUpdate(participantEmail, sessionInfo) {
 
 function sendEmailOnDelete(participantEmail, sessionInfo) {
   const msg = {
-      to: participantEmail,
-      from: 'studorcapstone@gmail.com',
-      subject: 'One Of Your Study Sessions Has Been Deleted!',
-      html: `The following study session you joined has been removed on Studor:<br><br>
+    to: participantEmail,
+    from: 'studorcapstone@gmail.com',
+    subject: 'One Of Your Study Sessions Has Been Deleted!',
+    html: `The following study session you joined has been removed on Studor:<br><br>
             <b>Title:</b> ${sessionInfo.title}<br>
             <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
             <b>Department:</b> ${sessionInfo.department}<br>
@@ -82,13 +82,13 @@ function sendEmailOnDelete(participantEmail, sessionInfo) {
   }
 
   sgMail
-      .send(msg)
-      .then(() => {
-          console.log('Email sent')
-      })
-      .catch((error) => {
-          console.error(error.response.body.errors)
-      })
+    .send(msg)
+    .then(() => {
+      console.log('Email sent')
+    })
+    .catch((error) => {
+      console.error(error.response.body.errors)
+    })
 }
 
 
@@ -343,16 +343,16 @@ export async function retrieveExistingJoinedSessions() {
 export async function deleteSession(id) {
   const supabase = createServerActionClient({ cookies });
 
-  const {data : sessionData} = await supabase.from('study_sessions').select().eq('id', id).single();
+  const { data: sessionData } = await supabase.from('study_sessions').select().eq('id', id).single();
 
   const { data: returned_participants, error: error2 } = await supabase
-  .from('participants_in_study_session')
-  .select('users(email)')
-  .eq('study_session_id', id);
+    .from('participants_in_study_session')
+    .select('users(email)')
+    .eq('study_session_id', id);
 
   const participants = returned_participants.map(entry => entry.users.email);
   for (const participant of participants) {
-      sendEmailOnDelete(participant, sessionData);
+    sendEmailOnDelete(participant, sessionData);
   }
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
@@ -397,6 +397,7 @@ export async function joinSession(data) {
 }
 
 export async function leaveSession(data) {
+  console.log(data)
 
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
@@ -405,11 +406,11 @@ export async function leaveSession(data) {
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
     .delete()
     .eq('user_id', user.id)
-    .eq('study_session_id', data.session.id)
+    .eq('study_session_id', data.id)
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
-    .update({ current_group_size: data.session.current_group_size - 1 })
-    .eq('id', data.session.id)
+    .update({ current_group_size: data.current_group_size - 1 })
+    .eq('id', data.id)
 }
 /*
 if I click leave session

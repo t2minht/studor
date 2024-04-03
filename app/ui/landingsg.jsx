@@ -24,15 +24,15 @@ import { leaveSession } from "../backend/study-session-backend";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function Landingsg(data) {
+export default function Landingsg({ study_sessions, sendDataToParent }) {
   const router = useRouter();
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
-  const [study_sessions_hosted, setHostedStudySessions] = useState(data.study_sessions.hosted);
-  const [study_sessions_joined, setJoinedStudySessions] = useState(data.study_sessions.joined);
+  const [study_sessions_hosted, setHostedStudySessions] = useState(study_sessions.hosted);
+  const [study_sessions_joined, setJoinedStudySessions] = useState(study_sessions.joined);
 
-  if (data.study_sessions === null) {
+  if (study_sessions === null) {
     return (
       <Group>
         <Text>Nothing to see here</Text>
@@ -41,9 +41,10 @@ export default function Landingsg(data) {
   }
 
   const leaveHandler = async (session) => {
-    await leaveSession(data = { session });
+    await leaveSession(session);
     const updatedSessions = study_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedStudySessions(updatedSessions);
+    sendDataToParent(session.id);
   }
 
   function convertTo12HourFormat(timeString) {
@@ -77,7 +78,7 @@ export default function Landingsg(data) {
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>
-      <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
+        <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
         <Group pl={50} pr={50}>
           {study_sessions_hosted.map((session) => (
             <Paper shadow="md" radius="xl" p="xl" withBorder key={session.topic}>

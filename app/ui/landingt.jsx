@@ -30,14 +30,14 @@ import { useState } from "react";
 import { leaveSession } from "../backend/tutoring-backend";
 import Link from "next/link";
 
-export default function Landingsg(data) {
+export default function Landingsg({ tutoring, sendDataToParent }) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
-  const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(data.tutoring.hosted);
-  const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(data.tutoring.joined);
+  const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(tutoring.hosted);
+  const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(tutoring.joined);
 
-  if (data.tutoring === null) {
+  if (tutoring === null) {
     return (
       <Group>
         <Text>Nothing to see here</Text>
@@ -46,9 +46,11 @@ export default function Landingsg(data) {
   }
 
   const leaveHandler = async (session) => {
-    await leaveSession(data = { session });
+    await leaveSession(session);
     const updatedSessions = tutoring_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedTutoringSessions(updatedSessions);
+    sendDataToParent(session.id);
+
   }
 
   function convertTo12HourFormat(timeString) {
