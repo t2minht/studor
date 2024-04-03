@@ -26,8 +26,9 @@ import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
-
+import { useViewportSize } from '@mantine/hooks';
 import Modaltprofile from "@/app/ui/modaltprofile";
+import { addTutorCourses } from "@/app/backend/tutoring-backend";
 
 let formValues = {};
 
@@ -134,7 +135,7 @@ function parseICS(icsString) {
 };
 
 export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
-
+    const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
 
 
@@ -159,10 +160,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     ));
 
     const tutoringHistoryRows = tutor_sessions.map((session) => {
-        const ratings = session.tutor_ratings.map(ratingObj => ratingObj.rating);
-        const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
-        const averageRating = sumOfRatings / ratings.length;
-        session.averageRating = averageRating;
+        session.averageRating = session.users.tutor_rating;
         return (
             <Table.Tr key={session.id}>
 
@@ -205,6 +203,26 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         resetSchedule.current?.();
     };
 
+    const uploadTranscript = async (event) => {
+
+        const formData = new FormData();
+        formData.append('pdf', transcript);
+        try {
+            const response = await fetch('https://smmathen.pythonanywhere.com/upload_file', {
+                method: 'POST',
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from Flask server');
+            }
+            const classes = await response.json();
+            addTutorCourses(classes);
+            clearTranscript();
+        } catch (error) {
+            console.error('Error fetching data from Flask server:', error);
+        }
+    };
+
     const uploadSchedule = (event) => {
 
         const file = schedule;
@@ -212,6 +230,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
 
         let eve = parseICS(file);
         // console.log(eve);
+
+        clearSchedule();
     };
 
     const form = useForm({
@@ -438,30 +458,70 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                 <IconAt size={16} />
                                 <Text>{userData.email}</Text>
                             </Group>
-                            <Group justify="center">
-                                <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
-                                    {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
-                                </FileButton>
-                                <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
-                                    Upload
-                                </Button>
-                                <Button disabled={!schedule} color="red" onClick={clearSchedule}>
-                                    Reset
-                                </Button>
-                            </Group>
+                            {width > 420 ?
+                                <Group justify="center">
+                                    <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                        {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                    </FileButton>
+                                    <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                                        Upload
+                                    </Button>
+                                    <Button disabled={!schedule} color="red" onClick={clearSchedule}>
+                                        Reset
+                                    </Button>
+                                </Group>
+                                :
+                                <>
+                                    <Stack align="center">
+                                        <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                            {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+                                        </FileButton>
+                                    </Stack>
+                                    <Group justify="center">
+                                        <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+                                            Upload
+                                        </Button>
+                                        <Button disabled={!schedule} color="red" onClick={clearSchedule}>
+                                            Reset
+                                        </Button>
+                                    </Group>
+                                </>
+                            }
                             {schedule && (
                                 <Text size="sm" mt={-10} ta="center">
                                     Selected file: {schedule.name}
                                 </Text>
                             )}
-                            <Group justify="center">
-                                <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
-                                    {(props) => <Button {...props}>Upload Transcript</Button>}
-                                </FileButton>
-                                <Button disabled={!transcript} color="red" onClick={clearTranscript}>
-                                    Reset
-                                </Button>
-                            </Group>
+                            {width > 420 ?
+                                <Group justify="center">
+                                    <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
+                                        {(props) => <Button {...props}>Upload Transcript</Button>}
+                                    </FileButton>
+                                    <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
+                                        Upload
+                                    </Button>
+                                    <Button disabled={!transcript} color="red" onClick={clearTranscript}>
+                                        Reset
+                                    </Button>
+                                </Group>
+                                :
+                                <>
+                                    <Stack align="center">
+                                        <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
+                                            {(props) => <Button {...props}>Upload Transcript</Button>}
+                                        </FileButton>
+                                    </Stack>
+                                    <Group justify="center">
+                                        <Button disabled={!transcript} color="Green" onClick={uploadTranscript}>
+                                            Upload
+                                        </Button>
+                                        <Button disabled={!transcript} color="red" onClick={clearTranscript}>
+                                            Reset
+                                        </Button>
+                                    </Group>
+                                </>
+                            }
+
                             {transcript && (
                                 <Text size="sm" mt={-10} ta="center">
                                     Selected file: {transcript.name}
@@ -473,121 +533,239 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                 <Stack mt={60} mx={50}>
                     <Text ta="center" size="lg" fw={700}>My Courses</Text>
                     <form onSubmit={handleSubmit}>
-                        <Group grow mt={0}>
-                            <Stack>
-                                <NativeSelect
-                                    label="Department"
-                                    placeholder="Enter Four Letters"
-                                    data={departments.map((department) => ({ value: department, label: department }))}
-                                    maxDropdownHeight={200}
-                                    required
-                                    {...form.getInputProps('department')}
-                                    onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
+                        {width > 720 ?
+                            <Group grow mt={0}>
+                                <Stack>
+                                    <NativeSelect
+                                        label="Department"
+                                        placeholder="Enter Four Letters"
+                                        data={departments.map((department) => ({ value: department, label: department }))}
+                                        maxDropdownHeight={200}
+                                        required
+                                        {...form.getInputProps('department')}
+                                        onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
 
-                                />
-                                <NativeSelect
-                                    label="Course #"
-                                    placeholder="Enter Three Numbers"
-                                    data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
-                                    maxDropdownHeight={200}
-                                    disabled={!selectedDepartment}
-                                    required
-                                    {...form.getInputProps('courseNumber')}
-                                    onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
-                                    value={selectedCourseNumber}
-                                />
-                                <NativeSelect
-                                    label="Course Section"
-                                    placeholder="Enter Three Numbers"
-                                    data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
-                                    maxDropdownHeight={200}
-                                    disabled={!selectedCourseNumber}
-                                    {...form.getInputProps('courseSection')}
-                                />
-                                <Stack align="center">
-                                    <Button
-                                        type='submit'
-                                        mt="md"
-                                        variant="filled"
-                                        color='#800000'
-                                        radius="xl"
-                                    >
-                                        Add Course
-                                    </Button>
+                                    />
+                                    <NativeSelect
+                                        label="Course #"
+                                        placeholder="Enter Three Numbers"
+                                        data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
+                                        maxDropdownHeight={200}
+                                        disabled={!selectedDepartment}
+                                        required
+                                        {...form.getInputProps('courseNumber')}
+                                        onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                                        value={selectedCourseNumber}
+                                    />
+                                    <NativeSelect
+                                        label="Course Section"
+                                        placeholder="Enter Three Numbers"
+                                        data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
+                                        maxDropdownHeight={200}
+                                        disabled={!selectedCourseNumber}
+                                        {...form.getInputProps('courseSection')}
+                                    />
+                                    <Stack align="center">
+                                        <Button
+                                            type='submit'
+                                            mt="md"
+                                            variant="filled"
+                                            color='#800000'
+                                            radius="xl"
+                                        >
+                                            Add Course
+                                        </Button>
+                                    </Stack>
                                 </Stack>
-                            </Stack>
 
-                            <Stack>
-                                <ScrollArea mb={-20} h={225}>
-                                    <Table stickyHeader striped withTableBorder highlightOnHover>
-                                        <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                            <Table.Tr>
-                                                <Table.Th style={{ width: rem(40) }}>
-                                                    <Checkbox
-                                                        onChange={toggleAll}
-                                                        checked={selection.length === data.length}
-                                                        indeterminate={selection.length > 0 && selection.length !== data.length}
-                                                    />
-                                                </Table.Th>
-                                                <Table.Th>Department</Table.Th>
-                                                <Table.Th>Course Number</Table.Th>
-                                                <Table.Th>Section</Table.Th>
-                                            </Table.Tr>
-                                        </Table.Thead>
-                                        <Table.Tbody>{coursesRows}</Table.Tbody>
-                                    </Table>
-                                </ScrollArea>
-                                <Stack align="center">
-                                    <Button
-                                        variant="filled"
-                                        color='#800000'
-                                        mt="md"
-                                        radius="xl"
-                                        disabled={(selection == undefined || selection.length == 0) ? true : false}
-                                        onClick={handleDelete}
-                                    >
-                                        Delete Course
-                                    </Button>
+                                <Stack>
+                                    <ScrollArea mb={-20} h={225}>
+                                        <Table stickyHeader striped withTableBorder highlightOnHover>
+                                            <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                                <Table.Tr>
+                                                    <Table.Th style={{ width: rem(40) }}>
+                                                        <Checkbox
+                                                            onChange={toggleAll}
+                                                            checked={selection.length === data.length}
+                                                            indeterminate={selection.length > 0 && selection.length !== data.length}
+                                                        />
+                                                    </Table.Th>
+                                                    <Table.Th>Department</Table.Th>
+                                                    <Table.Th>Course Number</Table.Th>
+                                                    <Table.Th>Section</Table.Th>
+                                                </Table.Tr>
+                                            </Table.Thead>
+                                            <Table.Tbody>{coursesRows}</Table.Tbody>
+                                        </Table>
+                                    </ScrollArea>
+                                    <Stack align="center">
+                                        <Button
+                                            variant="filled"
+                                            color='#800000'
+                                            mt="md"
+                                            radius="xl"
+                                            disabled={(selection == undefined || selection.length == 0) ? true : false}
+                                            onClick={handleDelete}
+                                        >
+                                            Delete Course
+                                        </Button>
+                                    </Stack>
                                 </Stack>
-                            </Stack>
-                        </Group>
+                            </Group>
+                            :
+                            <>
+                                <Stack>
+                                    <NativeSelect
+                                        label="Department"
+                                        placeholder="Enter Four Letters"
+                                        data={departments.map((department) => ({ value: department, label: department }))}
+                                        maxDropdownHeight={200}
+                                        required
+                                        {...form.getInputProps('department')}
+                                        onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
+
+                                    />
+                                    <NativeSelect
+                                        label="Course #"
+                                        placeholder="Enter Three Numbers"
+                                        data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
+                                        maxDropdownHeight={200}
+                                        disabled={!selectedDepartment}
+                                        required
+                                        {...form.getInputProps('courseNumber')}
+                                        onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
+                                        value={selectedCourseNumber}
+                                    />
+                                    <NativeSelect
+                                        label="Course Section"
+                                        placeholder="Enter Three Numbers"
+                                        data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
+                                        maxDropdownHeight={200}
+                                        disabled={!selectedCourseNumber}
+                                        {...form.getInputProps('courseSection')}
+                                    />
+                                    <Stack align="center">
+                                        <Button
+                                            type='submit'
+                                            mt="md"
+                                            variant="filled"
+                                            color='#800000'
+                                            radius="xl"
+                                        >
+                                            Add Course
+                                        </Button>
+                                    </Stack>
+                                </Stack>
+
+                                <Stack mt={50}>
+                                    <ScrollArea mb={-20} h={225}>
+                                        <Table stickyHeader striped withTableBorder highlightOnHover>
+                                            <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                                <Table.Tr>
+                                                    <Table.Th style={{ width: rem(40) }}>
+                                                        <Checkbox
+                                                            onChange={toggleAll}
+                                                            checked={selection.length === data.length}
+                                                            indeterminate={selection.length > 0 && selection.length !== data.length}
+                                                        />
+                                                    </Table.Th>
+                                                    <Table.Th>Department</Table.Th>
+                                                    <Table.Th>Course Number</Table.Th>
+                                                    <Table.Th>Section</Table.Th>
+                                                </Table.Tr>
+                                            </Table.Thead>
+                                            <Table.Tbody>{coursesRows}</Table.Tbody>
+                                        </Table>
+                                    </ScrollArea>
+                                    <Stack align="center">
+                                        <Button
+                                            variant="filled"
+                                            color='#800000'
+                                            mt="md"
+                                            radius="xl"
+                                            disabled={(selection == undefined || selection.length == 0) ? true : false}
+                                            onClick={handleDelete}
+                                        >
+                                            Delete Course
+                                        </Button>
+                                    </Stack>
+                                </Stack>
+                            </>
+                        }
                     </form>
                 </Stack>
 
-                <Group grow>
-                    <Stack mt={50} pl={50}>
-                        <Text ta="center" size="lg" fw={700}>Study Group History</Text>
-                        <ScrollArea h={250}>
-                            <Table stickyHeader striped withTableBorder highlightOnHover>
-                                <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                    <Table.Tr>
-                                        <Table.Th>Topic</Table.Th>
-                                        <Table.Th>Course</Table.Th>
-                                        <Table.Th>Date</Table.Th>
-                                        <Table.Th>Details</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
-                            </Table>
-                        </ScrollArea>
-                    </Stack>
-                    <Stack mt={50} pr={50}>
-                        <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
-                        <ScrollArea h={250}>
-                            <Table stickyHeader striped withTableBorder highlightOnHover>
-                                <Table.Thead style={{ color: 'white' }} bg='#800000'>
-                                    <Table.Tr>
-                                        <Table.Th>Topic</Table.Th>
-                                        <Table.Th>Course</Table.Th>
-                                        <Table.Th>Date</Table.Th>
-                                        <Table.Th>Details</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
-                            </Table>
-                        </ScrollArea>
-                    </Stack>
-                </Group>
+                {width > 1000 ?
+                    <Group grow>
+                        <Stack mt={50} pl={50}>
+                            <Text ta="center" size="lg" fw={700}>Study Group History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                        <Stack mt={50} pr={50}>
+                            <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                    </Group>
+                    :
+                    <>
+                        <Stack mt={50} pl={50} pr={50}>
+                            <Text ta="center" size="lg" fw={700}>Study Group History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{sessionHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                        <Stack mt={50} pl={50} pr={50}>
+                            <Text ta="center" size="lg" fw={700}>Tutoring History</Text>
+                            <ScrollArea h={250}>
+                                <Table stickyHeader striped withTableBorder highlightOnHover>
+                                    <Table.Thead style={{ color: 'white' }} bg='#800000'>
+                                        <Table.Tr>
+                                            <Table.Th>Topic</Table.Th>
+                                            <Table.Th>Course</Table.Th>
+                                            <Table.Th>Date</Table.Th>
+                                            <Table.Th>Details</Table.Th>
+                                        </Table.Tr>
+                                    </Table.Thead>
+                                    <Table.Tbody>{tutoringHistoryRows}</Table.Tbody>
+                                </Table>
+                            </ScrollArea>
+                        </Stack>
+                    </>
+                }
                 <Space h='xl' />
             </MantineProvider>
         </>

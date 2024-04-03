@@ -103,7 +103,8 @@ export default function Modaltutor(session) {
                 {session.current.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
               </Group>
               <Group mt={-15}>
-                {avgRating && <Text><b>Tutor Rating:</b> {avgRating}</Text>}
+
+                {avgRating ? <Text><b>Tutor Rating:</b> {avgRating}</Text> : <Text> <b>Tutor Rating:</b> No Rating</Text>}
                 {avgRating && <Rating value={avgRating} fractions={4} ml={-10} readOnly />}
               </Group>
             </Stack>

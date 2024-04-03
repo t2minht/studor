@@ -33,23 +33,52 @@ function formatDate(inputDate) {
 }
 
 
-function sendEmail(participantEmail, sessionInfo) {
+function sendEmailOnUpdate(participantEmail, sessionInfo) {
   const msg = {
     to: participantEmail,
     from: 'studorcapstone@gmail.com',
     subject: 'One Of Your Study Sessions Has Been Updated!',
-    text: `The following study session you joined has been updated on Studor:\n\n
-            Topic: ${sessionInfo.title}\n
-            Description: ${sessionInfo.description || 'N/A'}\n
-            Department: ${sessionInfo.department}\n
-            Course Number: ${sessionInfo.courseNumber}\n
-            Section: ${sessionInfo.courseSection || 'N/A'}\n
-            Location: ${sessionInfo.location}\n
-            Date: ${formatDate(sessionInfo.date)}\n
-            Start Time: ${convertTo12HourFormat(sessionInfo.startTime)}\n
-            End Time: ${convertTo12HourFormat(sessionInfo.endTime)}\n
-            Max Group Size: ${sessionInfo.groupSize}\n
-            Noise Level: ${sessionInfo.noiseLevel}\n`
+    html: `The following study session you joined has been updated on Studor:<br><br>
+           <b>Topic:</b> ${sessionInfo.title}<br>
+           <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+           <b>Department:</b> ${sessionInfo.department}<br>
+           <b>Course Number:</b> ${sessionInfo.courseNumber}<br>
+           <b>Section:</b> ${sessionInfo.courseSection || 'N/A'}<br>
+           <b>Location:</b> ${sessionInfo.location}<br>
+           <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+           <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.startTime)}<br>
+           <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.endTime)}<br>
+           <b>Max Group Size:</b> ${sessionInfo.groupSize}<br>
+           <b>Noise Level:</b> ${sessionInfo.noiseLevel}<br>`
+  }
+
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log('Email sent')
+    })
+    .catch((error) => {
+      console.error(error.response.body.errors)
+    })
+}
+
+function sendEmailOnDelete(participantEmail, sessionInfo) {
+  const msg = {
+    to: participantEmail,
+    from: 'studorcapstone@gmail.com',
+    subject: 'One Of Your Study Sessions Has Been Deleted!',
+    html: `The following study session you joined has been removed on Studor:<br><br>
+            <b>Title:</b> ${sessionInfo.title}<br>
+            <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+            <b>Department:</b> ${sessionInfo.department}<br>
+            <b>Course Number:</b> ${sessionInfo.course_number}<br>
+            <b>Section:</b> ${sessionInfo.section || 'N/A'}<br>
+            <b>Location:</b> ${sessionInfo.location}<br>
+            <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+            <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.start_time)}<br>
+            <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.end_time)}<br>
+            <b>Max Group Size:</b> ${sessionInfo.max_group_size}<br>`
   }
 
   sgMail
@@ -61,6 +90,7 @@ function sendEmail(participantEmail, sessionInfo) {
       console.error(error.response.body.errors)
     })
 }
+
 
 function setDifference(setA, setB) {
   const difference = new Set(setA);
@@ -188,7 +218,7 @@ export async function updateStudyGroupSessionData(data) {
 
   const participantEmails = participantsData.map(entry => entry.users.email);
   for (const email of participantEmails) {
-    sendEmail(email, data);
+    sendEmailOnUpdate(email, data);
   }
 }
 /* 
@@ -313,6 +343,18 @@ export async function retrieveExistingJoinedSessions() {
 export async function deleteSession(id) {
   const supabase = createServerActionClient({ cookies });
 
+  const { data: sessionData } = await supabase.from('study_sessions').select().eq('id', id).single();
+
+  const { data: returned_participants, error: error2 } = await supabase
+    .from('participants_in_study_session')
+    .select('users(email)')
+    .eq('study_session_id', id);
+
+  const participants = returned_participants.map(entry => entry.users.email);
+  for (const participant of participants) {
+    sendEmailOnDelete(participant, sessionData);
+  }
+
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
     .delete()
     .eq('id', id)
@@ -355,6 +397,7 @@ export async function joinSession(data) {
 }
 
 export async function leaveSession(data) {
+  console.log(data)
 
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
@@ -363,11 +406,11 @@ export async function leaveSession(data) {
   const { data: returned_participant, data: error } = await supabase.from('participants_in_study_session')
     .delete()
     .eq('user_id', user.id)
-    .eq('study_session_id', data.session.id)
+    .eq('study_session_id', data.id)
 
   const { data: returned_data, data: error1 } = await supabase.from("study_sessions")
-    .update({ current_group_size: data.session.current_group_size - 1 })
-    .eq('id', data.session.id)
+    .update({ current_group_size: data.current_group_size - 1 })
+    .eq('id', data.id)
 }
 /*
 if I click leave session
