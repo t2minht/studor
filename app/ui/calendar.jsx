@@ -212,7 +212,6 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD']){
             textColor = "#FFFFFF";
         }
-        
     }
 
     return (
