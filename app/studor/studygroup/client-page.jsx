@@ -131,10 +131,10 @@ export default function ClientPage(data) {
                     </Stack>
                 </Grid.Col>
 
-                <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
+                <Grid.Col span="auto" order={{ base: 3 }} miw={485}>
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
-                            <Group>
+                            <Group pl={50} pr={50}>
                                 {dataFromChild                                    
                                     .filter((session) => session.current_group_size < session.max_group_size )
                                     .map((session) => (
@@ -145,7 +145,7 @@ export default function ClientPage(data) {
                                                 </Stack>
                                                 <Stack maw={210}>
                                                     <Stack>
-                                                        <Text fw={700} size="xl">
+                                                        <Text fw={700} size="xl" style={{ wordWrap: "break-word" }}>
                                                             {session.topic}
                                                         </Text>
                                                         <Text mt={-10} fw={700}>

@@ -37,9 +37,12 @@ export default function ClientPage(data) {
   const [checked, setChecked] = useState(true);
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
+  function handleDataFromChild(filtered_posts) {
+    setTutorSessions(filtered_posts);
+  }
+
   const [all_tutoring, setAllTutoring] = useState(data.all_tutoring);
   const [calendarKey, setCalendarKey] = useState(0);
-
 
   const joinHandler = async (session) => {
     const joined = await joinSession(data = { session });
@@ -103,7 +106,7 @@ export default function ClientPage(data) {
       <Grid overflow="hidden">
         <Grid.Col span="content">
           <Stack pl={20}>
-            <TutorFilter departments={data.departments} />
+            <TutorFilter departments={data.departments} study_sessions={data.tutor_sessions} sendDataToParent={handleDataFromChild} />
             <Switch
               checked={checked}
               onChange={(event) => setChecked(event.currentTarget.checked)}
@@ -125,7 +128,7 @@ export default function ClientPage(data) {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span="auto" order={{ base: 3 }}>
+        <Grid.Col span="auto" order={{ base: 3 }} miw={485}>
           <Group miw={200}>
             <ScrollArea h={height - 180}>
               <Group pl={50} pr={50}>
@@ -143,7 +146,7 @@ export default function ClientPage(data) {
                           </Stack>
                           <Stack maw={210}>
                             <Stack>
-                              <Text fw={700} size="xl">
+                              <Text fw={700} size="xl" style={{ wordWrap: "break-word" }}>
                                 {session.title}
                               </Text>
                               <Text mt={-10} fw={700}>
