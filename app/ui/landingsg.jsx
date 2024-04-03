@@ -13,6 +13,7 @@ import {
   Button,
   ScrollArea,
   Paper,
+  Title,
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -76,11 +77,11 @@ export default function Landingsg(data) {
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>
-        <h1>Your Posts</h1>
+      <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
         <Group pl={50} pr={50}>
           {study_sessions_hosted.map((session) => (
             <Paper shadow="md" radius="xl" p="xl" withBorder key={session.topic}>
-              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
+              <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={250}>
                 <Stack>
                   <Avatar size={100} src={session.host_avatar_url} />
                 </Stack>
@@ -120,7 +121,7 @@ export default function Landingsg(data) {
             </Paper>
           ))}
         </Group>
-        <h1>Joined Sessions</h1>
+        <Title order={1} pl={50} pr={50} pt={40} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
           {study_sessions_joined.map((session) => (
             <Paper shadow="md" radius="xl" p="xl" withBorder key={session.topic}>
