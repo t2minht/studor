@@ -1,5 +1,5 @@
 'use client'
-import { Container, Title, Accordion, Center, Space, Image, ScrollArea } from '@mantine/core';
+import { Container, Accordion, Center, Space, Image } from '@mantine/core';
 import howdyScheduleImage from './images/howdySchedule.png';
 import uploadScheduleImage from './images/uploadSchedule.png';
 import uploadTranscriptImage1 from './images/uploadTranscript1.png';

@@ -13,6 +13,7 @@ import {
   Button,
   ScrollArea,
   Paper,
+  Title,
 } from "@mantine/core";
 import {
   IconXboxX,
@@ -82,58 +83,56 @@ export default function Landingsg(data) {
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>
-        <h1>Your Posts</h1>
+        {/* <h1>Your Posts</h1> */}
+        <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
         <Group pl={50} pr={50}>
           {tutoring_sessions_hosted.map((session) => (
-          <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
-            <Group p={5} pl={10} pr={10} miw={350} mih={250}>
-              <Stack>
-                <Avatar size={100} src={session.tutor_avatar_url} />
-              </Stack>
-              <Stack maw={210}>
+            <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
+              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                 <Stack>
-                  <Text fw={700} size="xl">
-                    {session.title}
-                  </Text>
-                  <Text mt={-10} fw={700}>
-                    Class: {" "}
-                    {session.department +
-                      " " +
-                      session.course_number +
-                      (session.section ? " - " + session.section : "")}{" "}
-                  </Text>
-                  <Text mt={-15}>Location: {session.location}</Text>
-                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                  <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                  <Text mt={-15}>
-                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size - 1}{" "}
-                  </Text>
+                  <Avatar size={100} src={session.tutor_avatar_url} />
                 </Stack>
-                <Group>
-                  <Modaltutor current={session} />
-                  <Link
-                    href={{
-                      pathname: "/studor/updatetutorposting",
-                      query: session
-                    }}
-                  ><Button color="yellow" radius="xl">Edit</Button></Link>
-                </Group>
-              </Stack>
-            </Group>
+                <Stack maw={210}>
+                  <Stack>
+                    <Text fw={700} size="xl">
+                      {session.title}
+                    </Text>
+                    <Text mt={-10} fw={700}>
+                      Class: {" "}
+                      {session.department +
+                        " " +
+                        session.course_number +
+                        (session.section ? " - " + session.section : "")}{" "}
+                    </Text>
+                    <Text mt={-15}>Location: {session.location}</Text>
+                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                    <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                    <Text mt={-15}>
+                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
+                      {session.max_group_size - 1}{" "}
+                    </Text>
+                  </Stack>
+                  <Group>
+                    <Modaltutor current={session} />
+                    <Link
+                      href={{
+                        pathname: "/studor/updatetutorposting",
+                        query: session
+                      }}
+                    ><Button color="yellow" radius="xl">Edit</Button></Link>
+                  </Group>
+                </Stack>
+              </Group>
             </Paper>
           ))}
         </Group>
-        <h1>Joined Sessions</h1>
+        <Title order={1} pl={50} pr={50} pt={40} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
           {tutoring_sessions_joined.map((session) => {
-            const ratings = session.tutor_ratings.map(ratingObj => ratingObj.rating);
-            const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
-            const averageRating = sumOfRatings / ratings.length;
-            session.averageRating = averageRating;
+            session.averageRating = session.users.tutor_rating;
             return (
               <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
-                <Group p={5} pl={10} pr={10} miw={350} mih={250}>
+                <Group p={5} pl={10} pr={10} miw={350} mih={300}>
                   <Stack>
                     <Avatar size={100} src={session.tutor_avatar_url} />
                   </Stack>

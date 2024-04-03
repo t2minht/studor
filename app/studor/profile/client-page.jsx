@@ -103,10 +103,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     ));
 
     const tutoringHistoryRows = tutor_sessions.map((session) => {
-        const ratings = session.tutor_ratings.map(ratingObj => ratingObj.rating);
-        const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
-        const averageRating = sumOfRatings / ratings.length;
-        session.averageRating = averageRating;
+        session.averageRating = session.users.tutor_rating;
         return (
             <Table.Tr key={session.id}>
 
@@ -404,7 +401,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                 <IconAt size={16} />
                                 <Text>{userData.email}</Text>
                             </Group>
-                            { width > 420 ? 
+                            {width > 420 ?
                                 <Group justify="center">
                                     <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
                                         {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
@@ -416,7 +413,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                         Reset
                                     </Button>
                                 </Group>
-                            :
+                                :
                                 <>
                                     <Stack align="center">
                                         <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
@@ -438,7 +435,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                     Selected file: {schedule.name}
                                 </Text>
                             )}
-                            { width > 420 ? 
+                            {width > 420 ?
                                 <Group justify="center">
                                     <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
                                         {(props) => <Button {...props}>Upload Transcript</Button>}
@@ -450,7 +447,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                         Reset
                                     </Button>
                                 </Group>
-                            :
+                                :
                                 <>
                                     <Stack align="center">
                                         <FileButton color="violet" leftSection={<IconUpload size={16} />} resetRef={resetTranscript} onChange={setTranscript} accept="application/pdf">
@@ -467,7 +464,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                     </Group>
                                 </>
                             }
-                            
+
                             {transcript && (
                                 <Text size="sm" mt={-10} ta="center">
                                     Selected file: {transcript.name}
@@ -479,7 +476,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                 <Stack mt={60} mx={50}>
                     <Text ta="center" size="lg" fw={700}>My Courses</Text>
                     <form onSubmit={handleSubmit}>
-                        {width > 720 ? 
+                        {width > 720 ?
                             <Group grow mt={0}>
                                 <Stack>
                                     <NativeSelect
@@ -640,8 +637,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                         }
                     </form>
                 </Stack>
-                
-                {width > 1000 ? 
+
+                {width > 1000 ?
                     <Group grow>
                         <Stack mt={50} pl={50}>
                             <Text ta="center" size="lg" fw={700}>Study Group History</Text>
