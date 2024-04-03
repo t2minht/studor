@@ -32,6 +32,27 @@ export default function Landing(data) {
     return localStorage.getItem("activeTab") || "sg";
   });
 
+  const [study_sessions, setStudySessions] = useState(data.study_sessions);
+  const [tutoring, setTutoring] = useState(data.tutoring);
+  const [calendarKey, setCalendarKey] = useState(0);
+  const [allStudySessions, setAllStudySessions] = useState(data.all_study_sessions);
+  const [allTutoringSessions, setAllTutoringSessions] = useState(data.all_tutoring);
+
+  function handleStudySessionsFromChild(data) {
+    setCalendarKey(calendarKey + 1);
+    const updatedAllStudySessions = allStudySessions.filter((item) => item.id !== data);
+    console.log("Updated all study sessions: ", updatedAllStudySessions);
+    setAllStudySessions(updatedAllStudySessions);
+  }
+
+  function handleTutoringSessionsFromChild(data) {
+    setCalendarKey(calendarKey + 1);
+    // filter out the session that was left
+    const updatedAllTutoringSessions = allTutoringSessions.filter((item) => item.id !== data);
+    setAllTutoringSessions(updatedAllTutoringSessions);
+
+  }
+
   useEffect(() => {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
@@ -75,17 +96,17 @@ export default function Landing(data) {
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="sg" pl={10}>
-              <Landingsg study_sessions={data.study_sessions}></Landingsg>
+              <Landingsg study_sessions={data.study_sessions} sendDataToParent={handleStudySessionsFromChild}></Landingsg>
             </Tabs.Panel>
             <Tabs.Panel value="tutor">
-              <Landingt tutoring={data.tutoring}></Landingt>
+              <Landingt tutoring={data.tutoring} sendDataToParent={handleTutoringSessionsFromChild}></Landingt>
             </Tabs.Panel>
           </Tabs>
         </Grid.Col>
 
         {checked && (
           <Grid.Col span="content" order={{ base: 2 }} mt={30} maw={700} miw={600}>
-            <Calendar events={data.events} study_sessions={data.all_study_sessions} tutoring={data.all_tutoring}></Calendar>
+            <Calendar key={calendarKey} events={data.events} study_sessions={allStudySessions} tutoring={allTutoringSessions}></Calendar>
           </Grid.Col>
         )}
       </Grid>

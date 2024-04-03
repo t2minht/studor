@@ -19,7 +19,7 @@ import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { joinSession } from "@/app/backend/study-session-backend";
 import Calendar from "@/app/ui/calendar";
 import Filter from "@/app/studor/studygroup/filter"
@@ -31,21 +31,30 @@ export default function ClientPage(data) {
     const [checked, setChecked] = useState(true);
 
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
-    const [update_events, setUpdateEvents] = useState(false);    
+    const [update_events, setUpdateEvents] = useState(false);
     const [dataFromChild, setDataFromChild] = useState(data.study_sessions);
+
+    const [calendarKey, setCalendarKey] = useState(0);
+    const [all_study_sessions, setAllStudySessions] = useState(data.all_study_sessions);
+
 
     function handleDataFromChild(filtered_posts) {
         setDataFromChild(filtered_posts);
     }
 
     const joinHandler = async (session) => {
-        setUpdateEvents(true);        
+        setUpdateEvents(true);
         const joined = await joinSession(data = { session });
         if (!joined) {
             alert("Study session is currently full, sorry!")
         } else {
             const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
+            console.log('updatedSessions')
             setStudySessions(updatedSessions);
+            setDataFromChild(updatedSessions);
+
+            const updatedAllStudySessions = [...all_study_sessions, session];
+            setAllStudySessions(updatedAllStudySessions);
         }
         setUpdateEvents(false);
 
@@ -60,6 +69,11 @@ export default function ClientPage(data) {
         // // Update the state with the filtered sessions
         // setStudySessions(updatedSessions);
     }
+
+    useEffect(() => {
+        // Update the calendar key to force re-render when tutoring sessions change
+        setCalendarKey(calendarKey + 1);
+    }, [all_study_sessions]);
 
     if (study_sessions === null) {
         return (
@@ -100,6 +114,7 @@ export default function ClientPage(data) {
         return formattedDate;
     }
 
+
     return (
         <MantineProvider>
             <Center pl={50} pr={50}>
@@ -109,7 +124,7 @@ export default function ClientPage(data) {
             <Grid overflow="hidden">
                 <Grid.Col span="content" mt={30} mr={70}>
                     <Stack pl={20}>
-                        <Filter departments={data.departments} study_sessions={data.study_sessions} sendDataToParent={handleDataFromChild}/>
+                        <Filter departments={data.departments} study_sessions={data.study_sessions} sendDataToParent={handleDataFromChild} />
                         <Switch
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
@@ -135,8 +150,8 @@ export default function ClientPage(data) {
                     <Group miw={200}>
                         <ScrollArea h={height - 160}>
                             <Group pl={50} pr={50}>
-                                {dataFromChild                                    
-                                    .filter((session) => session.current_group_size < session.max_group_size )
+                                {dataFromChild
+                                    .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
                                         <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.topic}>
                                             <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
@@ -184,7 +199,7 @@ export default function ClientPage(data) {
 
                 {checked && (
                     <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
-                        <Calendar events = {data.events} study_sessions={data.all_study_sessions} tutoring = {data.all_tutoring}></Calendar>
+                        <Calendar key={calendarKey} events={data.events} study_sessions={all_study_sessions} tutoring={data.all_tutoring}></Calendar>
                     </Grid.Col>
                 )}
             </Grid>

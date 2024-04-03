@@ -30,14 +30,14 @@ import { useState } from "react";
 import { leaveSession } from "../backend/tutoring-backend";
 import Link from "next/link";
 
-export default function Landingsg(data) {
+export default function Landingsg({ tutoring, sendDataToParent }) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
 
-  const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(data.tutoring.hosted);
-  const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(data.tutoring.joined);
+  const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(tutoring.hosted);
+  const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(tutoring.joined);
 
-  if (data.tutoring === null) {
+  if (tutoring === null) {
     return (
       <Group>
         <Text>Nothing to see here</Text>
@@ -46,9 +46,11 @@ export default function Landingsg(data) {
   }
 
   const leaveHandler = async (session) => {
-    await leaveSession(data = { session });
+    await leaveSession(session);
     const updatedSessions = tutoring_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedTutoringSessions(updatedSessions);
+    sendDataToParent(session.id);
+
   }
 
   function convertTo12HourFormat(timeString) {
@@ -86,45 +88,48 @@ export default function Landingsg(data) {
         {/* <h1>Your Posts</h1> */}
         <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
         <Group pl={50} pr={50}>
-          {tutoring_sessions_hosted.map((session) => (
-            <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
-              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
-                <Stack>
-                  <Avatar size={100} src={session.tutor_avatar_url} />
-                </Stack>
-                <Stack maw={210}>
+          {tutoring_sessions_hosted.map((session) => {
+            session.averageRating = session.users.tutor_rating;
+            return (
+              <Paper shadow="md" radius="xl" p="xl" withBorder key={session.title}>
+                <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                   <Stack>
-                    <Text fw={700} size="xl">
-                      {session.title}
-                    </Text>
-                    <Text mt={-10} fw={700}>
-                      Class: {" "}
-                      {session.department +
-                        " " +
-                        session.course_number +
-                        (session.section ? " - " + session.section : "")}{" "}
-                    </Text>
-                    <Text mt={-15}>Location: {session.location}</Text>
-                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                    <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                    <Text mt={-15}>
-                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                      {session.max_group_size - 1}{" "}
-                    </Text>
+                    <Avatar size={100} src={session.tutor_avatar_url} />
                   </Stack>
-                  <Group>
-                    <Modaltutor current={session} />
-                    <Link
-                      href={{
-                        pathname: "/studor/updatetutorposting",
-                        query: session
-                      }}
-                    ><Button color="yellow" radius="xl">Edit</Button></Link>
-                  </Group>
-                </Stack>
-              </Group>
-            </Paper>
-          ))}
+                  <Stack maw={210}>
+                    <Stack>
+                      <Text fw={700} size="xl">
+                        {session.title}
+                      </Text>
+                      <Text mt={-10} fw={700}>
+                        Class: {" "}
+                        {session.department +
+                          " " +
+                          session.course_number +
+                          (session.section ? " - " + session.section : "")}{" "}
+                      </Text>
+                      <Text mt={-15}>Location: {session.location}</Text>
+                      <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                      <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
+                      <Text mt={-15}>
+                        Remaining: {session.max_group_size - session.current_group_size} /{" "}
+                        {session.max_group_size - 1}{" "}
+                      </Text>
+                    </Stack>
+                    <Group>
+                      <Modaltutor current={session} />
+                      <Link
+                        href={{
+                          pathname: "/studor/updatetutorposting",
+                          query: session
+                        }}
+                      ><Button color="yellow" radius="xl">Edit</Button></Link>
+                    </Group>
+                  </Stack>
+                </Group>
+              </Paper>
+            )
+          })}
         </Group>
         <Title order={1} pl={50} pr={50} pt={40} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
