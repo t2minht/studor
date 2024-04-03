@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DayPilotCalendar, DayPilot } from 'daypilot-pro-react';
-import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker} from "@mantine/core";
+import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal} from "@mantine/core";
+import { useDisclosure } from '@mantine/hooks';
 import { retrieveUserEvents } from '../backend/calendar-backend';
 
 const Calendar = ({events, study_sessions, tutoring}) => {
@@ -11,8 +12,6 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
       ];
-
-    const [value, onChange] = useState("#FFFFFF");
 
     const [sunday, setWed] = useState(new Date());
 
@@ -61,7 +60,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         return datesForWeek;
     }
 
-    function addSession(eventsList, sessions, id){
+    function addSession(eventsList, sessions, id, event_tag, color){
         sessions.map((session) =>{
             // console.log(session.date + "T" + session.start_time);
             // console.log(session.date + "T" + session.end_time);
@@ -76,7 +75,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
             }
 
             // if( startDate < eventDate && eventDate < newStartDate ){
-                eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time});
+                eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time, tags: event_tag, backColor: color});
             // }
         });
         return eventsList, id;
@@ -113,7 +112,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
                             let dy = dates[day].getDate() + "";
                             let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
 
-                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: "#cccccc"});
+                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: "#cccccc", tags: "Class"});
                         });
                     }
 
@@ -158,8 +157,8 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         // eventsList, id = addSession(eventsList, tutoring, id);
         */
 
-        eventsList, id = addSession(eventsList, study_sessions, id);
-        eventsList, id = addSession(eventsList, tutoring, id);
+        eventsList, id = addSession(eventsList, study_sessions, id, "Study Session", "#339af0");
+        eventsList, id = addSession(eventsList, tutoring, id, "Tutoring", "#078787");
         console.log(eventsList);
 
         setEvents(eventsList);
@@ -184,26 +183,37 @@ const Calendar = ({events, study_sessions, tutoring}) => {
 
     */
 
-    const [event, setEvent] = useState();
-
-    const form = [
-        {html: "<ColorPicker />" },
-        {name: "Name", id: "name", type: "text"},
-      ];
+    const [event, setEvent] = useState({event:"", id: 0});
 
     const [config, setConfig] = useState({
         viewType: "Week",
         durationBarVisible: false,
         headerDateFormat:"ddd \n MM/dd",
         eventClickHandling: "Enabled",
-        modal: new DayPilot.Modal({
-
-        }),
         onEventClick: (args) => {
-            console.log(args);
-            const data = args.e;
+            console.log(args.e);
+            console.log(args.e.data.tags);
+            if(args.e.data.tags == "Class"){
+                handlers.open();
+                setEvent({event: args.e.data.text, id: args.e.data.id});
+
+            }
         },
     });
+
+
+    const [opened, handlers] = useDisclosure(false);
+
+    const [value, onChange] = useState("#FFFFFF");
+
+    function colorChoice(color){
+        let textColor = "#000000";
+        if(color in ['#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
+        '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD']){
+            textColor = "#FFFFFF";
+        }
+        
+    }
 
     return (
         <>
@@ -227,6 +237,25 @@ const Calendar = ({events, study_sessions, tutoring}) => {
                         Next Week
                     </Button>
                 </Group>
+                <Modal opened={opened} onClose={() => handlers.close()} title={event.event}>
+                    <Stack align='center'>
+                        <Text>Select a color</Text>
+                        <ColorPicker 
+                            format="hex"
+                            
+                            value={value}
+                            onChange={(color) => colorChoice(color)}
+                            withPicker={false}
+                            swatchesPerRow={9}
+                            swatches={[
+                                '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
+                                '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
+                                '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
+                                '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
+                            ]}
+                        />
+                    </Stack>
+                </Modal>
                 <DayPilotCalendar
                     {...config} 
                     events={calendarEvents} 
@@ -240,20 +269,3 @@ const Calendar = ({events, study_sessions, tutoring}) => {
 }
 
 export default Calendar;
-
-/*
-                <ColorPicker 
-                    format="hex"
-
-                    value={value}
-                    onChange={onChange}
-                    withPicker={false}
-                    swatchesPerRow={9}
-                    swatches={[
-                        '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
-                        '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
-                        '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
-                        '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
-                    ]}
-                />
-*/
