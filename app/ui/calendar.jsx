@@ -207,15 +207,21 @@ const Calendar = ({events, study_sessions, tutoring}) => {
     const [value, onChange] = useState("#FFFFFF");
 
     function colorChoice(color){
-        let textColor = "#000000";
-        if(color in ['#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
-        '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD']){
-            textColor = "#FFFFFF";
+        let textColor = '#FFFFFF';
+        console.log(color);
+        let lightColors = ['#FFFFFF', '#FFFF00', '#00FF00', '#00FFFF','#CCCCCC', '#F9CB9C', '#FFE599', '#D5A6BD'];
+        console.log(lightColors.includes(color));
+        
+        if(lightColors.includes(color)){
+            console.log("changing color");
+            textColor = "#000000";
         }
         console.log(calendarEvents);
+        console.log(JSON.parse(events.events));
         for(let i = 0; i < calendarEvents.length; i++){
             if(calendarEvents[i].text == event.event){
                 calendarEvents[i].backColor = color;
+                calendarEvents[i].fontColor = textColor;
             }
         }
         calendarRef.current.control.update({startDate, events: calendarEvents});
