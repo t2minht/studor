@@ -4,7 +4,7 @@ import howdyScheduleImage from './images/howdySchedule.png';
 import uploadScheduleImage from './images/uploadSchedule.png';
 import uploadTranscriptImage1 from './images/uploadTranscript1.png';
 import uploadTranscriptImage2 from './images/uploadTranscript2.png';
-import uploadSessionHistoryImage from './images/SessionHistory.png'
+import uploadSessionHistoryImage from './images/sessionHistory.png'
 import uploadVerifiedTutorImage from './images/verifiedTutor.png'
 import uploadNonverifiedTutorImage from './images/nonverifiedTutor.png'
 import uploadTutorRatingsImage from './images/tutorRatings.png'
