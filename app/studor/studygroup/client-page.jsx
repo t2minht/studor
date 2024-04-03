@@ -13,6 +13,7 @@ import {
     Button,
     ScrollArea,
     Paper,
+    Space,
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -132,7 +133,7 @@ export default function ClientPage(data) {
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
                                         <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.topic}>
-                                            <Group p={5} pl={10} pr={10} miw={350} mih={250}>
+                                            <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={250}>
                                                 <Stack>
                                                     <Avatar size={100} src={session.host_avatar_url} />
                                                 </Stack>
@@ -181,6 +182,7 @@ export default function ClientPage(data) {
                     </Grid.Col>
                 )}
             </Grid>
+            <Space h="md" />
         </MantineProvider>
     );
 }
