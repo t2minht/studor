@@ -25,6 +25,7 @@ export default function Page(data) {
   const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
+  console.log(searchParams.get('date'));
 
   useEffect(() => {
     const getSectionsInitial = async () => {
@@ -82,7 +83,7 @@ export default function Page(data) {
     return date;
   }
 
-  var date = new Date(searchParams.get('date'));
+  var date = new Date((searchParams.get('date') + "T00:00:00").replace(/-/g, '/').replace(/T.+/, ''));
 
   var description_details = searchParams.get('description') || '';
   var fix_start_time = searchParams.get('start_time').slice(0, 5);
@@ -101,7 +102,7 @@ export default function Page(data) {
   const form = useForm({
     validateInputOnChange: true,
 
-    initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date.addDays(1), startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
+    initialValues: { id: searchParams.get('id'), title: searchParams.get('topic'), description: description_details, department: searchParams.get('department'), courseNumber: searchParams.get('course_number'), courseSection: fix_section, location: searchParams.get('location'), groupSize: Number(searchParams.get('max_group_size')), date: date, startTime: fix_start_time, endTime: fix_end_time, noiseLevel: searchParams.get('noise_level') },
 
     validate: {
       title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
@@ -170,6 +171,7 @@ export default function Page(data) {
     form.values.endTime = form.values.endTime + ':00';
 
     formValues = form.values;
+    console.log(form.values);
     updateStudyGroupSessionData(formValues);
 
     notifications.show({
@@ -184,7 +186,7 @@ export default function Page(data) {
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';
-    }, 5000);
+    }, 0);
   };
 
 
@@ -258,7 +260,7 @@ export default function Page(data) {
 
   return (
     <MantineProvider>
-      <Center>
+      <Center pl={50} pr={50}>
         <h1>Update a Study Group Session</h1>
       </Center>
 

@@ -1,4 +1,4 @@
-import { ActionIcon, Autocomplete, Button, Center, Checkbox, Drawer, Group, NativeSelect, NumberInput, SegmentedControl, Stack, Text, rem } from "@mantine/core";
+import { ActionIcon, Autocomplete, Button, Center, Checkbox, Drawer, Group, NativeSelect, NumberInput, Rating, SegmentedControl, Stack, Text, rem } from "@mantine/core";
 import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -18,7 +18,7 @@ const courseSectionData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
 
-export default function Filter({ departments, study_sessions, sendDataToParent  }) {
+export default function TutorFilter({ departments }) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -27,7 +27,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
   const [coursesList, setCoursesList] = useState([]);
-  const [filtered_posts, setData] = useState("");
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,7 +121,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', noiseLevel: 'None' },
+    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', tutorRating: 0, tutorVerified: false},
 
     validate: {
       department: (value, allValues) => allValues.department && ((allValues.department.length !== 4 || !(/^[a-zA-Z]+$/.test(allValues.department))) ? 'Invalid Department' : null),
@@ -131,7 +131,6 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
       ),
       minGroupSize: (value, allValues) => allValues.minGroupSize && ((allValues.minGroupSize >= 2 && allValues.minGroupSize <= 20) ? null : 'Invalid Group Size'),
       maxGroupSize: (value, allValues) => allValues.maxGroupSize && ((allValues.maxGroupSize >= 2 && allValues.maxGroupSize <= 20 && allValues.maxGroupSize >= allValues.minGroupSize) ? null : 'Invalid Group Size'),
-      noiseLevel: (value) => ((value > 5 || value < 1 || value != '') ? 'Invalid Noise Level' : null),
       startDate: (value) => {
 
         const currentDate = new Date();
@@ -163,203 +162,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     event.preventDefault(); // Prevent default form submission
 
     // put code for applying filters here
-    // save all values
-    // parse all posts and save only ones that fit filter:
-    // for each post:
-      // if match filter 1
-        // add
-      // else if match filter 2
-        // add
 
-      //   let study_sessions = [
-      //     {
-      //         "id": "fa7f2396-b4b1-4f2f-851a-5f1b08cb3f5c",
-      //         "topic": "testing for tuong (watching date 2)",
-      //         "department": "CSCE",
-      //         "course_number": 121,
-      //         "section": 500,
-      //         "location": "MSC",
-      //         "date": "2024-04-30",
-      //         "start_time": "10:00:00",
-      //         "end_time": "12:00:00",
-      //         "current_group_size": 2,
-      //         "max_group_size": 20,
-      //         "noise_level": 5,
-      //         "created_at": "2024-03-23T23:48:52.378972+00:00",
-      //         "host_user_id": "d1357b21-63aa-46a1-90aa-6a416b2d99ef",
-      //         "description": "",
-      //         "host_avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocIlCg9VrRfewRNVOoL11-jJkC1l08-jX6n_f70PcrE6sQ=s96-c"
-      //     },
-      //     {
-      //         "id": "2c4c48cc-9642-47a7-b372-1c5cd545c09b",
-      //         "topic": "testing for tuong PART 2",
-      //         "department": "CLEN",
-      //         "course_number": 181,
-      //         "section": 0,
-      //         "location": "Zach",
-      //         "date": "2024-04-31",
-      //         "start_time": "15:00:00",
-      //         "end_time": "17:00:00",
-      //         "current_group_size": 2,
-      //         "max_group_size": 6,
-      //         "noise_level": 1,
-      //         "created_at": "2024-03-23T23:49:43.852324+00:00",
-      //         "host_user_id": "d1357b21-63aa-46a1-90aa-6a416b2d99ef",
-      //         "description": "",
-      //         "host_avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocIlCg9VrRfewRNVOoL11-jJkC1l08-jX6n_f70PcrE6sQ=s96-c"
-      //     },
-      //     {
-      //         "id": "e6e91a2d-702b-4aa5-a7e6-e2841a90fe83",
-      //         "topic": "testing filtering 2",
-      //         "department": "CSCE",
-      //         "course_number": 110,
-      //         "section": 0,
-      //         "location": "MDC",
-      //         "date": "2024-04-03",
-      //         "start_time": "10:00:00",
-      //         "end_time": "12:00:00",
-      //         "current_group_size": 1,
-      //         "max_group_size": 7,
-      //         "noise_level": 3,
-      //         "created_at": "2024-03-25T15:54:47.625744+00:00",
-      //         "host_user_id": "d1357b21-63aa-46a1-90aa-6a416b2d99ef",
-      //         "description": "",
-      //         "host_avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocIlCg9VrRfewRNVOoL11-jJkC1l08-jX6n_f70PcrE6sQ=s96-c"
-      //     },
-      //     {
-      //         "id": "84ff93ec-51bc-49e0-9c61-f4a7163fb160",
-      //         "topic": "You are cool if you see this edit",
-      //         "department": "CSCE",
-      //         "course_number": 121,
-      //         "section": 0,
-      //         "location": "SCC",
-      //         "date": "2024-04-15",
-      //         "start_time": "12:00:00",
-      //         "end_time": "15:00:00",
-      //         "current_group_size": 1,
-      //         "max_group_size": 2,
-      //         "noise_level": 4,
-      //         "created_at": "2024-03-26T21:48:25.923923+00:00",
-      //         "host_user_id": "d9b0dbd6-d082-4866-b063-3d68df99d840",
-      //         "description": "",
-      //         "host_avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocL0XxXWHz4UtCkXdb-OwBAvszUJemKu3-qqBH0ANCAI=s96-c"
-      //     }
-      // ]
-
-
-    let filtered_posts = [];
-    console.log("START------------")
-    let fit_filter = false;
-
-    for(let i = 0; i < study_sessions.length; i++){   
-      // courses filter
-      if(coursesList.length != 0){
-        let course = study_sessions[i].department + " " + study_sessions[i].course_number;
-        if(study_sessions[i].section != 0){
-          course = study_sessions[i].department + " " + study_sessions[i].course_number + "-" + study_sessions[i].section;
-        }
-        console.log(course);
-        console.log(coursesList);
-        if(coursesList.includes(course) || coursesList.includes(study_sessions[i].department + " " + study_sessions[i].course_number) || coursesList.includes(study_sessions[i].department + " ")){
-          fit_filter = true;
-        }
-        else{
-          continue;
-        }
-      }
-      else{
-        fit_filter = true;
-      }    
- 
-      // dates filter
-      var date = new Date(form.values.startDate);
-      // Get year, month, and day part from the date
-      var year = date.toLocaleString("default", { year: "numeric" });
-      var month = date.toLocaleString("default", { month: "2-digit" });
-      var day = date.toLocaleString("default", { day: "2-digit" });
-      // Generate yyyy-mm-dd date string
-      let start_date = year + "-" + month + "-" + day;
-
-      var date = new Date(form.values.endDate);
-      // Get year, month, and day part from the date
-      var year = date.toLocaleString("default", { year: "numeric" });
-      var month = date.toLocaleString("default", { month: "2-digit" });
-      var day = date.toLocaleString("default", { day: "2-digit" });
-      // Generate yyyy-mm-dd date string
-      let end_date = year + "-" + month + "-" + day;
-
-      let session_date = study_sessions[i].date;
-
-      if(session_date >= start_date && session_date <= end_date){
-        fit_filter = true;
-      }
-      else{
-        fit_filter = false;
-        continue;
-      }
-
-      // times filter
-      let start_time = form.values.startTime + ":00";
-      let end_time = form.values.endTime + ":00";
-      if(form.values.startTime == ""){
-        start_time = "00:00:00";
-      }
-      if(form.values.endTime == ""){
-        end_time = "23:59:59";
-      }
-
-      if(study_sessions[i].start_time >= start_time && study_sessions[i].end_time <= end_time){
-        fit_filter = true;
-      }
-      else{
-        fit_filter = false;
-        continue;
-      }
-
-      // group size filter
-      let min_size = form.values.minGroupSize;
-      let max_size = form.values.maxGroupSize;
-      if(min_size == null || min_size == ""){
-        min_size = 0;
-      }
-
-      if((max_size == null || max_size == "") && study_sessions[i].max_group_size >= min_size){
-        fit_filter = true;
-      }
-      else if(study_sessions[i].max_group_size >= min_size && study_sessions[i].max_group_size <= max_size){
-        fit_filter = true;
-      }
-      else{
-        fit_filter = false;
-        continue;
-      }
-
-      // noise level filter
-      if(form.values.noiseLevel == "None"){
-        fit_filter = true;
-      }
-      else if(study_sessions[i].noise_level == form.values.noiseLevel){
-        fit_filter = true;
-      }
-      else{
-        fit_filter = false;
-        continue;
-      }
-      
-
-      // add to list
-      if(fit_filter == true){
-        filtered_posts.push(study_sessions[i]);
-      }
-      fit_filter = false;
-    }
-    
-    console.log("FINAL:")
-    for(let i = 0; i < filtered_posts.length; i++){
-      console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
-
-    }
-    sendDataToParent(filtered_posts);
   };
 
   const handleAddCourse = (event) => {
@@ -376,7 +179,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
       console.log(coursesList)
-      //form.reset();
+      form.reset();
     }
     else {
       alert("This exact course and section has already been added!");
@@ -398,17 +201,12 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     setCoursesList([]);
     form.setFieldValue('startDate', new Date());
     form.setFieldValue('endDate', currentDate);
-    form.setFieldValue('minGroupSize', null);
-    form.setFieldValue('maxGroupSize', null);
+    form.setFieldValue('minGroupSize', '');
+    form.setFieldValue('maxGroupSize', '');
     form.setFieldValue('startTime', '');
     form.setFieldValue('endTime', '');
-    form.setFieldValue('noiseLevel', 'None');
-    form.setFieldValue('department', '');
-    setSelectedDepartment('');
-    form.setFieldValue('courseNumber', '');
-    setSelectedCourseNumber('');
-    form.setFieldValue('courseSection', '');
-    setSelectedCourseSection('');
+    form.setFieldValue('tutorRating', 0);
+    form.setFieldValue('tutorVerified', false);
   }
 
   return (
@@ -531,62 +329,13 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
             />
           </Group>
 
-          <Text fw={700} mt={30}>Noise Level</Text>
-          <SegmentedControl color="#800000" data={[
-            {
-              value: 'None',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                  <span>No Preference</span>
-                </Center>
-              ),
-            },
-            {
-              value: '1',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                  <span>1</span>
-                </Center>
-              ),
-            },
-            {
-              value: '2',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <span>2</span>
-                </Center>
-              ),
-            },
-            {
-              value: '3',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolume2 style={{ width: rem(16), height: rem(16) }} />
-                  <span>3</span>
-                </Center>
-              ),
-            },
-            {
-              value: '4',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <span>4</span>
-                </Center>
-              ),
-            },
-            {
-              value: '5',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolume style={{ width: rem(16), height: rem(16) }} />
-                  <span>5</span>
-                </Center>
-              ),
-            },
-          ]}
-            {...form.getInputProps('noiseLevel')} />
+          <Text fw={700} mt={30}>Tutor Information</Text>
+          <Group>
+            <Rating fractions={2} size={"lg"} {...form.getInputProps('tutorRating')}/>
+            <Text>{form.values.tutorRating} and above</Text>
+          </Group>
+          <Checkbox mt="sm" size="sm" checked={form.values.tutorVerified} label="Verified Tutor" {...form.getInputProps('tutorVerified')}/>
+          
           <Group justify="center" mt="lg">
             <Button
               onClick={handleReset}
@@ -598,7 +347,6 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
               Reset
             </Button>
             <Button
-              onClick={handleSubmit}
               type='submit'
               variant="filled"
               color='#800000'

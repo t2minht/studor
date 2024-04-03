@@ -12,6 +12,7 @@ import {
   Text,
   Button,
   ScrollArea,
+  Paper,
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -76,83 +77,87 @@ export default function Landingsg(data) {
     <MantineProvider>
       <ScrollArea h={height - 120}>
         <h1>Your Posts</h1>
-        <Group>
+        <Group pl={50} pr={50}>
           {study_sessions_hosted.map((session) => (
-            <Group p={30} key={session.topic} maw={400}>
-              <Stack>
-                <Avatar size={100} src={session.host_avatar_url} />
-              </Stack>
-              <Stack maw={210}>
+            <Paper shadow="md" radius="xl" p="xl" withBorder key={session.topic}>
+              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                 <Stack>
-                  <Text fw={700} size="xl">
-                    {session.topic}
-                  </Text>
-                  <Text mt={-10} fw={700}>
-                    Class:{" "}
-                    {session.department +
-                      " " +
-                      session.course_number +
-                      (session.section ? " - " + session.section : "")}{" "}
-                  </Text>
-                  <Text aria-label="Location" mt={-15}>Location: {session.location}</Text>
-                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                  <Text mt={-15}>
-                    Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}
-                  </Text>
-                  <Text mt={-15}>
-                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size}{" "}
-                  </Text>
+                  <Avatar size={100} src={session.host_avatar_url} />
                 </Stack>
-                <Group>
-                  <Modalview current={session} />
-                  <Link
-                    href={{
-                      pathname: "/studor/updatestudygroupposting",
-                      query: session
-                    }}
-                  ><Button color="yellow" radius="xl">Edit</Button></Link>
-                </Group>
-              </Stack>
-            </Group>
+                <Stack maw={210}>
+                  <Stack>
+                    <Text fw={700} size="xl">
+                      {session.topic}
+                    </Text>
+                    <Text mt={-10} fw={700}>
+                      Class:{" "}
+                      {session.department +
+                        " " +
+                        session.course_number +
+                        (session.section ? " - " + session.section : "")}{" "}
+                    </Text>
+                    <Text aria-label="Location" mt={-15}>Location: {session.location}</Text>
+                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                    <Text mt={-15}>
+                      Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}
+                    </Text>
+                    <Text mt={-15}>
+                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
+                      {session.max_group_size}{" "}
+                    </Text>
+                  </Stack>
+                  <Group>
+                    <Modalview current={session} />
+                    <Link
+                      href={{
+                        pathname: "/studor/updatestudygroupposting",
+                        query: session
+                      }}
+                    ><Button color="yellow" radius="xl">Edit</Button></Link>
+                  </Group>
+                </Stack>
+              </Group>
+            </Paper>
           ))}
         </Group>
         <h1>Joined Sessions</h1>
-        <Group>
+        <Group pl={50} pr={50}>
           {study_sessions_joined.map((session) => (
-            <Group p={30} key={session.topic} maw={400}>
-              <Stack>
-                <Avatar size={100} src={session.host_avatar_url} />
-              </Stack>
-              <Stack maw={210}>
+            <Paper shadow="md" radius="xl" p="xl" withBorder key={session.topic}>
+              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                 <Stack>
-                  <Text fw={700} size="xl">
-                    {session.topic}
-                  </Text>
-                  <Text mt={-10} fw={700}>
-                    Class:{" "}
-                    {session.department +
-                      " " +
-                      session.course_number +
-                      (session.section ? " - " + session.section : "")}{" "}
-                  </Text>
-                  <Text mt={-15}>Location: {session.location}</Text>
-                  <Text mt={-15}>Date: {formatDate(session.date)}</Text>
-                  <Text mt={-15}>
-                    Time: {convertTo12HourFormat(session.start_time)} -{" "}
-                    {convertTo12HourFormat(session.end_time)}
-                  </Text>
-                  <Text mt={-15}>
-                    Remaining: {session.max_group_size - session.current_group_size} /{" "}
-                    {session.max_group_size}{" "}
-                  </Text>
+                  <Avatar size={100} src={session.host_avatar_url} />
                 </Stack>
-                <Group>
-                  <Modalview current={session} />
-                  <Button color="red" radius="xl" onClick={() => leaveHandler(session)}>Leave</Button>
-                </Group>
-              </Stack>
-            </Group>
+                <Stack maw={210}>
+                  <Stack>
+                    <Text fw={700} size="xl">
+                      {session.topic}
+                    </Text>
+                    <Text mt={-10} fw={700}>
+                      Class:{" "}
+                      {session.department +
+                        " " +
+                        session.course_number +
+                        (session.section ? " - " + session.section : "")}{" "}
+                    </Text>
+                    <Text mt={-15}>Location: {session.location}</Text>
+                    <Text mt={-15}>Date: {formatDate(session.date)}</Text>
+                    <Text mt={-15}>
+                      Time: {convertTo12HourFormat(session.start_time)} -{" "}
+                      {convertTo12HourFormat(session.end_time)}
+                    </Text>
+                    <Text mt={-15}>
+                      Remaining: {session.max_group_size - session.current_group_size} /{" "}
+                      {session.max_group_size}{" "}
+                    </Text>
+                  </Stack>
+                  <Group>
+                    <Modalview current={session} />
+                    <Button color="red" radius="xl" onClick={() => leaveHandler(session)}>Leave</Button>
+                  </Group>
+                </Stack>
+              </Group>
+            </Paper>
           ))}
         </Group>
       </ScrollArea>

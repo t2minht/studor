@@ -11,6 +11,149 @@ function setDifference(setA, setB) {
     return difference;
 }
 
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+function convertTo12HourFormat(timeString) {
+    // Split the string into hours and minutes
+    var parts = timeString.split(":");
+    var hours = parseInt(parts[0]);
+    var minutes = parseInt(parts[1]);
+
+    // Convert hours to 12-hour format
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+    // Construct the new time string
+    var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+    return formattedTime;
+}
+function formatDate(inputDate) {
+    // Create a new Date object from the input string
+    var dateObj = new Date(inputDate);
+    dateObj.setDate(dateObj.getDate() + 1);
+    // Format the date using options
+    var options = { month: 'long', day: '2-digit', year: 'numeric' };
+    var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+    return formattedDate;
+}
+
+function sendEmail(participantEmail, sessionInfo) {
+    const msg = {
+        to: participantEmail,
+        from: 'studorcapstone@gmail.com',
+        subject: 'One Of Your Tutoring Sessions Has Been Updated!',
+        html: `The following study session you joined has been updated on Studor:<br><br>
+              <b>Title:</b> ${sessionInfo.title}<br>
+              <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+              <b>Department:</b> ${sessionInfo.department}<br>
+              <b>Course Number:</b> ${sessionInfo.courseNumber}<br>
+              <b>Section:</b> ${sessionInfo.courseSection || 'N/A'}<br>
+              <b>Location:</b> ${sessionInfo.location}<br>
+              <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+              <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.startTime)}<br>
+              <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.endTime)}<br>
+              <b>Max Group Size:</b> ${sessionInfo.groupSize}<br>`
+    }
+
+    sgMail
+        .send(msg)
+        .then(() => {
+            console.log('Email sent')
+        })
+        .catch((error) => {
+            console.error(error.response.body.errors)
+        })
+}
+
+export async function insertRatings(studentId, tutorId, sessionId, rating) {
+
+    const supabase = createServerActionClient({ cookies });
+
+    const { data: returned_data, error: error1 } = await supabase
+        .from("tutor_ratings")
+        .select()
+        .eq('student_id', studentId)
+        .eq('session_id', sessionId)
+
+
+    if (returned_data.length === 0) {
+        const { data, error } = await supabase.from("tutor_ratings")
+            .insert([
+                {
+                    student_id: studentId,
+                    tutor_id: tutorId,
+                    session_id: sessionId,
+                    rating: rating
+                },
+
+            ])
+            .select();
+    }
+    else {
+        const { data, error } = await supabase.from("tutor_ratings")
+            .update({ rating: rating })
+            .eq('student_id', studentId)
+            .eq('session_id', sessionId)
+            .select();
+    }
+
+}
+
+export async function addTutorCourses(classes) {
+    const supabase = createServerActionClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+    const user_id = user.id
+    try {
+        const { data: returned_data, error: error1 } = await supabase.from("tutor_courses")
+            .delete()
+            .eq('user_id', user_id)
+
+    } catch (error) {
+        console.log('error', error);
+        throw error;
+    }
+
+    // need to get the course id for each className from tutor_course_catalog and then insert into tutor_courses table
+    let array = []
+    for (const className in classes) {
+        const { data: courseID, error: courseError } = await supabase.from('tutor_course_catalog').
+            select('id')
+            .eq('coursecode', className)
+
+
+
+        if (courseID.length === 0) {
+            console.log("Course not found", className)
+            const deptartment = className.split(' ')[0]
+            const courseNumber = className.split(' ')[1]
+            const { data, error } = await supabase.from("tutor_course_catalog")
+                .insert([
+                    {
+                        Department: deptartment,
+                        CourseNum: courseNumber,
+                    }
+                ]).select()
+
+            const course_id = data[0].id
+            array.push({ user_id, course_id })
+
+
+        } else {
+            const course_id = courseID[0].id
+            array.push({ user_id, course_id })
+
+        }
+    }
+
+    const { error } = await supabase.from("tutor_courses")
+        .insert(array)
+
+}
+
 export async function retrieveProfileTutoringSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -30,7 +173,7 @@ export async function retrieveProfileTutoringSessions() {
 
         const { data, error } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .in('id', participantSessionIds)
             .order('date', { ascending: false })
             .order('end_time', { ascending: false });
@@ -102,7 +245,7 @@ export async function retrieveFutureHostedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toISOString().split('T')[0];
+    const currentDate = currentDateTime.toDateString();
     const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
     try {
@@ -138,7 +281,7 @@ export async function retrieveExistingJoinedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toISOString().split('T')[0];
+    const currentDate = currentDateTime.toDateString();
     const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
     try {
@@ -157,17 +300,16 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .gt('date', currentDate)
             .in('id', participantSessionIds)
             .neq('tutor_user_id', user.id)
             .order('date')
             .order('end_time');
 
-
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', participantSessionIds)
@@ -227,7 +369,7 @@ export async function getExistingNotJoinedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toISOString().split('T')[0];
+    const currentDate = currentDateTime.toDateString();
     const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
 
@@ -253,17 +395,19 @@ export async function getExistingNotJoinedSessions() {
         const notInSessionsArray = Array.from(notInSessionsSet);
 
 
+
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .gt('date', currentDate)
             .in('id', notInSessionsArray)
             .order('date')
             .order('end_time');
 
+
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name), tutor_ratings(rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', notInSessionsArray)
@@ -271,6 +415,8 @@ export async function getExistingNotJoinedSessions() {
             .order('end_time');
 
         const data = todaysData.concat(futureData);
+        console.log(todaysData)
+
         return data;
 
 
@@ -329,6 +475,16 @@ export async function updateTutoringSessionData(data) {
         ])
         .eq('id', data.id)
         .select();
+
+    const { data: returned_participants, error: error2 } = await supabase
+        .from('participants_in_tutor_session')
+        .select('users(email)')
+        .eq('tutoring_session_id', data.id);
+
+    const participants = returned_participants.map(entry => entry.users.email);
+    for (const participant of participants) {
+        sendEmail(participant, data);
+    }
 
 }
 

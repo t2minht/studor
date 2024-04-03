@@ -12,4 +12,4 @@ export default async function Page() {
       <ClientPage courses={possible_courses} departments={departmentsAndNull} />
     </MantineProvider>
   )
-}
+} 

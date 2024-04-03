@@ -2,6 +2,66 @@
 
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+function convertTo12HourFormat(timeString) {
+  // Split the string into hours and minutes
+  var parts = timeString.split(":");
+  var hours = parseInt(parts[0]);
+  var minutes = parseInt(parts[1]);
+
+  // Convert hours to 12-hour format
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+  // Construct the new time string
+  var formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + ampm;
+
+  return formattedTime;
+}
+function formatDate(inputDate) {
+  // Create a new Date object from the input string
+  var dateObj = new Date(inputDate);
+  dateObj.setDate(dateObj.getDate() + 1);
+  // Format the date using options
+  var options = { month: 'long', day: '2-digit', year: 'numeric' };
+  var formattedDate = dateObj.toLocaleDateString('en-US', options);
+
+  return formattedDate;
+}
+
+
+function sendEmail(participantEmail, sessionInfo) {
+  const msg = {
+    to: participantEmail,
+    from: 'studorcapstone@gmail.com',
+    subject: 'One Of Your Study Sessions Has Been Updated!',
+    html: `The following study session you joined has been updated on Studor:<br><br>
+           <b>Topic:</b> ${sessionInfo.title}<br>
+           <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+           <b>Department:</b> ${sessionInfo.department}<br>
+           <b>Course Number:</b> ${sessionInfo.courseNumber}<br>
+           <b>Section:</b> ${sessionInfo.courseSection || 'N/A'}<br>
+           <b>Location:</b> ${sessionInfo.location}<br>
+           <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+           <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.startTime)}<br>
+           <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.endTime)}<br>
+           <b>Max Group Size:</b> ${sessionInfo.groupSize}<br>
+           <b>Noise Level:</b> ${sessionInfo.noiseLevel}<br>`
+  }
+
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log('Email sent')
+    })
+    .catch((error) => {
+      console.error(error.response.body.errors)
+    })
+}
 
 function setDifference(setA, setB) {
   const difference = new Set(setA);
@@ -51,7 +111,9 @@ export async function retrieveUserProfileInfo() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
   let metadata = user.user_metadata
+  metadata.id = user.id
   return metadata
 }
 
@@ -118,6 +180,17 @@ export async function updateStudyGroupSessionData(data) {
     ])
     .eq('id', data.id)
     .select();
+
+  // i need to go to the participants table, get all the participants in the session, get their email from users table, and then send email to all of them
+  const { data: participantsData, error: participantsError } = await supabase
+    .from('participants_in_study_session')
+    .select('users(email)')
+    .eq('study_session_id', data.id);
+
+  const participantEmails = participantsData.map(entry => entry.users.email);
+  for (const email of participantEmails) {
+    sendEmail(email, data);
+  }
 }
 /* 
 If I click "Update"
@@ -134,7 +207,7 @@ export async function retrieveExistingNotJoinedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toDateString().split('T')[0];
+  const currentDate = currentDateTime.toDateString();
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
 
@@ -192,7 +265,7 @@ export async function retrieveExistingJoinedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toDateString().split('T')[0];
+  const currentDate = currentDateTime.toDateString();
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
@@ -310,7 +383,7 @@ export async function retrieveFutureHostedSessions() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const currentDateTime = new Date();
-  const currentDate = currentDateTime.toDateString().split('T')[0];
+  const currentDate = currentDateTime.toDateString();
   const currentTime = currentDateTime.toTimeString().split(' ')[0];
 
   try {
@@ -333,7 +406,6 @@ export async function retrieveFutureHostedSessions() {
       .gte('end_time', currentTime)
       .order('date')
       .order('end_time');
-
 
     const data = todaysData.concat(futureData);
     return data;

@@ -23,6 +23,9 @@ import {
 import classes from './navbar.module.css';
 import LightOrDarkMode from './lightordarkmode';
 import LogoutButtonClient from './logout-button-client';
+import logo from '@/app/ui/logo.png';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -33,15 +36,15 @@ export default function Navbar() {
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <a href='/'>
-            <ActionIcon size="xl" variant="transparent" aria-label="Home">
-              <IconBook
-                size={38}
-                stroke={1.5}
-                color="white"
-              />
-            </ActionIcon>
-          </a>
+          <Link href='/'> 
+            <Image
+            src={logo}
+            alt='studor logo'
+            width={90}
+            height={50}
+            style={{marginTop: '5px'}}
+            />
+          </Link>
 
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="/" className={classes.link} style={{ color: 'white' }}>
@@ -83,7 +86,6 @@ export default function Navbar() {
         title="Navigation"
         hiddenFrom="sm"
         zIndex={1000000}
-        overlayColor={'#800000'}
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md" bg={'#800000'}>
           <Divider my="sm" color="rgba(255, 255, 255, 1)" />

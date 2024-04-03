@@ -187,12 +187,12 @@ export default function ClientPage(data) {
         // Redirect to the new page after a short delay
         setTimeout(() => {
             window.location.href = '/';
-        }, 5000);
+        }, 0);
     };
 
     return (
         <MantineProvider>
-            <Center>
+            <Center pl={50} pr={50}>
                 <h1>Create a Study Group Session</h1>
             </Center>
 
