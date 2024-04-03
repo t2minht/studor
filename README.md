@@ -21,4 +21,4 @@ CI/CD Lead  - Ethan Novicio
 Design Lead - Sarah Eilene Sotelo  
 Testing Lead - Tuong Tran
 
-Special Thanks to our Capstone professor, Dr. Shawna Thomas
+Special thanks to our Capstone professor, Dr. Shawna Thomas, and our TA, Yijin Fang.
