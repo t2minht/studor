@@ -144,7 +144,7 @@ export default function ClientPage(data) {
                                                 </Stack>
                                                 <Stack maw={210}>
                                                     <Stack>
-                                                        <Text fw={700} size="xl">
+                                                        <Text fw={700} size="xl" style={{ wordWrap: "break-word" }}>
                                                             {session.topic}
                                                         </Text>
                                                         <Text mt={-10} fw={700}>

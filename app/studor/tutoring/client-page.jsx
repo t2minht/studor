@@ -136,9 +136,9 @@ export default function ClientPage(data) {
                           <Stack>
                             <Avatar size={100} src={session.tutor_avatar_url} />
                           </Stack>
-                          <Stack>
+                          <Stack maw={210}>
                             <Stack>
-                              <Text fw={700} size="xl">
+                              <Text fw={700} size="xl" style={{ wordWrap: "break-word" }}>
                                 {session.title}
                               </Text>
                               <Text mt={-10} fw={700}>
