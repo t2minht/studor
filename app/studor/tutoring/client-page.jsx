@@ -118,7 +118,7 @@ export default function ClientPage(data) {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span="auto" order={{ base: 3 }}>
+        <Grid.Col span="auto" order={{ base: 3 }} miw={485}>
           <Group miw={200}>
             <ScrollArea h={height - 180}>
               <Group pl={50} pr={50}>
