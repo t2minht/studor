@@ -6,8 +6,6 @@ import { retrieveUserEvents } from '../backend/calendar-backend';
 
 const Calendar = ({events, study_sessions, tutoring}) => {
 
-    const [calendar, setCalendar] = useState();
-
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -85,8 +83,8 @@ const Calendar = ({events, study_sessions, tutoring}) => {
     // const [id, setID] = useState(0);
 
     useEffect(() => {                               // displays events
-        // console.log("events");
-        // console.log(events);
+        console.log("events");
+        console.log(events);
         let parser = JSON.parse(events.events);
         let id = 1;
         console.log(parser);
@@ -201,6 +199,8 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         },
     });
 
+    const calendarRef = useRef();
+
 
     const [opened, handlers] = useDisclosure(false);
 
@@ -212,6 +212,14 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD']){
             textColor = "#FFFFFF";
         }
+        console.log(calendarEvents);
+        for(let i = 0; i < calendarEvents.length; i++){
+            if(calendarEvents[i].text == event.event){
+                calendarEvents[i].backColor = color;
+            }
+        }
+        calendarRef.current.control.update({startDate, events: calendarEvents});
+        handlers.close();
     }
 
     return (
@@ -260,7 +268,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
                     events={calendarEvents} 
                     startDate = {startDate} 
                     useEventBoxes={"Never"}
-                    controlRef= {setCalendar}
+                    ref={calendarRef}
                 />
             </Stack>
         </>
