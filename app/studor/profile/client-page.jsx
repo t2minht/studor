@@ -93,7 +93,7 @@ function parseICS(icsString) {
         lines.map( (line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
             line = line.trim();
             if (line === 'BEGIN:VEVENT') { event = {}; }
-            else if (line === 'END:VEVENT') { event["color"] = "#FFFFFF"; events.push(event); }
+            else if (line === 'END:VEVENT') { event["backColor"] = "#CCCCCC"; event["fontColor"] = "#000000"; events.push(event); }
             else if (event) {
                 if(line.includes("SUMMARY")){
                     event["text"] = line.split("SUMMARY:")[1];

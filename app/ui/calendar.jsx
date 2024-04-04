@@ -15,6 +15,8 @@ const Calendar = ({events, study_sessions, tutoring}) => {
 
     const [startDate, setStartDate] = useState(new Date()); // Initial date for the calendar
 
+    const [isoEvents, setEvents] = useState(events.events);
+
     const handlePreviousWeek = () => {
         const newStartDate = new Date(startDate);
         newStartDate.setDate(newStartDate.getDate() - 7); // Go back one week
@@ -79,13 +81,12 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         return eventsList, id;
     }
 
-    const [calendarEvents, setEvents] = useState([]);
+    const [calendarEvents, setCalendar] = useState([]);
     // const [id, setID] = useState(0);
 
     useEffect(() => {                               // displays events
         console.log("events");
-        console.log(events);
-        let parser = JSON.parse(events.events);
+        let parser = JSON.parse(isoEvents);
         let id = 1;
         console.log(parser);
 
@@ -110,7 +111,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
                             let dy = dates[day].getDate() + "";
                             let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
 
-                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: "#cccccc", tags: "Class"});
+                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: event.backColor, fontColor:event.fontColor, tags: "Class"});
                         });
                     }
 
@@ -159,8 +160,8 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         eventsList, id = addSession(eventsList, tutoring, id, "Tutoring", "#078787");
         console.log(eventsList);
 
-        setEvents(eventsList);
-    }, [startDate]);
+        setCalendar(eventsList);
+    }, [startDate, isoEvents]);
 
 
     /*
@@ -168,7 +169,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         // Fetch events from an API or database
         // let events = retrieveUserEvents();
         // console.log(events);
-        // setEvents(retrieveUserEvents());
+        // setCalendar(retrieveUserEvents());
         const fetchedEvents = await retrieveUserEvents();
         console.log(fetchedEvents);
         // const fetchedEvents = [
@@ -176,7 +177,7 @@ const Calendar = ({events, study_sessions, tutoring}) => {
         // { id: 2, text: 'Event 2', start: '2024-03-21T14:00:00', end: '2024-03-21T16:00:00' },
         // ];
 
-        // setEvents(fetchedEvents);
+        // setCalendar(fetchedEvents);
     }, []);
 
     */
@@ -216,15 +217,30 @@ const Calendar = ({events, study_sessions, tutoring}) => {
             console.log("changing color");
             textColor = "#000000";
         }
-        console.log(calendarEvents);
-        console.log(JSON.parse(events.events));
+        // console.log(calendarEvents);
+        console.log("isoEvents")
+        console.log(JSON.parse(isoEvents));
+        let parser = JSON.parse(isoEvents);
+        for(let i = 0; i < parser.length; i++){
+            if(parser[i].text == event.event){
+                parser[i].backColor = color;
+                parser[i].fontColor = textColor;
+                // calendarEvents[i].backColor = color;
+                // calendarEvents[i].fontColor = textColor;
+            }
+        }
         for(let i = 0; i < calendarEvents.length; i++){
             if(calendarEvents[i].text == event.event){
                 calendarEvents[i].backColor = color;
                 calendarEvents[i].fontColor = textColor;
+                // calendarEvents[i].backColor = color;
+                // calendarEvents[i].fontColor = textColor;
             }
         }
-        calendarRef.current.control.update({startDate, events: calendarEvents});
+        console.log("parser")
+        console.log(parser)
+        // calendarRef.current.control.update({startDate, events: calendarEvents});
+        setEvents(JSON.stringify(parser));
         handlers.close();
     }
 
