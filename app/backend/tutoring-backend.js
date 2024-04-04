@@ -144,9 +144,11 @@ export async function insertRatings(studentId, tutorId, sessionId, rating) {
         const ratings = tutorRatings.map(entry => entry.rating);
         const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
         const averageRating = sumOfRatings / ratings.length;
+        // round to 2 decimal places
+        const roundedAverageRating = Math.round((averageRating + Number.EPSILON) * 100) / 100;
 
         const { data: returned_data2, error: error2 } = await supabase.from("users")
-            .update({ tutor_rating: averageRating })
+            .update({ tutor_rating: roundedAverageRating })
             .eq('id', tutorId)
             .select();
 
