@@ -90,35 +90,35 @@ function parseICS(icsString) {
         const lines = reader.result.split("\n");
         const events = [];
         let event;
-        lines.map( (line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
+        lines.map((line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
             line = line.trim();
             if (line === 'BEGIN:VEVENT') { event = {}; }
             else if (line === 'END:VEVENT') { event["backColor"] = "#CCCCCC"; event["fontColor"] = "#000000"; events.push(event); }
             else if (event) {
-                if(line.includes("SUMMARY")){
+                if (line.includes("SUMMARY")) {
                     event["text"] = line.split("SUMMARY:")[1];
-                }else if(line.toLowerCase().includes("dtstart")){
+                } else if (line.toLowerCase().includes("dtstart")) {
                     let temp = line.split(":")[1];
-                    if(temp.includes("Z")){
-                        let oldDate = new Date(temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z");
-                        oldDate = new Date(oldDate.toLocaleString("en-US", {timeZone: 'America/Chicago'}));
-                        temp = oldDate.getFullYear() + "-" + ( (oldDate.getMonth() + 1) + "").padStart(2,'0') + "-" + (oldDate.getDate() + "").padStart(2,'0') + "T" + oldDate.toTimeString().substr(0,8);
-                    }else{
-                        temp = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2);
+                    if (temp.includes("Z")) {
+                        let oldDate = new Date(temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2) + ".000Z");
+                        oldDate = new Date(oldDate.toLocaleString("en-US", { timeZone: 'America/Chicago' }));
+                        temp = oldDate.getFullYear() + "-" + ((oldDate.getMonth() + 1) + "").padStart(2, '0') + "-" + (oldDate.getDate() + "").padStart(2, '0') + "T" + oldDate.toTimeString().substr(0, 8);
+                    } else {
+                        temp = temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2);
                     }
-            
+
                     event["start"] = temp;
-                }else if(line.toLowerCase().includes("dtend")){
+                } else if (line.toLowerCase().includes("dtend")) {
                     let temp = line.split(":")[1];
-                    if(temp.includes("Z")){
-                        let oldDate = new Date(temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2) + ".000Z");
-                        oldDate = new Date(oldDate.toLocaleString("en-US", {timeZone: 'America/Chicago'}));
-                        temp = oldDate.getFullYear() + "-" + ( (oldDate.getMonth() + 1) + "").padStart(2,'0') + "-" + (oldDate.getDate() + "").padStart(2,'0') + "T" + oldDate.toTimeString().substr(0,8);
-                    }else{
-                        temp = temp.substr(0,4) + "-" + temp.substr(4,2) + "-" + temp.substr(6,5) + ":" + temp.substr(11,2) + ":" + temp.substr(13,2);
+                    if (temp.includes("Z")) {
+                        let oldDate = new Date(temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2) + ".000Z");
+                        oldDate = new Date(oldDate.toLocaleString("en-US", { timeZone: 'America/Chicago' }));
+                        temp = oldDate.getFullYear() + "-" + ((oldDate.getMonth() + 1) + "").padStart(2, '0') + "-" + (oldDate.getDate() + "").padStart(2, '0') + "T" + oldDate.toTimeString().substr(0, 8);
+                    } else {
+                        temp = temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2);
                     }
                     event["end"] = temp;
-                }else if(line.toLowerCase().includes("rrule")){
+                } else if (line.toLowerCase().includes("rrule")) {
                     event["rrule"] = line.split(":")[1];
                 }
             }
@@ -204,9 +204,10 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     };
 
     const uploadTranscript = async (event) => {
-
+        const first_name = userData.name.split(' ')[0];
         const formData = new FormData();
         formData.append('pdf', transcript);
+        formData.append('user_name', first_name)
         try {
             const response = await fetch('https://smmathen.pythonanywhere.com/upload_file', {
                 method: 'POST',
@@ -219,6 +220,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             addTutorCourses(classes);
             clearTranscript();
         } catch (error) {
+            alert("Transcript was invalid! Please try again.");
             console.error('Error fetching data from Flask server:', error);
         }
     };
