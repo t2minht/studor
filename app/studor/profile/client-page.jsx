@@ -15,7 +15,8 @@ import {
     Checkbox,
     rem,
     Autocomplete,
-    NativeSelect
+    NativeSelect,
+    LoadingOverlay
 } from "@mantine/core";
 import { IconAt, IconCalendarPlus, IconCircleCheck, IconCircleX, IconPencil, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
@@ -137,6 +138,7 @@ function parseICS(icsString) {
 export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
     const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
+    const [visible, setVisible] = useState(false);
 
 
     const [selection, setSelection] = useState([]);
@@ -204,6 +206,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     };
 
     const uploadTranscript = async (event) => {
+        setVisible(true);
         const first_name = userData.name.split(' ')[0];
         const formData = new FormData();
         formData.append('pdf', transcript);
@@ -219,9 +222,12 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             const classes = await response.json();
             addTutorCourses(classes);
             clearTranscript();
+            alert("Transcript was successfully uploaded!");
+            setVisible(false);
         } catch (error) {
             alert("Transcript was invalid! Please try again.");
             console.error('Error fetching data from Flask server:', error);
+            setVisible(false);
         }
     };
 
@@ -439,6 +445,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     return (
         <>
             <MantineProvider>
+                <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
                 <Center>
                     <h1>Profile</h1>
                 </Center>
