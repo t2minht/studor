@@ -18,7 +18,7 @@ const courseSectionData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
 
-export default function Filter({ departments, study_sessions, sendDataToParent  }) {
+export default function Filter({ departments, study_sessions, sendDataToParent }) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -117,7 +117,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
 
   var currentDate = new Date();
   var currentDay = currentDate.getDate();
-  currentDate.setDate(currentDay + 1);
+  currentDate.setDate(currentDay + 31);
 
   const form = useForm({
     validateInputOnChange: true,
@@ -165,24 +165,24 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     let filtered_posts = [];
     let fit_filter = false;
 
-    for(let i = 0; i < study_sessions.length; i++){   
+    for (let i = 0; i < study_sessions.length; i++) {
       // courses filter
-      if(coursesList.length != 0){
+      if (coursesList.length != 0) {
         let course = study_sessions[i].department + " " + study_sessions[i].course_number;
-        if(study_sessions[i].section != 0){
+        if (study_sessions[i].section != 0) {
           course = study_sessions[i].department + " " + study_sessions[i].course_number + "-" + study_sessions[i].section;
         }
-        if(coursesList.includes(course) || coursesList.includes(study_sessions[i].department + " " + study_sessions[i].course_number) || coursesList.includes(study_sessions[i].department + " ")){
+        if (coursesList.includes(course) || coursesList.includes(study_sessions[i].department + " " + study_sessions[i].course_number) || coursesList.includes(study_sessions[i].department + " ")) {
           fit_filter = true;
         }
-        else{
+        else {
           continue;
         }
       }
-      else{
+      else {
         fit_filter = true;
-      }    
- 
+      }
+
       // dates filter
       var date = new Date(form.values.startDate);
       // Get year, month, and day part from the date
@@ -202,10 +202,10 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
 
       let session_date = study_sessions[i].date;
 
-      if(session_date >= start_date && session_date <= end_date){
+      if (session_date >= start_date && session_date <= end_date) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
@@ -213,17 +213,17 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
       // times filter
       let start_time = form.values.startTime + ":00";
       let end_time = form.values.endTime + ":00";
-      if(form.values.startTime == ""){
+      if (form.values.startTime == "") {
         start_time = "00:00:00";
       }
-      if(form.values.endTime == ""){
+      if (form.values.endTime == "") {
         end_time = "23:59:59";
       }
 
-      if(study_sessions[i].start_time >= start_time && study_sessions[i].end_time <= end_time){
+      if (study_sessions[i].start_time >= start_time && study_sessions[i].end_time <= end_time) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
@@ -231,42 +231,42 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
       // group size filter
       let min_size = form.values.minGroupSize;
       let max_size = form.values.maxGroupSize;
-      if(min_size == null || min_size == ""){
+      if (min_size == null || min_size == "") {
         min_size = 0;
       }
 
-      if((max_size == null || max_size == "") && study_sessions[i].max_group_size >= min_size){
+      if ((max_size == null || max_size == "") && study_sessions[i].max_group_size >= min_size) {
         fit_filter = true;
       }
-      else if(study_sessions[i].max_group_size >= min_size && study_sessions[i].max_group_size <= max_size){
+      else if (study_sessions[i].max_group_size >= min_size && study_sessions[i].max_group_size <= max_size) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
 
       // noise level filter
-      if(form.values.noiseLevel == "None"){
+      if (form.values.noiseLevel == "None") {
         fit_filter = true;
       }
-      else if(study_sessions[i].noise_level == form.values.noiseLevel){
+      else if (study_sessions[i].noise_level == form.values.noiseLevel) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
-      
+
 
       // add to list
-      if(fit_filter == true){
+      if (fit_filter == true) {
         filtered_posts.push(study_sessions[i]);
       }
       fit_filter = false;
     }
-    
-    for(let i = 0; i < filtered_posts.length; i++){
+
+    for (let i = 0; i < filtered_posts.length; i++) {
       console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
@@ -277,13 +277,13 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     event.preventDefault();
 
     var newItem = '';
-    if (form.values.courseSection != ''){
+    if (form.values.courseSection != '') {
       newItem = form.values.department + ' ' + form.values.courseNumber + '-' + form.values.courseSection;
     }
-    else{
+    else {
       newItem = form.values.department + ' ' + form.values.courseNumber;
     }
-    
+
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
       console.log(coursesList)
@@ -294,7 +294,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
     }
   }
 
-  const handleRemoveCourse = (event,index) => {
+  const handleRemoveCourse = (event, index) => {
     event.preventDefault();
 
     const updatedCoursesList = coursesList.filter((_, i) => i !== index);
@@ -338,9 +338,9 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
           {coursesList.map((item, index) => (
             <Stack key={index}>
               <Group>
-                <Checkbox mt="xs" defaultChecked size="xs"  id={`checkbox-${index}`} label={item} />
+                <Checkbox mt="xs" defaultChecked size="xs" id={`checkbox-${index}`} label={item} />
                 <ActionIcon ml={-10} mt="xs" size={13} variant="subtle" color="rgba(186, 0, 0, 1)" aria-label="Remove Course" onClick={(event) => handleRemoveCourse(event, index)}>
-                  <IconX/>
+                  <IconX />
                 </ActionIcon>
               </Group>
             </Stack>
@@ -399,7 +399,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent  
               valueFormat="YYYY MMM DD"
               label="End Date"
               defaultValue={currentDate}
-              minDate={currentDate}
+              minDate={form.values.startDate}
               {...form.getInputProps('endDate')}
             />
           </Group>

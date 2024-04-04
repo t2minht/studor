@@ -117,11 +117,11 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
   var currentDate = new Date();
   var currentDay = currentDate.getDate();
-  currentDate.setDate(currentDay + 1);
+  currentDate.setDate(currentDay + 31);
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', tutorRating: 0, tutorVerified: false},
+    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', tutorRating: 0, tutorVerified: false },
 
     validate: {
       department: (value, allValues) => allValues.department && ((allValues.department.length !== 4 || !(/^[a-zA-Z]+$/.test(allValues.department))) ? 'Invalid Department' : null),
@@ -166,24 +166,24 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
     console.log(study_sessions);
 
-    for(let i = 0; i < study_sessions.length; i++){   
+    for (let i = 0; i < study_sessions.length; i++) {
       // courses filter
-      if(coursesList.length != 0){
+      if (coursesList.length != 0) {
         let course = study_sessions[i].department + " " + study_sessions[i].course_number;
-        if(study_sessions[i].section != 0){
+        if (study_sessions[i].section != 0) {
           course = study_sessions[i].department + " " + study_sessions[i].course_number + "-" + study_sessions[i].section;
         }
-        if(coursesList.includes(course) || coursesList.includes(study_sessions[i].department + " " + study_sessions[i].course_number) || coursesList.includes(study_sessions[i].department + " ")){
+        if (coursesList.includes(course) || coursesList.includes(study_sessions[i].department + " " + study_sessions[i].course_number) || coursesList.includes(study_sessions[i].department + " ")) {
           fit_filter = true;
         }
-        else{
+        else {
           continue;
         }
       }
-      else{
+      else {
         fit_filter = true;
-      }    
- 
+      }
+
       // dates filter
       var date = new Date(form.values.startDate);
       // Get year, month, and day part from the date
@@ -203,10 +203,10 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
       let session_date = study_sessions[i].date;
 
-      if(session_date >= start_date && session_date <= end_date){
+      if (session_date >= start_date && session_date <= end_date) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
@@ -214,17 +214,17 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
       // times filter
       let start_time = form.values.startTime + ":00";
       let end_time = form.values.endTime + ":00";
-      if(form.values.startTime == ""){
+      if (form.values.startTime == "") {
         start_time = "00:00:00";
       }
-      if(form.values.endTime == ""){
+      if (form.values.endTime == "") {
         end_time = "23:59:59";
       }
 
-      if(study_sessions[i].start_time >= start_time && study_sessions[i].end_time <= end_time){
+      if (study_sessions[i].start_time >= start_time && study_sessions[i].end_time <= end_time) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
@@ -232,31 +232,31 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
       // group size filter
       let min_size = form.values.minGroupSize;
       let max_size = form.values.maxGroupSize;
-      if(min_size == null || min_size == ""){
+      if (min_size == null || min_size == "") {
         min_size = 0;
       }
 
-      if((max_size == null || max_size == "") && study_sessions[i].max_group_size-1 >= min_size){
+      if ((max_size == null || max_size == "") && study_sessions[i].max_group_size - 1 >= min_size) {
         fit_filter = true;
       }
-      else if(study_sessions[i].max_group_size-1 >= min_size && study_sessions[i].max_group_size-1 <= max_size){
+      else if (study_sessions[i].max_group_size - 1 >= min_size && study_sessions[i].max_group_size - 1 <= max_size) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
 
       // tutor rating filter
       var avg_rating = study_sessions[i].averageRating;
-      if(isNaN(study_sessions[i].averageRating)){
+      if (isNaN(study_sessions[i].averageRating)) {
         avg_rating = 0;
       }
 
-      if(form.values.tutorRating <= avg_rating){
+      if (form.values.tutorRating <= avg_rating) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
@@ -265,22 +265,22 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
       console.log(form.values.tutorVerified);
       console.log(study_sessions[i].verified);
       console.log("----")
-      if(!form.values.tutorVerified || (form.values.tutorVerified && study_sessions[i].verified)){
+      if (!form.values.tutorVerified || (form.values.tutorVerified && study_sessions[i].verified)) {
         fit_filter = true;
       }
-      else{
+      else {
         fit_filter = false;
         continue;
       }
 
       // add to list
-      if(fit_filter == true){
+      if (fit_filter == true) {
         filtered_posts.push(study_sessions[i]);
       }
       fit_filter = false;
     }
-    
-    for(let i = 0; i < filtered_posts.length; i++){
+
+    for (let i = 0; i < filtered_posts.length; i++) {
       console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
@@ -292,13 +292,13 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     event.preventDefault();
 
     var newItem = '';
-    if (form.values.courseSection != ''){
+    if (form.values.courseSection != '') {
       newItem = form.values.department + ' ' + form.values.courseNumber + '-' + form.values.courseSection;
     }
-    else{
+    else {
       newItem = form.values.department + ' ' + form.values.courseNumber;
     }
-    
+
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
       console.log(coursesList)
@@ -309,7 +309,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     }
   }
 
-  const handleRemoveCourse = (event,index) => {
+  const handleRemoveCourse = (event, index) => {
     event.preventDefault();
 
     const updatedCoursesList = coursesList.filter((_, i) => i !== index);
@@ -354,9 +354,9 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
           {coursesList.map((item, index) => (
             <Stack key={index}>
               <Group>
-                <Checkbox mt="xs" defaultChecked size="xs"  id={`checkbox-${index}`} label={item} />
+                <Checkbox mt="xs" defaultChecked size="xs" id={`checkbox-${index}`} label={item} />
                 <ActionIcon ml={-10} mt="xs" size={13} variant="subtle" color="rgba(186, 0, 0, 1)" aria-label="Remove Course" onClick={(event) => handleRemoveCourse(event, index)}>
-                  <IconX/>
+                  <IconX />
                 </ActionIcon>
               </Group>
             </Stack>
@@ -415,7 +415,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
               valueFormat="YYYY MMM DD"
               label="End Date"
               defaultValue={currentDate}
-              minDate={currentDate}
+              minDate={form.values.startDate}
               {...form.getInputProps('endDate')}
             />
           </Group>
@@ -460,11 +460,11 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
           <Text fw={700} mt={30}>Tutor Information</Text>
           <Group>
-            <Rating fractions={2} size={"lg"} {...form.getInputProps('tutorRating')}/>
+            <Rating fractions={2} size={"lg"} {...form.getInputProps('tutorRating')} />
             <Text>{form.values.tutorRating} and above</Text>
           </Group>
-          <Checkbox mt="sm" size="sm" checked={form.values.tutorVerified} label="Verified Tutor" {...form.getInputProps('tutorVerified')}/>
-          
+          <Checkbox mt="sm" size="sm" checked={form.values.tutorVerified} label="Verified Tutor" {...form.getInputProps('tutorVerified')} />
+
           <Group justify="center" mt="lg">
             <Button
               onClick={handleReset}
