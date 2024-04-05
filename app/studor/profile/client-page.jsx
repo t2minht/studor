@@ -29,7 +29,7 @@ import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
 // import ModalColorPicker from "../../ui/modalcolorpicker";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
+import { sendEvents, sendManualClasses } from '../../backend/calendar-backend';
 import { setStudySessionColor, setTutorSessionColor } from '../../backend/calendar-backend';
 import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import Modaltprofile from "@/app/ui/modaltprofile";
@@ -49,7 +49,7 @@ const courseSectionData = Array(100)
     .fill(0)
     .map((_, index) => `Option ${index}`);
 
-
+/*
 // function parseICS(icsString) {
 //     let reader = new FileReader();
 //     reader.readAsText(icsString);
@@ -86,6 +86,7 @@ const courseSectionData = Array(100)
 //         console.log(reader.error);
 //     };
 // };
+*/
 
 function parseICS(icsString) {
     let reader = new FileReader();
@@ -147,6 +148,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     // for color picking modal
     const [opened, handlers] = useDisclosure(false); 
     const [value, onChange] = useState(colorPrefs.study_session_color);
+
+    const [visible, setVisible] = useState(false);
 
     function colorChoice(color){
         onChange(color);
@@ -322,13 +325,14 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             });
             return;
         }
-
+                                                                                
         const newCourseWithId = {
             ...newCourse,
             id: (data.length + 1).toString(), // Generate new ID for the course
         };
 
         setData([...data, newCourseWithId]); // Update data with the new course
+        sendManualClasses(data);
 
         form.reset(); // Reset form fields
         setSelectedDepartment('');
@@ -653,6 +657,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                                         placeholder="Enter Three Numbers"
                                         data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                                         maxDropdownHeight={200}
+                                        required
                                         disabled={!selectedCourseNumber}
                                         {...form.getInputProps('courseSection')}
                                     />

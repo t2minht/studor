@@ -35,12 +35,9 @@ export default async function Home() {
   const fetchedEvents = await retrieveUserEvents();
   const fetchedStudySessions = await retrieveProfileStudySession();
   const fetchedTutorSessions = await retrieveProfileTutoringSessions();
-<<<<<<< HEAD
   const fetchedColors = await getColorPref();
-=======
 
   const user = await retrieveUserProfileInfo();
->>>>>>> origin/testing
   // console.log(fetchedStudySessions);
   // console.log(fetchedTutorSessions);
 
