@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions, retrieveProfileStudySession } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions, retrieveProfileStudySession, retrieveUserProfileInfo } from "./backend/study-session-backend";
 import { retrieveExistingJoinedSessions as getJoinedTutoring, retrieveFutureHostedSessions as getHostedTutoring, retrieveProfileTutoringSessions } from "./backend/tutoring-backend";
 import Landing from "./ui/landing";
 import { getColorPref, retrieveUserEvents } from "./backend/calendar-backend";
@@ -35,14 +35,19 @@ export default async function Home() {
   const fetchedEvents = await retrieveUserEvents();
   const fetchedStudySessions = await retrieveProfileStudySession();
   const fetchedTutorSessions = await retrieveProfileTutoringSessions();
+<<<<<<< HEAD
   const fetchedColors = await getColorPref();
+=======
+
+  const user = await retrieveUserProfileInfo();
+>>>>>>> origin/testing
   // console.log(fetchedStudySessions);
   // console.log(fetchedTutorSessions);
 
   return (
     <>
       <MantineProvider>
-        <Navbar />
+        <Navbar user={user} />
         {/* <Center>
           <h1>My Landing Page</h1>
           {study_sessions.length > 0 ? (

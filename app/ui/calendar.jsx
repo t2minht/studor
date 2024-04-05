@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DayPilotCalendar, DayPilot } from 'daypilot-pro-react';
 import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal} from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
-import { retrieveUserEvents } from '../backend/calendar-backend';
+import { retrieveUserEvents, sendEvents} from '../backend/calendar-backend';
 
 const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
@@ -249,6 +249,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         // console.log(parser)
         // calendarRef.current.control.update({startDate, events: calendarEvents});
         setEvents(JSON.stringify(parser));
+        sendEvents(JSON.stringify(parser));
         handlers.close();
     }
 

@@ -235,7 +235,7 @@ export default function Page(data) {
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';
-    }, 0);
+    }, 1000);
   };
 
 

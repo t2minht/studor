@@ -69,7 +69,7 @@ function sendEmailOnDelete(participantEmail, sessionInfo) {
     from: 'studorcapstone@gmail.com',
     subject: 'One Of Your Study Sessions Has Been Deleted!',
     html: `The following study session you joined has been removed on Studor:<br><br>
-            <b>Title:</b> ${sessionInfo.title}<br>
+            <b>Title:</b> ${sessionInfo.topic}<br>
             <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
             <b>Department:</b> ${sessionInfo.department}<br>
             <b>Course Number:</b> ${sessionInfo.course_number}<br>
