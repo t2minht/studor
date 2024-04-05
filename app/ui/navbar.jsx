@@ -13,6 +13,7 @@ import {
   rem,
   useMantineTheme,
   ActionIcon,
+  Stack,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -61,17 +62,13 @@ export default function Navbar({ user }) {
 
           <Group visibleFrom="sm">
             <LogoutButtonClient />
-            <a href='/studor/profile'>
-              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-                <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
-              </ActionIcon>
-            </a>
+            <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
+              <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
+            </ActionIcon>
 
-            <a href='/studor/faqs'>
-              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-                <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
-              </ActionIcon>
-            </a>
+            <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="FAQs"onClick={() => window.location.href = '/studor/faqs'}>
+              <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
+            </ActionIcon>
             <LightOrDarkMode />
           </Group>
 
@@ -102,31 +99,22 @@ export default function Navbar({ user }) {
           </a>
 
           <Divider my="sm" color="rgba(255, 255, 255, 1)" />
+            <Stack align='center' justify='center'>
+              <Group justify="center" grow pb="xl" color="rgba(255, 255, 255, 1)" px="md">
+                <LogoutButtonClient />
+              </Group>
 
-          <Group justify="center" grow pb="xl" color="rgba(255, 255, 255, 1)" px="md">
-            <LogoutButtonClient />
-          </Group>
+              <Group justify="center" grow pb="xl" px="md">
+                <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
+                  <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
+                </ActionIcon>
 
-
-          <a href='/studor/profile'>
-            <Group justify="center" grow pb="xl" px="md">
-              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-                <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
-              </ActionIcon>
-            </Group>
-          </a>
-
-          <a href='/studor/faqs'>
-            <Group justify="center" grow pb="xl" px="md">
-              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-                <IconQuestionMark variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
-              </ActionIcon>
-            </Group>
-          </a>
-
-          <Group justify="center" grow pb="xl" px="md">
-            <LightOrDarkMode />
-          </Group>
+                <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl"aria-label="FAQs"onClick={() => window.location.href = '/studor/faqs'}>
+                  <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
+                </ActionIcon>
+                <LightOrDarkMode />
+              </Group>
+            </Stack>
         </ScrollArea>
       </Drawer>
     </Box>
