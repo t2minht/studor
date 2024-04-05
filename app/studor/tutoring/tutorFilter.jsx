@@ -18,7 +18,7 @@ const courseSectionData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
 
-export default function TutorFilter({ departments }) {
+export default function TutorFilter({ departments, study_sessions, sendDataToParent }) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -161,7 +161,130 @@ export default function TutorFilter({ departments }) {
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
-    // put code for applying filters here
+    let filtered_posts = [];
+    let fit_filter = false;
+
+    console.log(study_sessions);
+
+    for(let i = 0; i < study_sessions.length; i++){   
+      // courses filter
+      if(coursesList.length != 0){
+        let course = study_sessions[i].department + " " + study_sessions[i].course_number;
+        if(study_sessions[i].section != 0){
+          course = study_sessions[i].department + " " + study_sessions[i].course_number + "-" + study_sessions[i].section;
+        }
+        if(coursesList.includes(course) || coursesList.includes(study_sessions[i].department + " " + study_sessions[i].course_number) || coursesList.includes(study_sessions[i].department + " ")){
+          fit_filter = true;
+        }
+        else{
+          continue;
+        }
+      }
+      else{
+        fit_filter = true;
+      }    
+ 
+      // dates filter
+      var date = new Date(form.values.startDate);
+      // Get year, month, and day part from the date
+      var year = date.toLocaleString("default", { year: "numeric" });
+      var month = date.toLocaleString("default", { month: "2-digit" });
+      var day = date.toLocaleString("default", { day: "2-digit" });
+      // Generate yyyy-mm-dd date string
+      let start_date = year + "-" + month + "-" + day;
+
+      var date = new Date(form.values.endDate);
+      // Get year, month, and day part from the date
+      var year = date.toLocaleString("default", { year: "numeric" });
+      var month = date.toLocaleString("default", { month: "2-digit" });
+      var day = date.toLocaleString("default", { day: "2-digit" });
+      // Generate yyyy-mm-dd date string
+      let end_date = year + "-" + month + "-" + day;
+
+      let session_date = study_sessions[i].date;
+
+      if(session_date >= start_date && session_date <= end_date){
+        fit_filter = true;
+      }
+      else{
+        fit_filter = false;
+        continue;
+      }
+
+      // times filter
+      let start_time = form.values.startTime + ":00";
+      let end_time = form.values.endTime + ":00";
+      if(form.values.startTime == ""){
+        start_time = "00:00:00";
+      }
+      if(form.values.endTime == ""){
+        end_time = "23:59:59";
+      }
+
+      if(study_sessions[i].start_time >= start_time && study_sessions[i].end_time <= end_time){
+        fit_filter = true;
+      }
+      else{
+        fit_filter = false;
+        continue;
+      }
+
+      // group size filter
+      let min_size = form.values.minGroupSize;
+      let max_size = form.values.maxGroupSize;
+      if(min_size == null || min_size == ""){
+        min_size = 0;
+      }
+
+      if((max_size == null || max_size == "") && study_sessions[i].max_group_size-1 >= min_size){
+        fit_filter = true;
+      }
+      else if(study_sessions[i].max_group_size-1 >= min_size && study_sessions[i].max_group_size-1 <= max_size){
+        fit_filter = true;
+      }
+      else{
+        fit_filter = false;
+        continue;
+      }
+
+      // tutor rating filter
+      var avg_rating = study_sessions[i].averageRating;
+      if(isNaN(study_sessions[i].averageRating)){
+        avg_rating = 0;
+      }
+
+      if(form.values.tutorRating <= avg_rating){
+        fit_filter = true;
+      }
+      else{
+        fit_filter = false;
+        continue;
+      }
+
+      // verified tutor filter
+      console.log(form.values.tutorVerified);
+      console.log(study_sessions[i].verified);
+      console.log("----")
+      if(!form.values.tutorVerified || (form.values.tutorVerified && study_sessions[i].verified)){
+        fit_filter = true;
+      }
+      else{
+        fit_filter = false;
+        continue;
+      }
+
+      // add to list
+      if(fit_filter == true){
+        filtered_posts.push(study_sessions[i]);
+      }
+      fit_filter = false;
+    }
+    
+    for(let i = 0; i < filtered_posts.length; i++){
+      console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
+
+    }
+    sendDataToParent(filtered_posts);
 
   };
 
@@ -179,7 +302,7 @@ export default function TutorFilter({ departments }) {
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
       console.log(coursesList)
-      form.reset();
+      //form.reset();
     }
     else {
       alert("This exact course and section has already been added!");
@@ -207,6 +330,12 @@ export default function TutorFilter({ departments }) {
     form.setFieldValue('endTime', '');
     form.setFieldValue('tutorRating', 0);
     form.setFieldValue('tutorVerified', false);
+    form.setFieldValue('department', '');
+    setSelectedDepartment('');
+    form.setFieldValue('courseNumber', '');
+    setSelectedCourseNumber('');
+    form.setFieldValue('courseSection', '');
+    setSelectedCourseSection('');
   }
 
   return (

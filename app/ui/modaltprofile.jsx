@@ -69,6 +69,7 @@ export default function Modaltutor(session) {
   }
   function handleRatingSubmit(rating) {
     insertRatings(session.userID, session.current.tutor_user_id, session.current.id, rating);
+    alert("Rating submitted! Refresh the page to see the effect")
   }
 
   function formatDate(inputDate) {
@@ -112,10 +113,10 @@ export default function Modaltutor(session) {
               <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
               <Group mt={-15}>
                 <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-                <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />
+                {session.current.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
               </Group>
               <Group mt={-15}>
-                {session.current.averageRating && <Text><b>Tutor Rating:</b> {session.current.averageRating}</Text>}
+                {session.current.averageRating ? <Text><b>Tutor Rating:</b> {session.current.averageRating}</Text> : <Text> <b>Tutor Rating:</b> No Rating</Text>}
                 {session.current.averageRating && <Rating value={session.current.averageRating} fractions={4} ml={-10} readOnly />}
               </Group>
             </Stack>

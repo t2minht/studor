@@ -41,22 +41,50 @@ function formatDate(inputDate) {
     return formattedDate;
 }
 
-function sendEmail(participantEmail, sessionInfo) {
+function sendEmailOnUpdate(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
         from: 'studorcapstone@gmail.com',
         subject: 'One Of Your Tutoring Sessions Has Been Updated!',
-        text: `The following tutoring session you joined has been updated on Studor:\n\n
-              Title: ${sessionInfo.title}\n
-              Description: ${sessionInfo.description || 'N/A'}\n
-              Department: ${sessionInfo.department}\n
-              Course Number: ${sessionInfo.courseNumber}\n
-              Section: ${sessionInfo.courseSection || 'N/A'}\n
-              Location: ${sessionInfo.location}\n
-              Date: ${formatDate(sessionInfo.date)}\n
-              Start Time: ${convertTo12HourFormat(sessionInfo.startTime)}\n
-              End Time: ${convertTo12HourFormat(sessionInfo.endTime)}\n
-              Max Group Size: ${sessionInfo.groupSize}\n`
+        html: `The following study session you joined has been updated on Studor:<br><br>
+              <b>Title:</b> ${sessionInfo.title}<br>
+              <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+              <b>Department:</b> ${sessionInfo.department}<br>
+              <b>Course Number:</b> ${sessionInfo.courseNumber}<br>
+              <b>Section:</b> ${sessionInfo.courseSection || 'N/A'}<br>
+              <b>Location:</b> ${sessionInfo.location}<br>
+              <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+              <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.startTime)}<br>
+              <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.endTime)}<br>
+              <b>Max Group Size:</b> ${sessionInfo.groupSize}<br>`
+    }
+
+    sgMail
+        .send(msg)
+        .then(() => {
+            console.log('Email sent')
+        })
+        .catch((error) => {
+            console.error(error.response.body.errors)
+        })
+}
+
+function sendEmailOnDelete(participantEmail, sessionInfo) {
+    const msg = {
+        to: participantEmail,
+        from: 'studorcapstone@gmail.com',
+        subject: 'One Of Your Tutoring Sessions Has Been Deleted!',
+        html: `The following tutoring session you joined has been removed on Studor:<br><br>
+              <b>Title:</b> ${sessionInfo.title}<br>
+              <b>Description:</b> ${sessionInfo.description || 'N/A'} <br>
+              <b>Department:</b> ${sessionInfo.department}<br>
+              <b>Course Number:</b> ${sessionInfo.course_number}<br>
+              <b>Section:</b> ${sessionInfo.section || 'N/A'}<br>
+              <b>Location:</b> ${sessionInfo.location}<br>
+              <b>Date:</b> ${formatDate(sessionInfo.date)}<br>
+              <b>Start Time:</b> ${convertTo12HourFormat(sessionInfo.start_time)}<br>
+              <b>End Time:</b> ${convertTo12HourFormat(sessionInfo.end_time)}<br>
+              <b>Max Group Size:</b> ${sessionInfo.max_group_size}<br>`
     }
 
     sgMail
@@ -101,6 +129,79 @@ export async function insertRatings(studentId, tutorId, sessionId, rating) {
             .select();
     }
 
+    // in users table, update average rating for tutor
+    const { data: tutorRatings, error: tutorRatingsError } = await supabase.from('tutor_ratings')
+        .select('rating')
+        .eq('tutor_id', tutorId)
+
+    if (!tutorRatings) {
+        const { data: returned_data2, error2 } = await supabase.from("users")
+            .update({ tutor_rating: null })
+            .eq('id', tutorId)
+            .select();
+        return
+    } else {
+        const ratings = tutorRatings.map(entry => entry.rating);
+        const sumOfRatings = ratings.reduce((total, rating) => total + rating, 0);
+        const averageRating = sumOfRatings / ratings.length;
+
+        const { data: returned_data2, error: error2 } = await supabase.from("users")
+            .update({ tutor_rating: averageRating })
+            .eq('id', tutorId)
+            .select();
+
+    }
+}
+
+export async function addTutorCourses(classes) {
+    const supabase = createServerActionClient({ cookies });
+    const { data: { user } } = await supabase.auth.getUser();
+    const user_id = user.id
+    try {
+        const { data: returned_data, error: error1 } = await supabase.from("tutor_courses")
+            .delete()
+            .eq('user_id', user_id)
+
+    } catch (error) {
+        console.log('error', error);
+        throw error;
+    }
+
+    // need to get the course id for each className from tutor_course_catalog and then insert into tutor_courses table
+    let array = []
+    for (const className in classes) {
+        const { data: courseID, error: courseError } = await supabase.from('tutor_course_catalog').
+            select('id')
+            .eq('coursecode', className)
+
+
+
+        if (courseID.length === 0) {
+            console.log("Course not found", className)
+            const deptartment = className.split(' ')[0]
+            const courseNumber = className.split(' ')[1]
+            const { data, error } = await supabase.from("tutor_course_catalog")
+                .insert([
+                    {
+                        Department: deptartment,
+                        CourseNum: courseNumber,
+                    }
+                ]).select()
+
+            const course_id = data[0].id
+            array.push({ user_id, course_id })
+
+
+        } else {
+            const course_id = courseID[0].id
+            array.push({ user_id, course_id })
+
+        }
+    }
+
+    const { error } = await supabase.from("tutor_courses")
+        .insert(array)
+
 }
 
 export async function retrieveProfileTutoringSessions() {
@@ -122,7 +223,7 @@ export async function retrieveProfileTutoringSessions() {
 
         const { data, error } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .in('id', participantSessionIds)
             .order('date', { ascending: false })
             .order('end_time', { ascending: false });
@@ -201,7 +302,7 @@ export async function retrieveFutureHostedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('tutor_user_id', user.id)
             .gt('date', currentDate)
             .order('date')
@@ -209,7 +310,7 @@ export async function retrieveFutureHostedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('tutor_user_id', user.id)
             .eq('date', currentDate)
             .gte('end_time', currentTime)
@@ -249,7 +350,7 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .gt('date', currentDate)
             .in('id', participantSessionIds)
             .neq('tutor_user_id', user.id)
@@ -258,7 +359,7 @@ export async function retrieveExistingJoinedSessions() {
 
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', participantSessionIds)
@@ -344,17 +445,19 @@ export async function getExistingNotJoinedSessions() {
         const notInSessionsArray = Array.from(notInSessionsSet);
 
 
+
         const { data: futureData, error: error1 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name), tutor_ratings(rating)')
+            .select('*, users(full_name, tutor_rating)')
             .gt('date', currentDate)
             .in('id', notInSessionsArray)
             .order('date')
             .order('end_time');
 
+
         const { data: todaysData, error: error2 } = await supabase
             .from('tutoring_sessions')
-            .select('*, users(full_name)')
+            .select('*, users(full_name, tutor_rating)')
             .eq('date', currentDate)
             .gte('end_time', currentTime)
             .in('id', notInSessionsArray)
@@ -362,6 +465,7 @@ export async function getExistingNotJoinedSessions() {
             .order('end_time');
 
         const data = todaysData.concat(futureData);
+
         return data;
 
 
@@ -374,12 +478,25 @@ export async function getExistingNotJoinedSessions() {
 export async function deleteSession(id) {
     const supabase = createServerActionClient({ cookies });
 
+    const { data: sessionData } = await supabase.from('tutoring_sessions').select().eq('id', id).single();
+
+    const { data: returned_participants, error: error2 } = await supabase
+        .from('participants_in_tutor_session')
+        .select('users(email)')
+        .eq('tutoring_session_id', id);
+
+    const participants = returned_participants.map(entry => entry.users.email);
+    for (const participant of participants) {
+        sendEmailOnDelete(participant, sessionData);
+    }
+
     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
         .delete()
         .eq('id', id)
 }
 
 export async function leaveSession(data) {
+
 
     const supabase = createServerActionClient({ cookies })
     const { data: { user } } = await supabase.auth.getUser();
@@ -388,11 +505,11 @@ export async function leaveSession(data) {
     const { data: returned_participant, data: error } = await supabase.from('participants_in_tutor_session')
         .delete()
         .eq('user_id', user.id)
-        .eq('tutoring_session_id', data.session.id)
+        .eq('tutoring_session_id', data.id)
 
     const { data: returned_data, data: error1 } = await supabase.from("tutoring_sessions")
-        .update({ current_group_size: data.session.current_group_size - 1 })
-        .eq('id', data.session.id)
+        .update({ current_group_size: data.current_group_size - 1 })
+        .eq('id', data.id)
 }
 
 export async function updateTutoringSessionData(data) {
@@ -428,7 +545,7 @@ export async function updateTutoringSessionData(data) {
 
     const participants = returned_participants.map(entry => entry.users.email);
     for (const participant of participants) {
-        sendEmail(participant, data);
+        sendEmailOnUpdate(participant, data);
     }
 
 }
