@@ -26,7 +26,7 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
-import ModalColorPicker from "../../ui/modalcolorpicker";
+// import ModalColorPicker from "../../ui/modalcolorpicker";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
 import { setStudySessionColor, setTutorSessionColor } from '../../backend/calendar-backend';
