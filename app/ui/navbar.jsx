@@ -27,22 +27,23 @@ import logo from '@/app/ui/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Navbar() {
+export default function Navbar({ user }) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
+
 
   return (
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <Link href='/'> 
+          <Link href='/'>
             <Image
-            src={logo}
-            alt='studor logo'
-            width={90}
-            height={50}
-            style={{marginTop: '5px'}}
+              src={logo}
+              alt='studor logo'
+              width={90}
+              height={50}
+              style={{ marginTop: '5px' }}
             />
           </Link>
 
@@ -62,7 +63,7 @@ export default function Navbar() {
             <LogoutButtonClient />
             <a href='/studor/profile'>
               <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile">
-                <Avatar src={null} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
+                <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
               </ActionIcon>
             </a>
 
