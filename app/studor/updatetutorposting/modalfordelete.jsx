@@ -10,7 +10,7 @@ export default function Modaldelete(data) {
 
   return (
     <MantineProvider>
-      <Modal opened={opened} onClose={close} withCloseButton={true} centered> 
+      <Modal opened={opened} onClose={close} withCloseButton={true} centered>
         <Text fw={700} ta="center" >Are you sure you want to delete this session?</Text>
         <Group justify='center'>
           <Button mt="md"
@@ -29,13 +29,13 @@ export default function Modaldelete(data) {
 
               console.log(data)
               deleteSession(data.id)
-          
+
               // Redirect to the new page after a short delay
               setTimeout(() => {
-              window.location.href = '/';
-            }, 0);
+                window.location.href = '/';
+              }, 1000);
             }}
-            >Yes</Button>
+          >Yes</Button>
         </Group>
       </Modal>
       <Button
@@ -48,5 +48,5 @@ export default function Modaldelete(data) {
         Delete Session
       </Button>
     </MantineProvider>
- );
+  );
 }
