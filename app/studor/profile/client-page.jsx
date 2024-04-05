@@ -29,8 +29,9 @@ import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
 // import ModalColorPicker from "../../ui/modalcolorpicker";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { sendEvents, sendManualClasses } from '../../backend/calendar-backend';
+import { sendEvents } from '../../backend/calendar-backend';
 import { setStudySessionColor, setTutorSessionColor } from '../../backend/calendar-backend';
+import { sendManualClasses } from "@/app/backend/classes-backend";
 import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import Modaltprofile from "@/app/ui/modaltprofile";
 import { addTutorCourses } from "@/app/backend/tutoring-backend";
@@ -332,7 +333,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         };
 
         setData([...data, newCourseWithId]); // Update data with the new course
-        sendManualClasses(data);
+        // console.log(data);
+        sendManualClasses(JSON.stringify(data));
 
         form.reset(); // Reset form fields
         setSelectedDepartment('');
