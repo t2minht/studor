@@ -15,7 +15,9 @@ import {
     Checkbox,
     rem,
     Autocomplete,
-    NativeSelect
+    NativeSelect,
+    Modal,
+    ColorPicker
 } from "@mantine/core";
 import { IconAt, IconCalendarPlus, IconCircleCheck, IconCircleX, IconPencil, IconUpload } from '@tabler/icons-react';
 import React, { useRef, useState, useEffect } from 'react';
@@ -24,8 +26,11 @@ import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
 import Modalview from "../../ui/modalview";
+import ModalColorPicker from "../../ui/modalcolorpicker";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { calendarDataUpload, sendEvents } from '../../backend/calendar-backend';
+import { setStudySessionColor, setTutorSessionColor } from '../../backend/calendar-backend';
+import { useDisclosure } from "@mantine/hooks";
 
 import Modaltprofile from "@/app/ui/modaltprofile";
 
@@ -133,10 +138,31 @@ function parseICS(icsString) {
     };
 };
 
-export default function ClientPage({ sessions, user, tutor_sessions, departments }) {
+export default function ClientPage({ sessions, user, tutor_sessions, departments, colorPrefs }) {
 
     const [data, setData] = useState([]);
 
+
+    // for color picking modal
+    const [opened, handlers] = useDisclosure(false); 
+    const [value, onChange] = useState(colorPrefs.study_session_color);
+
+    function colorChoice(color){
+        onChange(color);
+        setStudySessionColor(color);
+        handlers.close();
+    }
+    //////////////////////////////////////
+    // for color picking modal 2
+    const [opened2, handlers2] = useDisclosure(false); 
+    const [value2, onChange2] = useState(colorPrefs.tutor_session_color);
+
+    function colorChoice2(color2){
+        onChange2(color2);
+        setTutorSessionColor(color2);
+        handlers2.close();
+    }
+    //////////////////////////////////////
 
     const [selection, setSelection] = useState([]);
     const toggleRow = (id) =>
@@ -437,6 +463,64 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                             <Group justify="center">
                                 <IconAt size={16} />
                                 <Text>{userData.email}</Text>
+                            </Group>
+                            <Group justify="center">
+                                <Text>Study Group Default Color:</Text>
+                                <Modal opened={opened} onClose={() => handlers.close()} title={"Select A Color"}>
+                                    <Stack align='center'>
+                                        <ColorPicker 
+                                            format="hex"
+                                            
+                                            value={value}
+                                            onChange={(color) => colorChoice(color)}
+                                            withPicker={false}
+                                            swatchesPerRow={9}
+                                            swatches={[
+                                                '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
+                                                '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
+                                                '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
+                                                '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
+                                            ]}
+                                        />
+                                    </Stack>
+                                </Modal>
+                                <Button
+                                    onClick={() => handlers.open()}
+                                    color={value}
+                                    maw={30}
+                                    style={{borderColor: 'black'}}
+                                    >
+                                    Color
+                                </Button>
+                            </Group>
+                            <Group justify="center">
+                                <Text>Tutoring Default Color:</Text>
+                                <Modal opened={opened2} onClose={() => handlers2.close()} title={"Select A Color"}>
+                                    <Stack align='center'>
+                                        <ColorPicker 
+                                            format="hex"
+                                            
+                                            value={value2}
+                                            onChange={(color2) => colorChoice2(color2)}
+                                            withPicker={false}
+                                            swatchesPerRow={9}
+                                            swatches={[
+                                                '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
+                                                '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
+                                                '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
+                                                '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
+                                            ]}
+                                        />
+                                    </Stack>
+                                </Modal>
+                                <Button
+                                    onClick={() => handlers2.open()}
+                                    color={value2}
+                                    maw={30}
+                                    style={{borderColor: 'black'}}
+                                    >
+                                    Color
+                                </Button>
                             </Group>
                             <Group justify="center">
                                 <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
