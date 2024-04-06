@@ -625,7 +625,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                         </Stack>
                     </Group>
                 </Center>
-                <Stack mt={60} mx={50}>
+                {/* <Stack mt={60} mx={50}>
                     <Text ta="center" size="lg" fw={700}>My Courses</Text>
                     <form onSubmit={handleSubmit}>
                         {width > 720 ?
@@ -789,7 +789,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                             </>
                         }
                     </form>
-                </Stack>
+                </Stack> */}
 
                 {width > 1000 ?
                     <Group grow>
