@@ -85,7 +85,7 @@ export default function Landing(data) {
           </Stack>
         </Grid.Col>
 
-        <Grid.Col span="auto" order={{ base: 3 }} miw={300}>
+        <Grid.Col span="auto" order={{ base: 3 }} miw={485}>
           <Tabs variant="default" defaultValue="sg" value={activeTab} onChange={setActiveTab}>
             <Tabs.List mt={20}>
               <Tabs.Tab value="sg" fz={15}>
