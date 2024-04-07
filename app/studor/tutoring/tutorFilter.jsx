@@ -1,4 +1,4 @@
-import { ActionIcon, Autocomplete, Button, Center, Checkbox, Drawer, Group, NativeSelect, NumberInput, SegmentedControl, Stack, Text, rem } from "@mantine/core";
+import { ActionIcon, Autocomplete, Button, Center, Checkbox, Drawer, Group, NativeSelect, NumberInput, Rating, SegmentedControl, Stack, Text, rem } from "@mantine/core";
 import { DatePickerInput, TimeInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -18,7 +18,7 @@ const courseSectionData = Array(100)
   .fill(0)
   .map((_, index) => `Option ${index}`);
 
-export default function Filter({ departments, study_sessions, sendDataToParent }) {
+export default function TutorFilter({ departments, study_sessions, sendDataToParent }) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -27,7 +27,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
   const [coursesList, setCoursesList] = useState([]);
-  const [filtered_posts, setData] = useState("");
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -121,7 +121,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
 
   const form = useForm({
     validateInputOnChange: true,
-    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', noiseLevel: 'None' },
+    initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', tutorRating: 0, tutorVerified: false },
 
     validate: {
       department: (value, allValues) => allValues.department && ((allValues.department.length !== 4 || !(/^[a-zA-Z]+$/.test(allValues.department))) ? 'Invalid Department' : null),
@@ -131,7 +131,6 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
       ),
       minGroupSize: (value, allValues) => allValues.minGroupSize && ((allValues.minGroupSize >= 2 && allValues.minGroupSize <= 20) ? null : 'Invalid Group Size'),
       maxGroupSize: (value, allValues) => allValues.maxGroupSize && ((allValues.maxGroupSize >= 2 && allValues.maxGroupSize <= 20 && allValues.maxGroupSize >= allValues.minGroupSize) ? null : 'Invalid Group Size'),
-      noiseLevel: (value) => ((value > 5 || value < 1 || value != '') ? 'Invalid Noise Level' : null),
       startDate: (value) => {
 
         const currentDate = new Date();
@@ -164,6 +163,8 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
 
     let filtered_posts = [];
     let fit_filter = false;
+
+    console.log(study_sessions);
 
     for (let i = 0; i < study_sessions.length; i++) {
       // courses filter
@@ -235,22 +236,10 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
         min_size = 0;
       }
 
-      if ((max_size == null || max_size == "") && study_sessions[i].max_group_size >= min_size) {
+      if ((max_size == null || max_size == "") && study_sessions[i].max_group_size - 1 >= min_size) {
         fit_filter = true;
       }
-      else if (study_sessions[i].max_group_size >= min_size && study_sessions[i].max_group_size <= max_size) {
-        fit_filter = true;
-      }
-      else {
-        fit_filter = false;
-        continue;
-      }
-
-      // noise level filter
-      if (form.values.noiseLevel == "None") {
-        fit_filter = true;
-      }
-      else if (study_sessions[i].noise_level == form.values.noiseLevel) {
+      else if (study_sessions[i].max_group_size - 1 >= min_size && study_sessions[i].max_group_size - 1 <= max_size) {
         fit_filter = true;
       }
       else {
@@ -258,6 +247,31 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
         continue;
       }
 
+      // tutor rating filter
+      var avg_rating = study_sessions[i].averageRating;
+      if (isNaN(study_sessions[i].averageRating)) {
+        avg_rating = 0;
+      }
+
+      if (form.values.tutorRating <= avg_rating) {
+        fit_filter = true;
+      }
+      else {
+        fit_filter = false;
+        continue;
+      }
+
+      // verified tutor filter
+      console.log(form.values.tutorVerified);
+      console.log(study_sessions[i].verified);
+      console.log("----")
+      if (!form.values.tutorVerified || (form.values.tutorVerified && study_sessions[i].verified)) {
+        fit_filter = true;
+      }
+      else {
+        fit_filter = false;
+        continue;
+      }
 
       // add to list
       if (fit_filter == true) {
@@ -271,6 +285,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
 
     }
     sendDataToParent(filtered_posts);
+
   };
 
   const handleAddCourse = (event) => {
@@ -309,11 +324,12 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
     setCoursesList([]);
     form.setFieldValue('startDate', new Date());
     form.setFieldValue('endDate', currentDate);
-    form.setFieldValue('minGroupSize', null);
-    form.setFieldValue('maxGroupSize', null);
+    form.setFieldValue('minGroupSize', '');
+    form.setFieldValue('maxGroupSize', '');
     form.setFieldValue('startTime', '');
     form.setFieldValue('endTime', '');
-    form.setFieldValue('noiseLevel', 'None');
+    form.setFieldValue('tutorRating', 0);
+    form.setFieldValue('tutorVerified', false);
     form.setFieldValue('department', '');
     setSelectedDepartment('');
     form.setFieldValue('courseNumber', '');
@@ -442,62 +458,13 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
             />
           </Group>
 
-          <Text fw={700} mt={30}>Noise Level</Text>
-          <SegmentedControl color="#800000" data={[
-            {
-              value: 'None',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                  <span>No Preference</span>
-                </Center>
-              ),
-            },
-            {
-              value: '1',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolumeOff style={{ width: rem(16), height: rem(16) }} />
-                  <span>1</span>
-                </Center>
-              ),
-            },
-            {
-              value: '2',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <span>2</span>
-                </Center>
-              ),
-            },
-            {
-              value: '3',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolume2 style={{ width: rem(16), height: rem(16) }} />
-                  <span>3</span>
-                </Center>
-              ),
-            },
-            {
-              value: '4',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <span>4</span>
-                </Center>
-              ),
-            },
-            {
-              value: '5',
-              label: (
-                <Center style={{ gap: 10 }}>
-                  <IconVolume style={{ width: rem(16), height: rem(16) }} />
-                  <span>5</span>
-                </Center>
-              ),
-            },
-          ]}
-            {...form.getInputProps('noiseLevel')} />
+          <Text fw={700} mt={30}>Tutor Information</Text>
+          <Group>
+            <Rating fractions={2} size={"lg"} {...form.getInputProps('tutorRating')} />
+            <Text>{form.values.tutorRating} and above</Text>
+          </Group>
+          <Checkbox mt="sm" size="sm" checked={form.values.tutorVerified} label="Verified Tutor" {...form.getInputProps('tutorVerified')} />
+
           <Group justify="center" mt="lg">
             <Button
               onClick={handleReset}
@@ -509,7 +476,6 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
               Reset
             </Button>
             <Button
-              onClick={handleSubmit}
               type='submit'
               variant="filled"
               color='#800000'

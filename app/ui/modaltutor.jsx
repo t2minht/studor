@@ -26,6 +26,7 @@ export default function Modaltutor(session) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
   const [participants, setParticipants] = useState([]);
+  const [avgRating, setAvgRating] = useState(session.current.averageRating);
   useEffect(() => {
     getParticipants();
   }, []);
@@ -95,15 +96,16 @@ export default function Modaltutor(session) {
               <Text mt={-15}><b>Date:</b> {formatDate(session.current.date)}</Text>
               <Text mt={-15}><b>Time:</b> {convertTo12HourFormat(session.current.start_time)} - {convertTo12HourFormat(session.current.end_time)}</Text>
               <Text mt={-15}> <b>Remaining:</b> {session.current.max_group_size - session.current.current_group_size} /{" "}
-                {session.current.max_group_size-1}{" "}</Text>
+                {session.current.max_group_size - 1}{" "}</Text>
               <Text mt={-15}><b>Description:</b> {session.current.description}</Text>
               <Group mt={-15}>
                 <Text><b>Tutor:</b> {session.current.users.full_name}</Text>
-                {session.current.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft:"-10" }} />}
+                {session.current.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
               </Group>
               <Group mt={-15}>
-                <Text><b>Tutor Rating:</b> 3.5</Text>
-                <Rating value={3.5} fractions={2} ml={-10} readOnly />
+
+                {avgRating ? <Text><b>Tutor Rating:</b> {avgRating}</Text> : <Text> <b>Tutor Rating:</b> No Rating</Text>}
+                {avgRating && <Rating value={avgRating} fractions={4} ml={-10} readOnly />}
               </Group>
             </Stack>
           </Stack>

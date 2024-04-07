@@ -4,10 +4,10 @@ import { redirect } from 'next/navigation';
 import AuthButtonServer from './ui/auth-button-server';
 import { Center, MantineProvider } from "@mantine/core";
 import Navbar from "./ui/navbar";
-import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions, retrieveProfileStudySession } from "./backend/study-session-backend";
+import { retrieveExistingJoinedSessions as getJoinedStudySessions, retrieveFutureHostedSessions as getHostedStudySessions, retrieveProfileStudySession, retrieveUserProfileInfo } from "./backend/study-session-backend";
 import { retrieveExistingJoinedSessions as getJoinedTutoring, retrieveFutureHostedSessions as getHostedTutoring, retrieveProfileTutoringSessions } from "./backend/tutoring-backend";
 import Landing from "./ui/landing";
-import { retrieveUserEvents } from "./backend/calendar-backend";
+import { getColorPref, retrieveUserEvents } from "./backend/calendar-backend";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
@@ -19,7 +19,7 @@ export default async function Home() {
 
   const hosted_study_sessions = await getHostedStudySessions();
   const joined_study_sessions = await getJoinedStudySessions();
-  
+
 
   const study_sessions = {};
   study_sessions.hosted = hosted_study_sessions;
@@ -35,13 +35,16 @@ export default async function Home() {
   const fetchedEvents = await retrieveUserEvents();
   const fetchedStudySessions = await retrieveProfileStudySession();
   const fetchedTutorSessions = await retrieveProfileTutoringSessions();
+  const fetchedColors = await getColorPref();
+
+  const user = await retrieveUserProfileInfo();
   // console.log(fetchedStudySessions);
   // console.log(fetchedTutorSessions);
 
   return (
     <>
       <MantineProvider>
-        <Navbar />
+        <Navbar user={user} />
         {/* <Center>
           <h1>My Landing Page</h1>
           {study_sessions.length > 0 ? (
@@ -67,7 +70,7 @@ export default async function Home() {
             </>
           )}
         </Center> */}
-        <Landing study_sessions={study_sessions} tutoring={tutoring} events = {fetchedEvents} all_study_sessions = {fetchedStudySessions} all_tutoring = {fetchedTutorSessions}></Landing>
+        <Landing study_sessions={study_sessions} tutoring={tutoring} events={fetchedEvents} all_study_sessions={fetchedStudySessions} all_tutoring={fetchedTutorSessions} colors={fetchedColors}></Landing>
       </MantineProvider>
     </>
   );

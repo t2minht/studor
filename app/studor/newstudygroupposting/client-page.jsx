@@ -112,7 +112,7 @@ export default function ClientPage(data) {
         initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '', noiseLevel: '3' },
 
         validate: {
-            title: (value) => ((value.length < 2 || value.length > 50) ? 'Must be between 2-50 characters' : null),
+            title: (value) => ((value.length < 2 || value.length > 40) ? 'Must be between 2-40 characters' : null),
             description: (value, allValues) => (
                 allValues.description && (value.length > 500) ? 'Invalid Description' : null
             ),
@@ -121,7 +121,7 @@ export default function ClientPage(data) {
             courseSection: (value, allValues) => (
                 allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
             ),
-            location: (value) => ((value.length < 2 || value.length > 50) ? 'Invalid Location (Limit of 50 characters)' : null),
+            location: (value) => ((value.length < 2 || value.length > 40) ? 'Invalid Location (Limit of 40 characters)' : null),
             groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
             noiseLevel: (value) => ((value > 5 || value < 1) ? 'Invalid Noise Level' : null),
             date: (value) => {
@@ -187,12 +187,12 @@ export default function ClientPage(data) {
         // Redirect to the new page after a short delay
         setTimeout(() => {
             window.location.href = '/';
-        }, 5000);
+        }, 1000);
     };
 
     return (
         <MantineProvider>
-            <Center>
+            <Center pl={50} pr={50}>
                 <h1>Create a Study Group Session</h1>
             </Center>
 
@@ -201,7 +201,7 @@ export default function ClientPage(data) {
                     <form onSubmit={handleSubmit}>
                         <TextInput
                             label="Title"
-                            description="Limit of 50 characters"
+                            description="Limit of 40 characters"
                             placeholder="Title of Session"
                             required
                             {...form.getInputProps('title')}
@@ -245,7 +245,7 @@ export default function ClientPage(data) {
                         </Group>
                         <TextInput
                             label="Location"
-                            description="Limit of 50 characters"
+                            description="Limit of 40 characters"
                             placeholder="Location of Session"
                             mt={15}
                             required

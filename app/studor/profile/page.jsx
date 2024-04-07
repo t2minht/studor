@@ -4,7 +4,7 @@ import { retrieveProfileStudySession, retrieveUserProfileInfo } from "@/app/back
 import cx from 'clsx';
 import { useForm } from "@mantine/form";
 import { notifications } from '@mantine/notifications';
-import { calendarDataUpload } from '../../backend/calendar-backend';
+import { calendarDataUpload, getColorPref } from '../../backend/calendar-backend';
 import Modalview from "../../ui/modalview";
 import { getDepartmentNames, getTutorCourses, retrieveProfileTutoringSessions } from "@/app/backend/tutoring-backend";
 
@@ -15,11 +15,12 @@ export default async function Page() {
 
   const departments = await getDepartmentNames();
   const departmentsAndNull = [''].concat(departments);
+  const colorPrefs = await getColorPref();
 
   return (
     <div>
       <MantineProvider>
-        <ClientPage sessions={sessions} user={user} tutor_sessions={tutor_sessions} departments={departmentsAndNull} />
+        <ClientPage sessions={sessions} user={user} tutor_sessions={tutor_sessions} departments={departmentsAndNull} colorPrefs={colorPrefs} />
       </MantineProvider>
 
     </div>
