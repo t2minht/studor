@@ -3,7 +3,7 @@ import { retrieveProfileTutoringSessions } from "@/app/backend/tutoring-backend"
 import { MantineProvider } from "@mantine/core";
 import ClientPage from "./client-page";
 import { getDepartmentNames } from "@/app/backend/tutoring-backend";
-import { retrieveUserEvents } from "../../backend/calendar-backend";
+import { retrieveUserEvents, getColorPref } from "../../backend/calendar-backend";
 
 
 export default async function Page() {
@@ -14,10 +14,11 @@ export default async function Page() {
   const fetchedEvents = await retrieveUserEvents();
   const fetchedStudySessions = await retrieveProfileStudySession();
   const fetchedTutorSessions = await retrieveProfileTutoringSessions();
+  const colorPrefs = await getColorPref();
 
   return (
     <MantineProvider>
-      <ClientPage study_sessions={study_sessions} events = {fetchedEvents} all_study_sessions = {fetchedStudySessions} all_tutoring = {fetchedTutorSessions} departments={departmentsAndNull}></ClientPage>
+      <ClientPage study_sessions={study_sessions} events = {fetchedEvents} colors = {colorPrefs} all_study_sessions = {fetchedStudySessions} all_tutoring = {fetchedTutorSessions} departments={departmentsAndNull}></ClientPage>
     </MantineProvider>
   )
 }
