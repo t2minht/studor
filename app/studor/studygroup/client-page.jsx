@@ -199,7 +199,7 @@ export default function ClientPage(data) {
 
                 {checked && (
                     <Grid.Col span="content" order={{ base: 2 }} maw={700} miw={600}>
-                        <Calendar key={calendarKey} events={data.events} study_sessions={all_study_sessions} tutoring={data.all_tutoring}></Calendar>
+                        <Calendar key={calendarKey} events={data.events} colors={data.colors} study_sessions={all_study_sessions} tutoring={data.all_tutoring}></Calendar>
                     </Grid.Col>
                 )}
             </Grid>
