@@ -17,8 +17,8 @@ supabase - database
 
 ## Credits
 Developers:  
-Front-end Lead - Sana Marediya  
-Back-end Lead - Shawn Mathen  
+Front-end Lead - Sana Marediya, Sarah Eilene Sotelo  
+Back-end Lead - Shawn Mathen, Ethan Novicio 
 CI/CD Lead  - Ethan Novicio  
 Design Lead - Sarah Eilene Sotelo  
 Testing Lead - Tuong Tran
