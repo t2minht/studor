@@ -32,6 +32,9 @@ import Modaltutor from "@/app/ui/modaltutor";
 import TutorFilter from "@/app/studor/tutoring/tutorFilter"
 
 export default function ClientPage(data) {
+
+  console.log("client data", data.tutor_sessions);
+
   const [opened, { open, close }] = useDisclosure(false);
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(true);
