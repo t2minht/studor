@@ -43,6 +43,9 @@ const sessionHistory =
 const tutorRatings =
   "Go to your Profile page and scroll down until you find the 'Tutoring History' table. Click the 'View' button on the specific session you want to rate. At the very bottom of the popup/modal there should be a 'Rate Tutor' section. Once you click the 'Submit' button, your rating of the tutor will be sent. Note that you will only be able to submit a rating once per session.";
 
+const browserIssue =
+  "From our knowledge, creating and editing a session doesn't work on Firefox browsers. This may be the issue why some features aren't working for you. Please switch to another browser. It should work on Google Chrome, Brave, and Safari.";
+
 export default function FaqSimple() {
   return (
     <>
@@ -52,6 +55,11 @@ export default function FaqSimple() {
         </Center>
 
         <Accordion variant="separated">
+          <Accordion.Item value="browser-issue">
+            <Accordion.Control>Not working on my browser?</Accordion.Control>
+            <Accordion.Panel>{browserIssue}</Accordion.Panel>
+          </Accordion.Item>
+
           <Accordion.Item value="upload-schedule">
             <Accordion.Control>How can I upload my schedule?</Accordion.Control>
             <Accordion.Panel>{uploadSchedule}</Accordion.Panel>

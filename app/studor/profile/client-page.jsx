@@ -88,68 +88,73 @@ const courseSectionData = Array(100)
 // };
 */
 
-function parseICS(icsString) {
-    let reader = new FileReader();
-    reader.readAsText(icsString);
-    reader.onload = function () {
-        console.log(reader.result);
-        const lines = reader.result.split("\n");
-        const events = [];
-        let event;
-        lines.map((line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
-            line = line.trim();
-            if (line === 'BEGIN:VEVENT') { event = {}; }
-            else if (line === 'END:VEVENT') { event["backColor"] = "#CCCCCC"; event["fontColor"] = "#000000"; events.push(event); }
-            else if (event) {
-                if (line.includes("SUMMARY")) {
-                    event["text"] = line.split("SUMMARY:")[1];
-                } else if (line.toLowerCase().includes("dtstart")) {
-                    let temp = line.split(":")[1];
-                    if (temp.includes("Z")) {
-                        let oldDate = new Date(temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2) + ".000Z");
-                        oldDate = new Date(oldDate.toLocaleString("en-US", { timeZone: 'America/Chicago' }));
-                        temp = oldDate.getFullYear() + "-" + ((oldDate.getMonth() + 1) + "").padStart(2, '0') + "-" + (oldDate.getDate() + "").padStart(2, '0') + "T" + oldDate.toTimeString().substr(0, 8);
-                    } else {
-                        temp = temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2);
-                    }
-
-                    event["start"] = temp;
-                } else if (line.toLowerCase().includes("dtend")) {
-                    let temp = line.split(":")[1];
-                    if (temp.includes("Z")) {
-                        let oldDate = new Date(temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2) + ".000Z");
-                        oldDate = new Date(oldDate.toLocaleString("en-US", { timeZone: 'America/Chicago' }));
-                        temp = oldDate.getFullYear() + "-" + ((oldDate.getMonth() + 1) + "").padStart(2, '0') + "-" + (oldDate.getDate() + "").padStart(2, '0') + "T" + oldDate.toTimeString().substr(0, 8);
-                    } else {
-                        temp = temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2);
-                    }
-                    event["end"] = temp;
-                } else if (line.toLowerCase().includes("rrule")) {
-                    event["rrule"] = line.split(":")[1];
-                }
-            }
-        });
-        console.log(events);
-        let results = JSON.stringify(events);
-        console.log("results");
-        console.log(results);
-        sendEvents(results);
-    };
-    reader.onerror = function () {
-        console.log(reader.error);
-    };
-};
 
 export default function ClientPage({ sessions, user, tutor_sessions, departments, colorPrefs }) {
     const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
+    const [visible, setVisible] = useState(false);
+
+    function parseICS(icsString) {
+        setVisible(true);
+        let reader = new FileReader();
+        reader.readAsText(icsString);
+        reader.onload = function () {
+            console.log(reader.result);
+            const lines = reader.result.split("\n");
+            const events = [];
+            let event;
+            lines.map((line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
+                line = line.trim();
+                if (line === 'BEGIN:VEVENT') { event = {}; }
+                else if (line === 'END:VEVENT') { event["backColor"] = "#CCCCCC"; event["fontColor"] = "#000000"; events.push(event); }
+                else if (event) {
+                    if (line.includes("SUMMARY")) {
+                        event["text"] = line.split("SUMMARY:")[1];
+                    } else if (line.toLowerCase().includes("dtstart")) {
+                        let temp = line.split(":")[1];
+                        if (temp.includes("Z")) {
+                            let oldDate = new Date(temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2) + ".000Z");
+                            oldDate = new Date(oldDate.toLocaleString("en-US", { timeZone: 'America/Chicago' }));
+                            temp = oldDate.getFullYear() + "-" + ((oldDate.getMonth() + 1) + "").padStart(2, '0') + "-" + (oldDate.getDate() + "").padStart(2, '0') + "T" + oldDate.toTimeString().substr(0, 8);
+                        } else {
+                            temp = temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2);
+                        }
+    
+                        event["start"] = temp;
+                    } else if (line.toLowerCase().includes("dtend")) {
+                        let temp = line.split(":")[1];
+                        if (temp.includes("Z")) {
+                            let oldDate = new Date(temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2) + ".000Z");
+                            oldDate = new Date(oldDate.toLocaleString("en-US", { timeZone: 'America/Chicago' }));
+                            temp = oldDate.getFullYear() + "-" + ((oldDate.getMonth() + 1) + "").padStart(2, '0') + "-" + (oldDate.getDate() + "").padStart(2, '0') + "T" + oldDate.toTimeString().substr(0, 8);
+                        } else {
+                            temp = temp.substr(0, 4) + "-" + temp.substr(4, 2) + "-" + temp.substr(6, 5) + ":" + temp.substr(11, 2) + ":" + temp.substr(13, 2);
+                        }
+                        event["end"] = temp;
+                    } else if (line.toLowerCase().includes("rrule")) {
+                        event["rrule"] = line.split(":")[1];
+                    }
+                }
+            });
+            console.log(events);
+            let results = JSON.stringify(events);
+            console.log("results");
+            console.log(results);
+            sendEvents(results);
+            alert("Schedule was successfully uploaded!");
+            setVisible(false);
+        };
+        reader.onerror = function () {
+            console.log(reader.error);
+            alert("Schedule was NOT successfully uploaded!");
+            setVisible(false);
+        };
+    };
 
 
     // for color picking modal
     const [opened, handlers] = useDisclosure(false); 
     const [value, onChange] = useState(colorPrefs.study_session_color);
-
-    const [visible, setVisible] = useState(false);
 
     function colorChoice(color){
         onChange(color);
