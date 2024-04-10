@@ -72,7 +72,6 @@ export default function Landing(data) {
               label="Show calendar"
               mb={20}
             />
-            <Group>
               <Button
                 variant="filled"
                 component="a"
@@ -81,7 +80,14 @@ export default function Landing(data) {
               >
                 {activeTab == 'tutor' ? 'New Tutor Post' : 'New Study Group Post'}
               </Button>
-            </Group>
+              <Button
+                  variant="filled"
+                  component="a"
+                  href="/studor/faqs"
+                  color="#800000"
+              >
+                  FAQs
+              </Button>
           </Stack>
         </Grid.Col>
 

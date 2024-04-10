@@ -117,16 +117,22 @@ export default function ClientPage(data) {
               label="Show calendar"
               mb={20}
             />
-            <Group>
-              <Button
+            <Button
+              variant="filled"
+              component="a"
+              href="/studor/newtutorposting"
+              color="#800000"
+            >
+              New Tutor Post
+            </Button>
+            <Button
                 variant="filled"
                 component="a"
-                href="/studor/newtutorposting"
+                href="/studor/faqs"
                 color="#800000"
-              >
-                New Tutor Post
-              </Button>
-            </Group>
+            >
+                FAQs
+            </Button>
           </Stack>
         </Grid.Col>
 
@@ -141,7 +147,7 @@ export default function ClientPage(data) {
 
                     session.averageRating = session.users.tutor_rating;
                     return (
-                      <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.id}>
+                      <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.id}>
                         <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                           <Stack>
                             <Avatar size={100} src={session.tutor_avatar_url} />
