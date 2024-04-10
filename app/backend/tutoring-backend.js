@@ -297,8 +297,9 @@ export async function retrieveFutureHostedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toDateString();
-    const currentTime = currentDateTime.toTimeString().split(' ')[0];
+    const options = { timeZone: 'America/Chicago' }; // Central Time
+    const currentDate = currentDateTime.toLocaleDateString('en-US', options);
+    const currentTime = currentDateTime.toLocaleTimeString('en-US', options).split(' ')[0];
 
     try {
 
@@ -333,8 +334,9 @@ export async function retrieveExistingJoinedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toDateString();
-    const currentTime = currentDateTime.toTimeString().split(' ')[0];
+    const options = { timeZone: 'America/Chicago' }; // Central Time
+    const currentDate = currentDateTime.toLocaleDateString('en-US', options);
+    const currentTime = currentDateTime.toLocaleTimeString('en-US', options).split(' ')[0];
 
     try {
         const participantSessionsQuery = supabase
@@ -421,8 +423,9 @@ export async function getExistingNotJoinedSessions() {
     const { data: { user } } = await supabase.auth.getUser();
 
     const currentDateTime = new Date();
-    const currentDate = currentDateTime.toDateString();
-    const currentTime = currentDateTime.toTimeString().split(' ')[0];
+    const options = { timeZone: 'America/Chicago' }; // Central Time
+    const currentDate = currentDateTime.toLocaleDateString('en-US', options);
+    const currentTime = currentDateTime.toLocaleTimeString('en-US', options).split(' ')[0];
 
 
 
