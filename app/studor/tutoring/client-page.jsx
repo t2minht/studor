@@ -147,7 +147,7 @@ export default function ClientPage(data) {
 
                     session.averageRating = session.users.tutor_rating;
                     return (
-                      <Paper shadow="xl" radius="xl" p="xl" withBorder key={session.id}>
+                      <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.id}>
                         <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                           <Stack>
                             <Avatar size={100} src={session.tutor_avatar_url} />
