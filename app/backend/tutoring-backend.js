@@ -466,9 +466,13 @@ export async function getExistingNotJoinedSessions() {
             .order('date')
             .order('end_time');
 
-        const data = todaysData.concat(futureData);
-        
-        console.log("data", data)
+            const data = todaysData.concat(futureData);
+        console.log("current datetime", currentDateTime)
+        console.log("current date", currentDate)
+        console.log("current time", currentTime)
+        console.log("todays data:", todaysData)
+        console.log("future data:", futureData)
+        console.log("concatted data:", data)
         return data;
 
 
