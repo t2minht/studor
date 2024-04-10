@@ -133,16 +133,22 @@ export default function ClientPage(data) {
                             label="Show calendar"
                             mb={20}
                         />
-                        <Group>
-                            <Button
-                                variant="filled"
-                                component="a"
-                                href="/studor/newstudygroupposting"
-                                color="#800000"
-                            >
-                                New Study Group Post
-                            </Button>
-                        </Group>
+                        <Button
+                            variant="filled"
+                            component="a"
+                            href="/studor/newstudygroupposting"
+                            color="#800000"
+                        >
+                            New Study Group Post
+                        </Button>
+                        <Button
+                            variant="filled"
+                            component="a"
+                            href="/studor/faqs"
+                            color="#800000"
+                        >
+                            FAQs
+                        </Button>
                     </Stack>
                 </Grid.Col>
 
