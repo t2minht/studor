@@ -1,0 +1,30 @@
+const clearSchedule = () => {
+    setSchedule(null);
+    resetSchedule.current?.();
+  };
+
+  const uploadSchedule = (event) =>{
+
+    const file = schedule;
+    console.log("sending file");
+
+    calendarDataUpload(file);
+  };
+
+
+  <Group justify="center">
+    <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+        {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
+    </FileButton>
+    <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>
+        Upload
+    </Button>
+    <Button disabled={!schedule} color="red" onClick={clearSchedule}>
+        Reset
+    </Button>
+    </Group>
+    {schedule && (
+    <Text size="sm" mt={-10} ta="center">
+        Selected file: {schedule.name}
+    </Text>
+    )}

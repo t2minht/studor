@@ -8,12 +8,14 @@ import { useForm } from '@mantine/form';
 import { getCourseNumbersForDepartment, submitTutoringSession } from '../../backend/tutoring-backend';
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useViewportSize } from "@mantine/hooks";
 
 let formValues = {};
 
 export default function ClientPage(data) {
+  const { height, width } = useViewportSize();
   const supabase = createClientComponentClient();
-  const [selectedDepartment, setSelectedDepartment] = useState('ACCT');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
   const [selectedCourseSection, setSelectedCourseSection] = useState('');
   const [courseNumbers, setCourseNumbers] = useState([]);
@@ -22,15 +24,25 @@ export default function ClientPage(data) {
   useEffect(() => {
     const fetchData = async () => {
       const numbers = await getCourseNumbers(selectedDepartment);
-      setCourseNumbers(numbers);
+      const allNumbers = [''].concat(numbers);
+      setCourseNumbers(allNumbers);
     };
 
     fetchData();
+
+    form.values.department = selectedDepartment;
   }, [selectedDepartment]);
 
   useEffect(() => {
-
   }, [courseNumbers]);
+
+  useEffect(() => {
+    form.values.courseNumber = selectedCourseNumber;
+  }, [selectedCourseNumber]);
+
+  useEffect(() => {
+    form.values.courseSection = selectedCourseSection;
+  }, [selectedCourseSection]);
 
   const getSectionNumbers = async (courseNumber) => {
     try {
@@ -89,7 +101,8 @@ export default function ClientPage(data) {
   const handleCourseNumberChange = async (selectedCourseNumber) => {
     try {
       const sections = await getSectionNumbers(selectedCourseNumber);
-      setCourseSections(sections);
+      const allSections = [''].concat(sections);
+      setCourseSections(allSections);
     } catch (error) {
       console.error('Error updating course sections:', error);
     }
@@ -110,16 +123,19 @@ export default function ClientPage(data) {
     initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '' },
 
     validate: {
-      title: (value) => ((value.length < 2 || value.length > 100) ? 'Must be between 2-100 characters' : null),
+      title: (value) => ((value.length < 2 || value.length > 40) ? 'Must be between 2-40 characters' : null),
       description: (value, allValues) => (
         allValues.description && (value.length > 500) ? 'Invalid Description' : null
       ),
-      department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-      courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
+      // !(/^[a-zA-Z]+$/.test(value))
+      department: (value) => ((value.length !== 4) ? 'Invalid Department' : null),
+      // !(/^\d{3}$/.test(Number(value)))
+      courseNumber: (value) => ((value.length !== 3) ? 'Invalid Course Number' : null),
       courseSection: (value, allValues) => (
-        allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
+        // !(/^\d{3}$/.test(Number(value))
+        allValues.courseSection && (value.length !== 3) ? 'Invalid Course Section' : null
       ),
-      location: (value) => ((value.length < 2 || value.length > 100) ? 'Invalid Location' : null),
+      location: (value) => ((value.length < 2 || value.length > 40) ? 'Invalid Location (Limit of 40 characters)' : null),
       groupSize: (value) => ((value >= 2 && value <= 20) ? null : 'Invalid Group Size'),
       date: (value) => {
 
@@ -151,8 +167,8 @@ export default function ClientPage(data) {
     event.preventDefault(); // Prevent default form submission
 
     if (!form.isValid()) {
-      console.log(form.values)
-      console.log('Form is invalid');
+      console.error(form.values)
+      console.error('Form is invalid');
       notifications.show({
         withBorder: true,
         color: "red",
@@ -161,6 +177,7 @@ export default function ClientPage(data) {
         title: "Incorrect Inputs",
         message: "Please make sure all inputs are correctly formatted",
       });
+
       return;
     }
 
@@ -184,21 +201,21 @@ export default function ClientPage(data) {
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';
-    }, 5000);
+    }, 1000);
   };
 
   return (
     <MantineProvider>
-      <Center>
+      <Center pl={50} pr={50}>
         <h1>Create a Tutoring Session</h1>
       </Center>
 
       <Center mx={25}>
-        <Stack>
-          <form onSubmit={handleSubmit}>
+        <Stack miw={(width > 754) ? 680 : null}>
+          <form onSubmit={handleSubmit} >
             <TextInput
               label="Title"
-              description="Limit of 100 characters"
+              description="Limit of 40 characters"
               placeholder="Title of Session"
               required
               {...form.getInputProps('title')}
@@ -221,10 +238,11 @@ export default function ClientPage(data) {
                 onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
               />
               <NativeSelect
-                label="Course Number"
+                label="Course #"
                 placeholder="Enter Three Numbers"
                 data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
                 maxDropdownHeight={200}
+                disabled={!selectedDepartment}
                 required
                 {...form.getInputProps('courseNumber')}
                 onChange={(event) => { handleCourseNumberChange(event.currentTarget.value); setSelectedCourseNumber(event.currentTarget.value) }}
@@ -235,12 +253,13 @@ export default function ClientPage(data) {
                 placeholder="Enter Three Numbers"
                 data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
                 maxDropdownHeight={200}
+                disabled={!selectedCourseNumber}
                 {...form.getInputProps('courseSection')}
               />
             </Group>
             <TextInput
               label="Location"
-              description="Limit of 100 characters"
+              description="Limit of 40 characters"
               placeholder="Location of Session"
               mt={15}
               required

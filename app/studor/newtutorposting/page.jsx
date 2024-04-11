@@ -5,10 +5,11 @@ import { getDepartmentNames, getTutorCourses } from "@/app/backend/tutoring-back
 export default async function Page() {
   const possible_courses = await getTutorCourses();
   const departments = await getDepartmentNames();
+  const departmentsAndNull = [''].concat(departments);
 
   return (
     <MantineProvider>
-      <ClientPage courses={possible_courses} departments={departments}></ClientPage>
+      <ClientPage courses={possible_courses} departments={departmentsAndNull}></ClientPage>
     </MantineProvider>
   )
 }
