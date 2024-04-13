@@ -14,6 +14,8 @@ import {
   ScrollArea,
   Paper,
   Title,
+  Space,
+  Divider,
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -122,7 +124,10 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
             </Paper>
           ))}
         </Group>
-        <Title order={1} pl={50} pr={50} pt={40} pb={10} fw={700}>Joined Sessions</Title>
+        <Space h="md" />
+        <Space h="md" />
+        <Divider my="md" size="md" />
+        <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
           {study_sessions_joined.map((session) => (
             <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
