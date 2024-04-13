@@ -14,6 +14,8 @@ import {
   ScrollArea,
   Paper,
   Title,
+  Space,
+  Divider,
 } from "@mantine/core";
 import {
   IconXboxX,
@@ -131,7 +133,10 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
             )
           })}
         </Group>
-        <Title order={1} pl={50} pr={50} pt={40} pb={10} fw={700}>Joined Sessions</Title>
+        <Space h="md" />
+        <Space h="md" />
+        <Divider my="md" size="md" />
+        <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
           {tutoring_sessions_joined.map((session) => {
             session.averageRating = session.users.tutor_rating;
