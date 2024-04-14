@@ -1,8 +1,8 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, NativeSelect } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, SegmentedControl, Text, NativeSelect, Tooltip } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
-import { IconCircleCheck, IconCircleX, IconClock, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
+import { IconCircleCheck, IconCircleX, IconClock, IconInfoCircle, IconVolume, IconVolume2, IconVolumeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { submitStudyGroupSessionData } from '../../backend/study-session-backend';
 import { useEffect, useState } from 'react';
@@ -294,7 +294,12 @@ export default function ClientPage(data) {
                             />
                         </Group>
                         <Stack mt={20}>
-                            <Text mb={-15} ta="center" size="sm" fw={500}>Noise Level</Text>
+                            <Group justify='center'>
+                                <Text mr={-10} ta="center" size="sm" fw={500}>Noise Level</Text>
+                                <Tooltip label="How loud sessions are. 1=mostly quiet; occasional questions. 5=constant discussions.">
+                                    <IconInfoCircle />
+                                </Tooltip>
+                            </Group>
                             <SegmentedControl color="#800000" data={[
                                 {
                                     value: '1',
