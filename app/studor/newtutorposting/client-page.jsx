@@ -282,6 +282,7 @@ export default function ClientPage(data) {
                 description="Select Date"
                 defaultValue={new Date()}
                 minDate={new Date()}
+                firstDayOfWeek={0}
                 required
                 {...form.getInputProps('date')}
               />
