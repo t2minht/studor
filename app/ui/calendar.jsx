@@ -128,7 +128,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
             }
 
             // if( startDate < eventDate && eventDate < newStartDate ){
-                eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time, tags: event_tag, backColor: color, fontColor: textColor});
+                eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time, tags: event_tag, backColor: color, fontColor: textColor, bubbleHtml:"Click for more Information"});
             // }
         });
         return eventsList, id;
@@ -248,7 +248,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         eventClickHandling: "Enabled",
         // dayBeginsHour: 8,
         // dayEndsHour:18,
-        // watchWidthChanges: true,
+        watchWidthChanges: true,
         showCurrentTime: true,
         showCurrentTimeMode: "Full",
         businessBeginsHour: 8,
