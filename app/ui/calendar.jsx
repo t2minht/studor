@@ -240,6 +240,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
     const [event, setEvent] = useState({event:"", id: 0});
 
     const [config, setConfig] = useState({
+        columnMarginLeft: 3,
         viewType: "Week",
         durationBarVisible: false,
         eventArrangement: "SideBySide",
@@ -267,10 +268,14 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         eventHoverHandling: "Bubble",
         onBeforeCellRender: (args) => {
             if (args.cell.start.getDatePart().getTime() === new DayPilot.Date().getDatePart().getTime()) {
+              args.cell.backColor = "#eaeaea";
               args.cell.cssClass = "current_day_cell";
+            }else{
+                args.cell.cssClass = "not_current_day_cell";
             }
         },
-        columnMarginRight: 0,
+        columnMarginRight: 3,
+        // columnMarginLeft: 3,
     });
 
     const calendarRef = useRef();
@@ -283,7 +288,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
     function colorChoice(color){
         let textColor = '#FFFFFF';
-        // console.log(color);
+        console.log(color);
         let lightColors = ['#FFFFFF', '#FFFF00', '#00FF00', '#00FFFF','#CCCCCC', '#F9CB9C', '#FFE599', '#D5A6BD'];
         // console.log(lightColors.includes(color));
         
@@ -313,7 +318,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         }
         // console.log("parser")
         // console.log(parser)
-        // calendarRef.current.control.update({startDate, events: calendarEvents});
+        calendarRef.current.control.update({startDate, events: calendarEvents});
         setEvents(JSON.stringify(parser));
         sendEvents(JSON.stringify(parser));
         handlers.close();
