@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DayPilotCalendar, DayPilot } from 'daypilot-pro-react';
-import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal} from "@mantine/core";
+import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal, Space} from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { retrieveUserEvents, sendEvents} from '../backend/calendar-backend';
 
@@ -263,7 +263,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         <>
             <Stack>
                 <Group justify="space-between">
-                    <div>
+                    <Group>
                         <Button
                             type='submit'
                             variant="filled"
@@ -280,7 +280,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                         >
                             {">"}
                         </Button>
-                    </div>
+                    </Group>
                     <Text fw={700} size='xl'>{monthNames[(new Date(sunday)).getMonth()] + " " + (new Date(sunday)).getFullYear()}</Text> 
                     <Button
                         type='submit'
