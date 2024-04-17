@@ -301,7 +301,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         // console.log(JSON.parse(isoEvents));
         let parser = JSON.parse(isoEvents);
         for(let i = 0; i < parser.length; i++){
-            if(parser[i].text == event.event){
+            if(parser[i].text == event.text){
                 parser[i].backColor = color;
                 parser[i].fontColor = textColor;
                 // calendarEvents[i].backColor = color;
@@ -309,13 +309,14 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
             }
         }
         for(let i = 0; i < calendarEvents.length; i++){
-            if(calendarEvents[i].text == event.event){
+            if(calendarEvents[i].text == event.text){
                 calendarEvents[i].backColor = color;
                 calendarEvents[i].fontColor = textColor;
                 // calendarEvents[i].backColor = color;
                 // calendarEvents[i].fontColor = textColor;
             }
         }
+        console.log(calendarEvents);
         // console.log("parser")
         // console.log(parser)
         calendarRef.current.control.update({startDate, events: calendarEvents});
