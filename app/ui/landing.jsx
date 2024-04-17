@@ -113,7 +113,7 @@ export default function Landing(data) {
             <Tabs.Panel value="sg" pl={10}>
               <Landingsg study_sessions={data.study_sessions} sendDataToParent={handleStudySessionsFromChild}></Landingsg>
             </Tabs.Panel>
-            <Tabs.Panel value="tutor">
+            <Tabs.Panel value="tutor" pl={10}>
               <Landingt tutoring={data.tutoring} sendDataToParent={handleTutoringSessionsFromChild}></Landingt>
             </Tabs.Panel>
           </Tabs>
