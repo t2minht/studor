@@ -322,7 +322,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         <>
             <Stack>
                 <Group justify="space-between">
-                    <div>
+                    <Group>
                         <Button
                             type='submit'
                             variant="filled"
@@ -339,7 +339,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                         >
                             {">"}
                         </Button>
-                    </div>
+                    </Group>
                     {/* <Text fw={700} size='xl'>{monthNames[(new Date(wed)).getMonth()] + " " + (new Date(wed)).getFullYear()}</Text> */}
                     {/* <Text fw={700} size='xl'>{monthNames[(new Date(sun)).getMonth()] + " " + (new Date(sun)).getDate() + " " + (new Date(wed)).getFullYear()}</Text> */}
                     <Text fw={700} size='xl'>{getWeek()}</Text>

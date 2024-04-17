@@ -271,7 +271,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
 
     }
     sendDataToParent(filtered_posts);
-    alert('Study Group filters have been applied.')
+    close();
   };
 
   const handleAddCourse = (event) => {
