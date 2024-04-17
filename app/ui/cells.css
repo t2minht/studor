@@ -1,11 +1,5 @@
 .current_day_cell
 {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	bottom: 0px;
-	right: 0px;
-	border-right: 1px solid #cc00cc;
-	border-bottom: 1px solid #cc00cc;
-	background: #f9f9f9;
+	border-right: 1px solid #4a86e8;
+	border-left: 1px solid #4a86e8;
 }

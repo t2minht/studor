@@ -266,7 +266,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         eventHoverHandling: "Bubble",
         onBeforeCellRender: (args) => {
             if (args.cell.start.getDatePart().getTime() === new DayPilot.Date().getDatePart().getTime()) {
-              args.cell.backColor = "#dddddd";
+              args.cell.cssClass = "current_day_cell";
             }
         },
 
