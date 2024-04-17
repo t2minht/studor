@@ -11,7 +11,8 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         "July", "August", "September", "October", "November", "December"
       ];
 
-    const [sunday, setWed] = useState(new Date());
+    const [wed, setWed] = useState(new Date());
+    const [sun, setSun] = useState(new Date());
 
     const [startDate, setStartDate] = useState(new Date()); // Initial date for the calendar
 
@@ -30,12 +31,14 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         newStartDate.setDate(newStartDate.getDate() + 7); // Go forward one week
         setStartDate(newStartDate);
         getWed(newStartDate);
+        getSun(newStartDate);
     };
 
     const resetWeek = () => {
         const newStartDate = new Date();
         setStartDate(newStartDate);
         getWed(newStartDate);
+        getSun(newStartDate);
     };
 
     const getWed = (date) =>{
@@ -50,6 +53,35 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         // console.log(wedDate);
         setWed(wedDate);
     }
+    const getSun = (date) =>{
+        const currDate = date.getDay();
+        // console.log(currDate);
+        var diff = 0 - currDate;
+        // if (diff < 0) {
+        //   diff += 7;
+        // }
+        const sunDate = new Date(date);
+        sunDate.setDate(date.getDate() - currDate);
+        // console.log(wedDate);
+        setSun(sunDate);
+    }
+
+    const getWeek = () =>{
+        let sunday = sun;
+        let saturday = new Date(sunday);
+        saturday.setDate(saturday.getDate() + 6)
+        let output = "" + monthNames[sunday.getMonth()] + " " + sunday.getDate();
+        if(sunday.getFullYear() != saturday.getFullYear()){
+            output+= ", " + sunday.getFullYear();
+        }
+        output += " - ";
+        if(sunday.getMonth() != saturday.getMonth()){
+            output += monthNames[saturday.getMonth()];
+        }
+        output += " " + saturday.getDate() + ", " + saturday.getFullYear();
+        return output;
+    }
+
 
     function getDatesForWeek() {
         const currentDay = startDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
@@ -170,12 +202,13 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         // eventsList, id = addSession(eventsList, study_sessions, id);
         // eventsList, id = addSession(eventsList, tutoring, id);
         */
-        console.log("colors");
-        console.log(colors);
+        // console.log("colors");
+        // console.log(colors);
         eventsList, id = addSession(eventsList, study_sessions, id, "Study Session", colors.study_session_color); // "#339af0"
         eventsList, id = addSession(eventsList, tutoring, id, "Tutoring", colors.tutor_session_color); // "#078787"
         // console.log(eventsList);
-
+        getSun(startDate);
+        getWed(startDate);
         setCalendar(eventsList);
     }, [startDate, isoEvents]);
 
@@ -281,7 +314,9 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                             {">"}
                         </Button>
                     </div>
-                    <Text fw={700} size='xl'>{monthNames[(new Date(sunday)).getMonth()] + " " + (new Date(sunday)).getFullYear()}</Text> 
+                    {/* <Text fw={700} size='xl'>{monthNames[(new Date(wed)).getMonth()] + " " + (new Date(wed)).getFullYear()}</Text> */}
+                    {/* <Text fw={700} size='xl'>{monthNames[(new Date(sun)).getMonth()] + " " + (new Date(sun)).getDate() + " " + (new Date(wed)).getFullYear()}</Text> */}
+                    <Text fw={700} size='xl'>{getWeek()}</Text>
                     <Button
                         type='submit'
                         variant="filled"
