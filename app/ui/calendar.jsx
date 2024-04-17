@@ -13,10 +13,8 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
     const [sunday, setWed] = useState(new Date());
 
-    console.log("SelectedStartDate", localStorage.getItem("SelectedStartDate"));
-
     const [startDate, setStartDate] = useState(() => { // Initial date for the calendar or stored date
-        const storedDate = localStorage.getItem("SelectedStartDate");
+        const storedDate = sessionStorage.getItem("SelectedStartDate");
         return storedDate ? new Date(storedDate) : new Date();
       });
 
@@ -27,7 +25,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         newStartDate.setDate(newStartDate.getDate() - 7); // Go back one week
         setStartDate(newStartDate);
         getWed(newStartDate);
-        localStorage.setItem("SelectedStartDate", newStartDate);
+        sessionStorage.setItem("SelectedStartDate", newStartDate);
     };
     
     const handleNextWeek = () => {
@@ -35,13 +33,14 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         newStartDate.setDate(newStartDate.getDate() + 7); // Go forward one week
         setStartDate(newStartDate);
         getWed(newStartDate);
-        localStorage.setItem("SelectedStartDate", newStartDate);
+        sessionStorage.setItem("SelectedStartDate", newStartDate);
     };
-
+    
     const resetWeek = () => {
         const newStartDate = new Date();
         setStartDate(newStartDate);
         getWed(newStartDate);
+        sessionStorage.setItem("SelectedStartDate", newStartDate);
     };
 
     const getWed = (date) =>{
