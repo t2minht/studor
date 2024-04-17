@@ -3,6 +3,7 @@ import { DayPilotCalendar, DayPilot } from 'daypilot-pro-react';
 import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal, Space} from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { retrieveUserEvents, sendEvents} from '../backend/calendar-backend';
+import './cells.css';
 
 const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
@@ -163,7 +164,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                             let dy = dates[day].getDate() + "";
                             let DoWday = year.padStart(2,'0') + "-" + month.padStart(2, '0') + "-" + dy.padStart(2,'0');
 
-                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: event.backColor, fontColor:event.fontColor, tags: "Class"});
+                            eventsList.push({id: id++, text: event.text, start: DoWday + event.start.substring(10), end: DoWday + event.end.substring(10), backColor: event.backColor, fontColor:event.fontColor, tags: "Class", bubbleHtml:"Click for more Information"});
                         });
                     }
 
@@ -243,19 +244,39 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         durationBarVisible: false,
         headerDateFormat:"ddd \n MM/dd",
         eventClickHandling: "Enabled",
+        // dayBeginsHour: 8,
+        // dayEndsHour:18,
+        // watchWidthChanges: true,
+        showCurrentTime: true,
+        showCurrentTimeMode: "Full",
+        businessBeginsHour: 8,
         onEventClick: (args) => {
             if(args.e.data.tags == "Class"){
+                classHandler.open();
                 handlers.open();
-                setEvent({event: args.e.data.text, id: args.e.data.id});
+                setEvent({event: args.e.data.tags, id: args.e.data.id,text: args.e.data.text, start: args.e.data.start.value, end: args.e.data.end.value});
 
+            }else{
+                classHandler.close();
+                handlers.open();
+                console.log(args.e.data);
+                setEvent({event: args.e.data.tags, id: args.e.data.id,text: args.e.data.text, start: args.e.data.start.value, end: args.e.data.end.value});
             }
         },
+        eventHoverHandling: "Bubble",
+        onBeforeCellRender: (args) => {
+            if (args.cell.start.getDatePart().getTime() === new DayPilot.Date().getDatePart().getTime()) {
+              args.cell.backColor = "#dddddd";
+            }
+        },
+
     });
 
     const calendarRef = useRef();
 
 
     const [opened, handlers] = useDisclosure(false);
+    const [isClass, classHandler] = useDisclosure(false); 
 
     const [value, onChange] = useState("#FFFFFF");
 
@@ -333,23 +354,40 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                 </Group>
                 <Modal opened={opened} onClose={() => handlers.close()} title={event.event}>
                     <Stack align='center'>
-                        <Text>Select a color</Text>
-                        <ColorPicker 
-                            format="hex"
-                            
-                            value={value}
-                            onChange={(color) => colorChoice(color)}
-                            withPicker={false}
-                            swatchesPerRow={9}
-                            swatches={[
-                                '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
-                                '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
-                                '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
-                                '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
-                            ]}
-                        />
+                        <Text align='center'>
+                            {event.text}
+                            <br/>
+                            Start Time: {new Date(event.start).toLocaleTimeString().substring(0, new Date(event.start).toLocaleTimeString().indexOf(" ") -3) + new Date(event.start).toLocaleTimeString().substr(-3)}
+                            <br/>
+                            End Time: {new Date(event.end).toLocaleTimeString().substring(0, new Date(event.end).toLocaleTimeString().indexOf(" ") -3) + new Date(event.end).toLocaleTimeString().substr(-3)}
+                        </Text>
+                        {/* <Text>{event.text}</Text>
+                        <Text>Start Time: {new Date(event.start).toLocaleTimeString()}</Text>
+                        <Text>End Time: {new Date(event.end).toLocaleTimeString()}</Text> */}
+                        {isClass && (
+                            <Text>Select a color</Text>
+                        )}
+                        {isClass && (
+                            <ColorPicker 
+                                format="hex"
+                                
+                                value={value}
+                                onChange={(color) => colorChoice(color)}
+                                withPicker={false}
+                                swatchesPerRow={9}
+                                swatches={[
+                                    '#FFFFFF', '#FF0000', '#FF9900', '#FFFF00', '#00FF00', '#00FFFF', '#4A86E8', '#9900FF', '#FF00FF', 
+                                    '#CCCCCC', '#EA9999', '#F9CB9C', '#FFE599', '#B6D7A8', '#A2C4C9', '#9FC5E8', '#B4A7D6', '#D5A6BD', 
+                                    '#666666', '#CC0000', '#E69138', '#F1C232', '#6AA84F', '#45818E', '#3D85C6', '#674EA7', '#A64D79', 
+                                    '#000000', '#990000', '#B45f06', '#BF9000', '#38761D', '#134F5C', '#114297', '#351C75', '#741B47', 
+                                ]}
+                            />
+                        )}
+                        
                     </Stack>
                 </Modal>
+                
+                
                 <DayPilotCalendar
                     {...config} 
                     events={calendarEvents} 
