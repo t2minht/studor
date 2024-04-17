@@ -32,6 +32,12 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         getWed(newStartDate);
     };
 
+    const resetWeek = () => {
+        const newStartDate = new Date();
+        setStartDate(newStartDate);
+        getWed(newStartDate);
+    };
+
     const getWed = (date) =>{
         const currDate = date.getDay();
         // console.log(currDate);
@@ -257,22 +263,32 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         <>
             <Stack>
                 <Group justify="space-between">
-                    <Button
-                        type='submit'
-                        variant="filled"
-                        color='#800000'
-                        onClick={handlePreviousWeek}
-                    >
-                        Previous Week
-                    </Button>
+                    <div>
+                        <Button
+                            type='submit'
+                            variant="filled"
+                            color='#800000'
+                            onClick={handlePreviousWeek}
+                        >
+                            {"<"}
+                        </Button>
+                        <Button
+                            type='submit'
+                            variant="filled"
+                            color='#800000'
+                            onClick={handleNextWeek}
+                        >
+                            {">"}
+                        </Button>
+                    </div>
                     <Text fw={700} size='xl'>{monthNames[(new Date(sunday)).getMonth()] + " " + (new Date(sunday)).getFullYear()}</Text> 
                     <Button
                         type='submit'
                         variant="filled"
                         color='#800000'
-                        onClick={handleNextWeek}
+                        onClick={resetWeek}
                     >
-                        Next Week
+                        Current Week
                     </Button>
                 </Group>
                 <Modal opened={opened} onClose={() => handlers.close()} title={event.event}>
