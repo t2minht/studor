@@ -85,6 +85,7 @@ export default function Landing(data) {
               component="a"
               href={activeTab == 'tutor' ? "/studor/newtutorposting" : "/studor/newstudygroupposting"}
               color="#800000"
+              miw={200}
             >
               {activeTab == 'tutor' ? 'New Tutor Post' : 'New Study Group Post'}
             </Button>
