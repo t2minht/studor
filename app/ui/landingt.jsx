@@ -40,6 +40,9 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
   const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(tutoring.hosted);
   const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(tutoring.joined);
 
+  const [disabled, setDisabled] = useState(false);
+  const [editDisabler, setEditDisabler] = useState(false);
+
   if (tutoring === null) {
     return (
       <Group>
@@ -49,10 +52,12 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
   }
 
   const leaveHandler = async (session) => {
+    setDisabled(true);
     await leaveSession(session);
     const updatedSessions = tutoring_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedTutoringSessions(updatedSessions);
     sendDataToParent(session.id);
+    setDisabled(false);
 
   }
 
@@ -121,12 +126,12 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
                     </Stack>
                     <Group>
                       <Modaltutor current={session} />
-                      <Link
+                      <Link onClick={() => setEditDisabler(true)}
                         href={{
                           pathname: "/studor/updatetutorposting",
                           query: session
                         }}
-                      ><Button color="yellow" radius="xl">Edit</Button></Link>
+                      ><Button color="yellow" radius="xl" disabled={editDisabler}>Edit</Button></Link>
                     </Group>
                   </Stack>
                 </Group>
@@ -169,7 +174,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
                     </Stack>
                     <Group>
                       <Modaltutor current={session} />
-                      <Button color="red" radius='xl' onClick={() => leaveHandler(session)}>Leave</Button>
+                      <Button color="red" radius='xl' disabled={disabled} onClick={() => leaveHandler(session)}>Leave</Button>
                     </Group>
                   </Stack>
                 </Group>

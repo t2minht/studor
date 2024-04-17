@@ -36,6 +36,8 @@ export default function ClientPage(data) {
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
 
+  const [disabled, setDisabled] = useState(false)
+
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
   function handleDataFromChild(filtered_posts) {
@@ -46,6 +48,7 @@ export default function ClientPage(data) {
   const [calendarKey, setCalendarKey] = useState(0);
 
   const joinHandler = async (session) => {
+    setDisabled(true);
     const joined = await joinSession(data = { session });
     if (!joined) {
       alert("Tutoring Session is full, sorry")
@@ -55,6 +58,7 @@ export default function ClientPage(data) {
       const updatedAllTutoring = [...all_tutoring, session];
       setAllTutoring(updatedAllTutoring);
     }
+    setDisabled(false)
 
   }
   function convertTo12HourFormat(timeString) {
@@ -186,6 +190,7 @@ export default function ClientPage(data) {
                                 size="sm"
                                 color="#009020"
                                 radius="xl"
+                                disabled={disabled}
                                 onClick={() => joinHandler(session)}
                               >
                                 Join

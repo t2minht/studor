@@ -38,6 +38,9 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
   const [study_sessions_hosted, setHostedStudySessions] = useState(study_sessions.hosted);
   const [study_sessions_joined, setJoinedStudySessions] = useState(study_sessions.joined);
 
+  const [disabled, setDisabled] = useState(false);
+  const [editDisabler, setEditDisabler] = useState(false);
+
   if (study_sessions === null) {
     return (
       <Group>
@@ -47,10 +50,13 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
   }
 
   const leaveHandler = async (session) => {
+    setDisabled(true);
     await leaveSession(session);
     const updatedSessions = study_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedStudySessions(updatedSessions);
     sendDataToParent(session.id);
+    setDisabled(false);
+
   }
 
   function convertTo12HourFormat(timeString) {
@@ -116,12 +122,12 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
                   </Stack>
                   <Group>
                     <Modalview current={session} />
-                    <Link
+                    <Link onClick={() => setEditDisabler(true)}
                       href={{
                         pathname: "/studor/updatestudygroupposting",
                         query: session
                       }}
-                    ><Button color="yellow" radius="xl">Edit</Button></Link>
+                    ><Button color="yellow" radius="xl" disabled={editDisabler}>Edit</Button></Link>
                   </Group>
                 </Stack>
               </Group>
@@ -164,7 +170,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
                   </Stack>
                   <Group>
                     <Modalview current={session} />
-                    <Button color="red" radius="xl" onClick={() => leaveHandler(session)}>Leave</Button>
+                    <Button color="red" radius="xl" disabled={disabled} onClick={() => leaveHandler(session)}>Leave</Button>
                   </Group>
                 </Stack>
               </Group>

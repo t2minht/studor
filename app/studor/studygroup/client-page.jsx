@@ -41,12 +41,16 @@ export default function ClientPage(data) {
     const [calendarKey, setCalendarKey] = useState(0);
     const [all_study_sessions, setAllStudySessions] = useState(data.all_study_sessions);
 
+    const [disabled, setDisabled] = useState(false);
+
+
 
     function handleDataFromChild(filtered_posts) {
         setDataFromChild(filtered_posts);
     }
 
     const joinHandler = async (session) => {
+        setDisabled(true);
         setUpdateEvents(true);
         const joined = await joinSession(data = { session });
         if (!joined) {
@@ -61,6 +65,7 @@ export default function ClientPage(data) {
             setAllStudySessions(updatedAllStudySessions);
         }
         setUpdateEvents(false);
+        setDisabled(false);
 
     }
 
@@ -193,6 +198,7 @@ export default function ClientPage(data) {
                                                             size="sm"
                                                             color="#009020"
                                                             radius="xl"
+                                                            disabled={disabled}
                                                             onClick={() => joinHandler(session)}
                                                         >
                                                             Join
