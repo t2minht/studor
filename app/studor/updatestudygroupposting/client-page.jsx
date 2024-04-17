@@ -337,6 +337,7 @@ export default function Page(data) {
                 label="Date"
                 description="Select Date"
                 minDate={new Date()}
+                firstDayOfWeek={0}
                 required
                 {...form.getInputProps('date')}
 
