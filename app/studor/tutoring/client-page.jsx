@@ -34,7 +34,10 @@ import TutorFilter from "@/app/studor/tutoring/tutorFilter"
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
+
+  const [disabled, setDisabled] = useState(false)
+
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
   function handleDataFromChild(filtered_posts) {
@@ -45,6 +48,7 @@ export default function ClientPage(data) {
   const [calendarKey, setCalendarKey] = useState(0);
 
   const joinHandler = async (session) => {
+    setDisabled(true);
     const joined = await joinSession(data = { session });
     if (!joined) {
       alert("Tutoring Session is full, sorry")
@@ -53,7 +57,9 @@ export default function ClientPage(data) {
       setTutorSessions(updatedSessions);
       const updatedAllTutoring = [...all_tutoring, session];
       setAllTutoring(updatedAllTutoring);
+      alert('Tutor session joined.')
     }
+    setDisabled(false)
 
   }
   function convertTo12HourFormat(timeString) {
@@ -88,6 +94,10 @@ export default function ClientPage(data) {
     // Update the calendar when the tutoring sessions change
     setCalendarKey(calendarKey + 1);
   }, [all_tutoring])
+
+  useEffect(() => {
+    localStorage.setItem('checked', checked)
+  }, [checked])
 
   if (data.tutor_sessions === null) {
     return (
@@ -126,12 +136,12 @@ export default function ClientPage(data) {
               New Tutor Post
             </Button>
             <Button
-                variant="filled"
-                component="a"
-                href="/studor/faqs"
-                color="#800000"
+              variant="filled"
+              component="a"
+              href="/studor/faqs"
+              color="#800000"
             >
-                FAQs
+              FAQs
             </Button>
           </Stack>
         </Grid.Col>
@@ -181,6 +191,7 @@ export default function ClientPage(data) {
                                 size="sm"
                                 color="#009020"
                                 radius="xl"
+                                disabled={disabled}
                                 onClick={() => joinHandler(session)}
                               >
                                 Join
@@ -198,7 +209,7 @@ export default function ClientPage(data) {
 
         {checked && (
           <Grid.Col span={6} order={{ base: 2 }} mt={30} maw={600} miw={600}>
-            <Calendar key={calendarKey} events={data.events} colors = {data.colors} study_sessions={data.all_study_sessions} tutoring={all_tutoring} />
+            <Calendar key={calendarKey} events={data.events} colors={data.colors} study_sessions={data.all_study_sessions} tutoring={all_tutoring} />
           </Grid.Col>
         )}
       </Grid>

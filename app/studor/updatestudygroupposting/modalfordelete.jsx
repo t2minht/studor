@@ -29,6 +29,8 @@ export default function Modaldelete(data) {
               });
 
               deleteSession(data.id);
+
+              alert('Study Group session deleted.')
           
               // Redirect to the new page
               window.location.href = '/';

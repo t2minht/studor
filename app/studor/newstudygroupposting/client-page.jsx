@@ -184,6 +184,8 @@ export default function ClientPage(data) {
             message: "Now redirecting to Landing Page",
         });
 
+        alert('Study Group session created.')
+
         // Redirect to the new page after a short delay
         setTimeout(() => {
             window.location.href = '/';
@@ -269,7 +271,7 @@ export default function ClientPage(data) {
                                 description="Select Date"
                                 defaultValue={new Date()}
                                 minDate={new Date()}
-
+                                firstDayOfWeek={0}
                                 required
                                 {...form.getInputProps('date')}
 

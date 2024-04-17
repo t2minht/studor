@@ -183,6 +183,8 @@ export default function Page(data) {
       message: "Now redirecting to Landing Page",
     });
 
+    alert('Study Group session updated.')
+
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';
@@ -337,6 +339,7 @@ export default function Page(data) {
                 label="Date"
                 description="Select Date"
                 minDate={new Date()}
+                firstDayOfWeek={0}
                 required
                 {...form.getInputProps('date')}
 

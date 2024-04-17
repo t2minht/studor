@@ -27,7 +27,8 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
   const [coursesList, setCoursesList] = useState([]);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -285,7 +286,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
     }
     sendDataToParent(filtered_posts);
-
+    alert('Tutor filters have been applied.')
   };
 
   const handleAddCourse = (event) => {

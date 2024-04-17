@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DayPilotCalendar, DayPilot } from 'daypilot-pro-react';
-import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal} from "@mantine/core";
+import { MantineProvider, Container, Group, Button, Text, Stack, ColorPicker, Modal, Space} from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { retrieveUserEvents, sendEvents} from '../backend/calendar-backend';
 
@@ -14,7 +14,10 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
     const [wed, setWed] = useState(new Date());
     const [sun, setSun] = useState(new Date());
 
-    const [startDate, setStartDate] = useState(new Date()); // Initial date for the calendar
+    const [startDate, setStartDate] = useState(() => { // Initial date for the calendar or stored date
+        const storedDate = sessionStorage.getItem("SelectedStartDate");
+        return storedDate ? new Date(storedDate) : new Date();
+      });
 
     const [isoEvents, setEvents] = useState(events.events);
 
@@ -23,22 +26,24 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         newStartDate.setDate(newStartDate.getDate() - 7); // Go back one week
         setStartDate(newStartDate);
         getWed(newStartDate);
-
+        sessionStorage.setItem("SelectedStartDate", newStartDate);
     };
-
+    
     const handleNextWeek = () => {
         const newStartDate = new Date(startDate);
         newStartDate.setDate(newStartDate.getDate() + 7); // Go forward one week
         setStartDate(newStartDate);
         getWed(newStartDate);
         getSun(newStartDate);
+        sessionStorage.setItem("SelectedStartDate", newStartDate);
     };
-
+    
     const resetWeek = () => {
         const newStartDate = new Date();
         setStartDate(newStartDate);
         getWed(newStartDate);
         getSun(newStartDate);
+        sessionStorage.setItem("SelectedStartDate", newStartDate);
     };
 
     const getWed = (date) =>{
