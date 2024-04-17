@@ -27,7 +27,10 @@ import Calendar from "@/app/ui/calendar";
 
 export default function Landing(data) {
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => {
+    const storedValue = localStorage.getItem('checked');
+    return storedValue === null ? true : storedValue === 'true';
+  });
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem("activeTab") || "sg";
   });
@@ -57,6 +60,11 @@ export default function Landing(data) {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
+  useEffect(() => {
+    localStorage.setItem('checked', checked)
+
+  }, [checked])
+
   // console.log("landing");
   // console.log(data.events);
   return (
@@ -67,27 +75,27 @@ export default function Landing(data) {
             <Switch
               checked={checked}
               onChange={(event) => setChecked(event.currentTarget.checked)}
-              defaultChecked
+              // defaultChecked
               color="#800000"
               label="Show calendar"
               mb={20}
             />
-              <Button
-                variant="filled"
-                component="a"
-                href={activeTab == 'tutor' ? "/studor/newtutorposting" : "/studor/newstudygroupposting"}
-                color="#800000"
-              >
-                {activeTab == 'tutor' ? 'New Tutor Post' : 'New Study Group Post'}
-              </Button>
-              <Button
-                  variant="filled"
-                  component="a"
-                  href="/studor/faqs"
-                  color="#800000"
-              >
-                  FAQs
-              </Button>
+            <Button
+              variant="filled"
+              component="a"
+              href={activeTab == 'tutor' ? "/studor/newtutorposting" : "/studor/newstudygroupposting"}
+              color="#800000"
+            >
+              {activeTab == 'tutor' ? 'New Tutor Post' : 'New Study Group Post'}
+            </Button>
+            <Button
+              variant="filled"
+              component="a"
+              href="/studor/faqs"
+              color="#800000"
+            >
+              FAQs
+            </Button>
           </Stack>
         </Grid.Col>
 

@@ -34,7 +34,8 @@ import Link from "next/link";
 
 export default function Landingsg({ tutoring, sendDataToParent }) {
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
+
 
   const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(tutoring.hosted);
   const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(tutoring.joined);

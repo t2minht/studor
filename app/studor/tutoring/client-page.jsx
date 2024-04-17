@@ -34,7 +34,8 @@ import TutorFilter from "@/app/studor/tutoring/tutorFilter"
 export default function ClientPage(data) {
   const [opened, { open, close }] = useDisclosure(false);
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
+
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
   function handleDataFromChild(filtered_posts) {
@@ -89,6 +90,10 @@ export default function ClientPage(data) {
     setCalendarKey(calendarKey + 1);
   }, [all_tutoring])
 
+  useEffect(() => {
+    localStorage.setItem('checked', checked)
+  }, [checked])
+
   if (data.tutor_sessions === null) {
     return (
       <Group>
@@ -126,12 +131,12 @@ export default function ClientPage(data) {
               New Tutor Post
             </Button>
             <Button
-                variant="filled"
-                component="a"
-                href="/studor/faqs"
-                color="#800000"
+              variant="filled"
+              component="a"
+              href="/studor/faqs"
+              color="#800000"
             >
-                FAQs
+              FAQs
             </Button>
           </Stack>
         </Grid.Col>
@@ -198,7 +203,7 @@ export default function ClientPage(data) {
 
         {checked && (
           <Grid.Col span={6} order={{ base: 2 }} mt={30} maw={600} miw={600}>
-            <Calendar key={calendarKey} events={data.events} colors = {data.colors} study_sessions={data.all_study_sessions} tutoring={all_tutoring} />
+            <Calendar key={calendarKey} events={data.events} colors={data.colors} study_sessions={data.all_study_sessions} tutoring={all_tutoring} />
           </Grid.Col>
         )}
       </Grid>

@@ -29,7 +29,11 @@ import Link from "next/link";
 export default function Landingsg({ study_sessions, sendDataToParent }) {
   const router = useRouter();
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => {
+    const storedValue = localStorage.getItem('checked');
+    return storedValue === null ? true : storedValue === 'true';
+  });
+
 
   const [study_sessions_hosted, setHostedStudySessions] = useState(study_sessions.hosted);
   const [study_sessions_joined, setJoinedStudySessions] = useState(study_sessions.joined);

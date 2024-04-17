@@ -28,7 +28,11 @@ import { handleSubmit } from "./filter"
 export default function ClientPage(data) {
     const [opened, { open, close }] = useDisclosure(false);
     const { height, width } = useViewportSize();
-    const [checked, setChecked] = useState(true);
+    const [checked, setChecked] = useState(() => {
+        const storedValue = localStorage.getItem('checked');
+        return storedValue === null ? true : storedValue === 'true';
+    });
+
 
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
     const [update_events, setUpdateEvents] = useState(false);
@@ -74,6 +78,10 @@ export default function ClientPage(data) {
         // Update the calendar key to force re-render when tutoring sessions change
         setCalendarKey(calendarKey + 1);
     }, [all_study_sessions]);
+
+    useEffect(() => {
+        localStorage.setItem('checked', checked)
+    }, [checked])
 
     if (study_sessions === null) {
         return (
@@ -159,7 +167,7 @@ export default function ClientPage(data) {
                                 {dataFromChild
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px'}} withBorder key={session.topic}>
+                                        <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
                                             <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                                                 <Stack>
                                                     <Avatar size={100} src={session.host_avatar_url} />
