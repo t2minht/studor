@@ -198,6 +198,8 @@ export default function ClientPage(data) {
       message: "Now redirecting to Landing Page",
     });
 
+    alert('Tutor session created.')
+
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';

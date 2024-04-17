@@ -54,6 +54,7 @@ export default function ClientPage(data) {
       setTutorSessions(updatedSessions);
       const updatedAllTutoring = [...all_tutoring, session];
       setAllTutoring(updatedAllTutoring);
+      alert('Tutor session joined.')
     }
 
   }

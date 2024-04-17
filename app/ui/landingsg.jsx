@@ -51,6 +51,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
     const updatedSessions = study_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedStudySessions(updatedSessions);
     sendDataToParent(session.id);
+    alert('Left Study Group session.')
   }
 
   function convertTo12HourFormat(timeString) {
