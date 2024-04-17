@@ -57,6 +57,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
     const updatedSessions = tutoring_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedTutoringSessions(updatedSessions);
     sendDataToParent(session.id);
+    alert('Left Tutor session.');
     setDisabled(false);
 
   }

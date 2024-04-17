@@ -30,6 +30,8 @@ export default function Modaldelete(data) {
               console.log(data)
               deleteSession(data.id)
 
+              alert('Tutor session deleted.')
+
               // Redirect to the new page after a short delay
               setTimeout(() => {
                 window.location.href = '/';

@@ -57,6 +57,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
     sendDataToParent(session.id);
     setDisabled(false);
 
+    alert('Left Study Group session.');
   }
 
   function convertTo12HourFormat(timeString) {

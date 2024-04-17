@@ -63,6 +63,7 @@ export default function ClientPage(data) {
 
             const updatedAllStudySessions = [...all_study_sessions, session];
             setAllStudySessions(updatedAllStudySessions);
+            alert('Study Group session joined.')
         }
         setUpdateEvents(false);
         setDisabled(false);
