@@ -242,6 +242,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
     const [config, setConfig] = useState({
         viewType: "Week",
         durationBarVisible: false,
+        eventArrangement: "SideBySide",
         headerDateFormat:"ddd \n MM/dd",
         eventClickHandling: "Enabled",
         // dayBeginsHour: 8,
@@ -269,7 +270,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
               args.cell.cssClass = "current_day_cell";
             }
         },
-
+        columnMarginRight: 0,
     });
 
     const calendarRef = useRef();
