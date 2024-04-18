@@ -1,5 +1,5 @@
 'use client'
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, NativeSelect } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, NativeSelect, Modal, Text } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
@@ -10,6 +10,8 @@ import Modaldelete from "../updatetutorposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 let formValues = {};
 
@@ -232,7 +234,6 @@ export default function Page(data) {
       message: "Now redirecting to Landing Page",
     });
 
-    alert('Tutor session updated.')
 
     // Redirect to the new page after a short delay
     setTimeout(() => {
@@ -349,11 +350,26 @@ export default function Page(data) {
             <Stack align="center" mt={20}>
               <Group mt='md'>
                 <Modaldelete id={searchParams.get("id")} />
+                <Modal opened={opened} onClose={close} withCloseButton={false} centered>
+                  <stack>
+                    <Text ta="center">Session has been updated! </Text>
+                  <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                  </Center>
+                  <Text ta="center">Redirecting to home page...</Text>
+                  </stack>
+                </Modal>
                 <Button
                   type='submit'
                   variant="filled"
                   color='blue'
                   radius="xl"
+                  onClick={open}
                 >
                   Update Session
                 </Button>
