@@ -142,7 +142,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
         <Group pl={50} pr={50}>
           {study_sessions_joined.map((session) => (
             <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
-              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
+              <Group p={5} pl={10} pr={10} miw={350} mih={100}>
                 <Stack>
                   <Avatar size={100} src={session.host_avatar_url} />
                 </Stack>
