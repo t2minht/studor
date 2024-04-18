@@ -560,7 +560,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                             </Group>
                             {width > 420 ?
                                 <Group justify="center">
-                                    <FileButton color="indigo" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
+                                    <FileButton color="#1A71E5" leftSection={<IconCalendarPlus size={16} />} resetRef={resetSchedule} onChange={setSchedule} accept=".ics" id="calendar">
                                         {(props) => <Button {...props}>Import Schedule (*.ics)</Button>}
                                     </FileButton>
                                     <Button disabled={!schedule} color="Green" onClick={uploadSchedule}>

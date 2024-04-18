@@ -14,7 +14,7 @@ import {
   ScrollArea,
   Tabs,
 } from "@mantine/core";
-import { IconXboxX, IconFilter } from "@tabler/icons-react";
+import { IconXboxX, IconFilter, IconCalendarPlus } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import Modalview from "../ui/modalview";
 import { useViewportSize } from "@mantine/hooks";
@@ -93,9 +93,12 @@ export default function Landing(data) {
               variant="filled"
               component="a"
               href="/studor/faqs"
-              color="#800000"
+              color="#EC407A"
             >
               FAQs
+            </Button>
+            <Button color="#1A71E5" component="a" href="/studor/profile" leftSection={<IconCalendarPlus size={16}/>}>
+              Import a Calendar
             </Button>
           </Stack>
         </Grid.Col>
