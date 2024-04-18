@@ -354,7 +354,7 @@ export default function ClientPage(data) {
                         <Stack align="center" mt={20}>
                             <Modal opened={opened} onClose={close} withCloseButton={false} centered>
                                 <stack>
-                                    <Text ta="center">Session has been updated! </Text>
+                                    <Text ta="center">Session has been created! </Text>
                                 <Center>
                                     <Image
                                     src={logo}
