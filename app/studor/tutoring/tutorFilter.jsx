@@ -286,7 +286,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
     }
     sendDataToParent(filtered_posts);
-    alert('Tutor filters have been applied.')
+    close();
   };
 
   const handleAddCourse = (event) => {

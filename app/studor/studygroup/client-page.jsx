@@ -14,6 +14,7 @@ import {
     ScrollArea,
     Paper,
     Space,
+    Modal
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -24,9 +25,11 @@ import { joinSession } from "@/app/backend/study-session-backend";
 import Calendar from "@/app/ui/calendar";
 import Filter from "@/app/studor/studygroup/filter"
 import { handleSubmit } from "./filter"
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function ClientPage(data) {
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, handlers] = useDisclosure(false);
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(() => {
         const storedValue = localStorage.getItem('checked');
@@ -49,7 +52,7 @@ export default function ClientPage(data) {
         setDataFromChild(filtered_posts);
     }
 
-    const joinHandler = async (session) => {
+    const joinHandler = async (session, handlers) => {
         setDisabled(true);
         setUpdateEvents(true);
         const joined = await joinSession(data = { session });
@@ -63,7 +66,14 @@ export default function ClientPage(data) {
 
             const updatedAllStudySessions = [...all_study_sessions, session];
             setAllStudySessions(updatedAllStudySessions);
-            alert('Study Group session joined.')
+
+            handlers.open();
+            // open modal if a user has not joined a session before, using localStorage, so it doesn't open every time, check if localStorage item exists or just open
+            // if (!localStorage.getItem('joinedStudySession') || localStorage.getItem('joinedStudySession') === 'false') {
+            //     handlers.open();
+            //     localStorage.setItem('joinedStudySession', 'true');
+            // }
+
         }
         setUpdateEvents(false);
         setDisabled(false);
@@ -173,7 +183,7 @@ export default function ClientPage(data) {
                                 {dataFromChild
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
+                                        <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.id}>
                                             <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                                                 <Stack>
                                                     <Avatar size={100} src={session.host_avatar_url} />
@@ -200,7 +210,7 @@ export default function ClientPage(data) {
                                                             color="#009020"
                                                             radius="xl"
                                                             disabled={disabled}
-                                                            onClick={() => joinHandler(session)}
+                                                            onClick={() => joinHandler(session, handlers)}
                                                         >
                                                             Join
                                                         </Button>
@@ -225,6 +235,22 @@ export default function ClientPage(data) {
                 )}
             </Grid>
             <Space h="md" />
+            <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Joined Session!</Text>
+                <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+
+                <Text ta="center">View joined sessions on the home page</Text>
+                
+                </stack>
+            </Modal>
         </MantineProvider>
     );
 }

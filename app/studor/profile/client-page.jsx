@@ -34,6 +34,9 @@ import { setStudySessionColor, setTutorSessionColor } from '../../backend/calend
 import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import Modaltprofile from "@/app/ui/modaltprofile";
 import { addTutorCourses } from "@/app/backend/tutoring-backend";
+import Image from 'next/image';
+import leftToRightScroll_logo from '@/app/ui/leftToRightScroll_logo.gif';
+import heartbeat_logo from '@/app/ui/heartbeat_logo.gif';
 
 let formValues = {};
 
@@ -93,6 +96,10 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
     const [visible, setVisible] = useState(false);
+    const [openedTranscript, handlersTranscript] = useDisclosure(false);
+    const [openedTranscriptF, handlersTranscriptF] = useDisclosure(false);
+    const [openedSchedule, handlersSchedule] = useDisclosure(false);
+    const [openedScheduleF, handlersScheduleF] = useDisclosure(false);
 
     function parseICS(icsString) {
         setVisible(true);
@@ -141,12 +148,12 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             console.log("results");
             console.log(results);
             sendEvents(results);
-            alert("Schedule was successfully uploaded!");
+            handlersSchedule.open();
             setVisible(false);
         };
         reader.onerror = function () {
             console.log(reader.error);
-            alert("Schedule was NOT successfully uploaded!");
+            handlersScheduleF.open();
             setVisible(false);
         };
     };
@@ -254,10 +261,10 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             const classes = await response.json();
             addTutorCourses(classes);
             clearTranscript();
-            alert("Transcript was successfully uploaded!");
+            handlersTranscript.open();
             setVisible(false);
         } catch (error) {
-            alert("Transcript was invalid! Please try again.");
+            handlersTranscriptF.open();
             console.error('Error fetching data from Flask server:', error);
             setVisible(false);
         }
@@ -868,6 +875,62 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                     </>
                 }
                 <Space h='xl' />
+            <Modal opened={openedTranscript} onClose={handlersTranscript.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Transcript was successfully uploaded!</Text>
+                <Center>
+                    <Image
+                    src={leftToRightScroll_logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+                <Text ta="center">Your tutoring sessions will now be verified for courses where you received an A or S. Check the FAQ page for more information.</Text>
+                </stack>
+            </Modal>
+            <Modal opened={openedTranscriptF} onClose={handlersTranscriptF.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Transcript was NOT successfully uploaded!</Text>
+                <Center>
+                    <Image
+                    src={heartbeat_logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+                <Text ta="center">Please try again.</Text>
+                </stack>
+            </Modal>
+            <Modal opened={openedSchedule} onClose={handlersSchedule.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Your schedule was successfully uploaded!</Text>
+                <Center>
+                    <Image
+                    src={leftToRightScroll_logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+                <Text ta="center">The Studor calendar will now display your class schedule.</Text>
+                </stack>
+            </Modal>
+            <Modal opened={openedScheduleF} onClose={handlersScheduleF.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Your schedule was NOT successfully uploaded!</Text>
+                <Center>
+                    <Image
+                    src={heartbeat_logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+                <Text ta="center">Please try again.</Text>
+                </stack>
+            </Modal>
             </MantineProvider>
         </>
     )

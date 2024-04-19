@@ -16,6 +16,7 @@ import {
   Title,
   Space,
   Divider,
+  Modal
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -25,6 +26,8 @@ import { useState } from "react";
 import { leaveSession } from "../backend/study-session-backend";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function Landingsg({ study_sessions, sendDataToParent }) {
   const router = useRouter();
@@ -40,6 +43,9 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
 
   const [disabled, setDisabled] = useState(false);
   const [editDisabler, setEditDisabler] = useState(false);
+
+  const [opened, handlers] = useDisclosure(false);
+
 
   if (study_sessions === null) {
     return (
@@ -57,7 +63,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
     sendDataToParent(session.id);
     setDisabled(false);
 
-    alert('Left Study Group session.');
+    handlers.open()
   }
 
   function convertTo12HourFormat(timeString) {
@@ -179,6 +185,22 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
           ))}
         </Group>
       </ScrollArea>
+      <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Left Group!</Text>
+                <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+
+                <Text ta="center">View open groups on the Study Group page</Text>
+                
+                </stack>
+      </Modal>
     </MantineProvider>
   );
 }
