@@ -100,7 +100,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
         <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
         <Group pl={50} pr={50}>
           {study_sessions_hosted.map((session) => (
-            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
+            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.id}>
               <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                 <Stack>
                   <Avatar size={100} src={session.host_avatar_url} />
@@ -147,7 +147,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
         <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
           {study_sessions_joined.map((session) => (
-            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
+            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.id}>
               <Group p={5} pl={10} pr={10} miw={350} mih={100}>
                 <Stack>
                   <Avatar size={100} src={session.host_avatar_url} />

@@ -106,7 +106,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
           {tutoring_sessions_hosted.map((session) => {
             session.averageRating = session.users.tutor_rating;
             return (
-              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.title}>
+              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.id}>
                 <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                   <Stack>
                     <Avatar size={100} src={session.tutor_avatar_url} />
@@ -154,7 +154,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
           {tutoring_sessions_joined.map((session) => {
             session.averageRating = session.users.tutor_rating;
             return (
-              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.title}>
+              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.id}>
                 <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                   <Stack>
                     <Avatar size={100} src={session.tutor_avatar_url} />
