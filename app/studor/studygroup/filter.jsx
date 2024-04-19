@@ -271,6 +271,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
 
     }
     sendDataToParent(filtered_posts);
+    close();
   };
 
   const handleAddCourse = (event) => {

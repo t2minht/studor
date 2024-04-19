@@ -117,7 +117,7 @@ describe('FaqSimple Component', () => {
         );
         const optionalTranscriptAccordion = screen.getByText('Do I have to upload my transcript?');
         userEvent.click(optionalTranscriptAccordion);
-        const optionalTranscriptAccordionText = screen.getByText("You don't have to upload your transcript to participate in any study/tutor sessions or to become a tutor. However, if you choose to become a tutor and have not uploaded a transcript for a class you have taken and gotten a B or A, then you will not be considered a 'Verified Tutor'. People can see whether or not you are a 'Verified Tutor' for the course you'd like to tutor. Image of a verified and non-verified tutor indicator is below:");
+        const optionalTranscriptAccordionText = screen.getByText("You don't have to upload your transcript to participate in any study/tutor sessions or to become a tutor. However, if you choose to become a tutor and have not uploaded a transcript for a class you have taken and gotten a A or S, then you will not be considered a 'Verified Tutor'. People can see whether or not you are a 'Verified Tutor' for the course you'd like to tutor. Image of a verified and non-verified tutor indicator is below:");
         expect(optionalTranscriptAccordionText).toBeInTheDocument();
     });
 
@@ -177,7 +177,7 @@ describe('FaqSimple Component', () => {
         );
         const transcriptDataAccordion = screen.getByText('What data is collected from my transcript?');
         userEvent.click(transcriptDataAccordion);
-        const transcriptDataAccordionText = screen.getByText("Any official or unofficial transcript will work to verify you as a tutor. No personal information such as UIN or grades will be stored. The transcript is solely used to check whether or not you have taken the course and received a B or an A, then afterwards, the transcript will be discarded. If you don't feel comfortable doing this, you can still be a tutor for any course without uploading a transcript, you'll just be not verified by us.");
+        const transcriptDataAccordionText = screen.getByText("Any official or unofficial transcript will work to verify you as a tutor. No personal information such as UIN or grades will be stored. The transcript is solely used to check whether or not you have taken the course and received an A or S, then afterwards, the transcript will be discarded. If you don't feel comfortable doing this, you can still be a tutor for any course without uploading a transcript, you'll just be not verified by us.");
         expect(transcriptDataAccordionText).toBeInTheDocument();
     });
 

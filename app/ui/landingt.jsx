@@ -16,6 +16,7 @@ import {
   Title,
   Space,
   Divider,
+  Modal
 } from "@mantine/core";
 import {
   IconXboxX,
@@ -31,13 +32,22 @@ import { useViewportSize } from "@mantine/hooks";
 import { useState } from "react";
 import { leaveSession } from "../backend/tutoring-backend";
 import Link from "next/link";
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function Landingsg({ tutoring, sendDataToParent }) {
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
+
 
   const [tutoring_sessions_hosted, setHostedTutoringSessions] = useState(tutoring.hosted);
   const [tutoring_sessions_joined, setJoinedTutoringSessions] = useState(tutoring.joined);
+
+  const [disabled, setDisabled] = useState(false);
+  const [editDisabler, setEditDisabler] = useState(false);
+
+  const [opened, handlers] = useDisclosure(false);
+
 
   if (tutoring === null) {
     return (
@@ -48,10 +58,13 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
   }
 
   const leaveHandler = async (session) => {
+    setDisabled(true);
     await leaveSession(session);
     const updatedSessions = tutoring_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedTutoringSessions(updatedSessions);
     sendDataToParent(session.id);
+    handlers.open()
+    setDisabled(false);
 
   }
 
@@ -93,7 +106,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
           {tutoring_sessions_hosted.map((session) => {
             session.averageRating = session.users.tutor_rating;
             return (
-              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.title}>
+              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.id}>
                 <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                   <Stack>
                     <Avatar size={100} src={session.tutor_avatar_url} />
@@ -120,12 +133,12 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
                     </Stack>
                     <Group>
                       <Modaltutor current={session} />
-                      <Link
+                      <Link onClick={() => setEditDisabler(true)}
                         href={{
                           pathname: "/studor/updatetutorposting",
                           query: session
                         }}
-                      ><Button color="yellow" radius="xl">Edit</Button></Link>
+                      ><Button color="yellow" radius="xl" disabled={editDisabler}>Edit</Button></Link>
                     </Group>
                   </Stack>
                 </Group>
@@ -141,8 +154,8 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
           {tutoring_sessions_joined.map((session) => {
             session.averageRating = session.users.tutor_rating;
             return (
-              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.title}>
-                <Group p={5} pl={10} pr={10} miw={350} mih={300}>
+              <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#0046AB', borderWidth: '3px' }} withBorder key={session.id}>
+                <Group p={5} pl={10} pr={10} miw={350} mih={250}>
                   <Stack>
                     <Avatar size={100} src={session.tutor_avatar_url} />
                   </Stack>
@@ -168,7 +181,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
                     </Stack>
                     <Group>
                       <Modaltutor current={session} />
-                      <Button color="red" radius='xl' onClick={() => leaveHandler(session)}>Leave</Button>
+                      <Button color="red" radius='xl' disabled={disabled} onClick={() => leaveHandler(session)}>Leave</Button>
                     </Group>
                   </Stack>
                 </Group>
@@ -177,6 +190,22 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
           })}
         </Group>
       </ScrollArea>
+      <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Left Group!</Text>
+                <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+
+                <Text ta="center">View open groups on the Tutoring page</Text>
+                
+                </stack>
+      </Modal>
     </MantineProvider>
   );
 }

@@ -14,6 +14,7 @@ import {
     ScrollArea,
     Paper,
     Space,
+    Modal
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -24,11 +25,17 @@ import { joinSession } from "@/app/backend/study-session-backend";
 import Calendar from "@/app/ui/calendar";
 import Filter from "@/app/studor/studygroup/filter"
 import { handleSubmit } from "./filter"
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function ClientPage(data) {
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, handlers] = useDisclosure(false);
     const { height, width } = useViewportSize();
-    const [checked, setChecked] = useState(true);
+    const [checked, setChecked] = useState(() => {
+        const storedValue = localStorage.getItem('checked');
+        return storedValue === null ? true : storedValue === 'true';
+    });
+
 
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
     const [update_events, setUpdateEvents] = useState(false);
@@ -37,12 +44,16 @@ export default function ClientPage(data) {
     const [calendarKey, setCalendarKey] = useState(0);
     const [all_study_sessions, setAllStudySessions] = useState(data.all_study_sessions);
 
+    const [disabled, setDisabled] = useState(false);
+
+
 
     function handleDataFromChild(filtered_posts) {
         setDataFromChild(filtered_posts);
     }
 
-    const joinHandler = async (session) => {
+    const joinHandler = async (session, handlers) => {
+        setDisabled(true);
         setUpdateEvents(true);
         const joined = await joinSession(data = { session });
         if (!joined) {
@@ -55,8 +66,17 @@ export default function ClientPage(data) {
 
             const updatedAllStudySessions = [...all_study_sessions, session];
             setAllStudySessions(updatedAllStudySessions);
+
+            handlers.open();
+            // open modal if a user has not joined a session before, using localStorage, so it doesn't open every time, check if localStorage item exists or just open
+            // if (!localStorage.getItem('joinedStudySession') || localStorage.getItem('joinedStudySession') === 'false') {
+            //     handlers.open();
+            //     localStorage.setItem('joinedStudySession', 'true');
+            // }
+
         }
         setUpdateEvents(false);
+        setDisabled(false);
 
     }
 
@@ -74,6 +94,10 @@ export default function ClientPage(data) {
         // Update the calendar key to force re-render when tutoring sessions change
         setCalendarKey(calendarKey + 1);
     }, [all_study_sessions]);
+
+    useEffect(() => {
+        localStorage.setItem('checked', checked)
+    }, [checked])
 
     if (study_sessions === null) {
         return (
@@ -159,7 +183,7 @@ export default function ClientPage(data) {
                                 {dataFromChild
                                     .filter((session) => session.current_group_size < session.max_group_size)
                                     .map((session) => (
-                                        <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px'}} withBorder key={session.topic}>
+                                        <Paper shadow="xl" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.id}>
                                             <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                                                 <Stack>
                                                     <Avatar size={100} src={session.host_avatar_url} />
@@ -185,7 +209,8 @@ export default function ClientPage(data) {
                                                             size="sm"
                                                             color="#009020"
                                                             radius="xl"
-                                                            onClick={() => joinHandler(session)}
+                                                            disabled={disabled}
+                                                            onClick={() => joinHandler(session, handlers)}
                                                         >
                                                             Join
                                                         </Button>
@@ -210,6 +235,22 @@ export default function ClientPage(data) {
                 )}
             </Grid>
             <Space h="md" />
+            <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Joined Session!</Text>
+                <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+
+                <Text ta="center">View joined sessions on the home page</Text>
+                
+                </stack>
+            </Modal>
         </MantineProvider>
     );
 }

@@ -29,6 +29,7 @@ export default function Modaldelete(data) {
               });
 
               deleteSession(data.id);
+
           
               // Redirect to the new page
               window.location.href = '/';

@@ -16,6 +16,7 @@ import {
   Title,
   Space,
   Divider,
+  Modal
 } from "@mantine/core";
 import { IconXboxX, IconFilter } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -25,14 +26,26 @@ import { useState } from "react";
 import { leaveSession } from "../backend/study-session-backend";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function Landingsg({ study_sessions, sendDataToParent }) {
   const router = useRouter();
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => {
+    const storedValue = localStorage.getItem('checked');
+    return storedValue === null ? true : storedValue === 'true';
+  });
+
 
   const [study_sessions_hosted, setHostedStudySessions] = useState(study_sessions.hosted);
   const [study_sessions_joined, setJoinedStudySessions] = useState(study_sessions.joined);
+
+  const [disabled, setDisabled] = useState(false);
+  const [editDisabler, setEditDisabler] = useState(false);
+
+  const [opened, handlers] = useDisclosure(false);
+
 
   if (study_sessions === null) {
     return (
@@ -43,10 +56,14 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
   }
 
   const leaveHandler = async (session) => {
+    setDisabled(true);
     await leaveSession(session);
     const updatedSessions = study_sessions_joined.filter((item) => item.id !== session.id);
     setJoinedStudySessions(updatedSessions);
     sendDataToParent(session.id);
+    setDisabled(false);
+
+    handlers.open()
   }
 
   function convertTo12HourFormat(timeString) {
@@ -83,7 +100,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
         <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Your Posts</Title>
         <Group pl={50} pr={50}>
           {study_sessions_hosted.map((session) => (
-            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
+            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.id}>
               <Group pb={3} pt={3} pl={3} pr={3} miw={350} mih={300}>
                 <Stack>
                   <Avatar size={100} src={session.host_avatar_url} />
@@ -112,12 +129,12 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
                   </Stack>
                   <Group>
                     <Modalview current={session} />
-                    <Link
+                    <Link onClick={() => setEditDisabler(true)}
                       href={{
                         pathname: "/studor/updatestudygroupposting",
                         query: session
                       }}
-                    ><Button color="yellow" radius="xl">Edit</Button></Link>
+                    ><Button color="yellow" radius="xl" disabled={editDisabler}>Edit</Button></Link>
                   </Group>
                 </Stack>
               </Group>
@@ -130,8 +147,8 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
         <Title order={1} pl={50} pr={50} pt={20} pb={10} fw={700}>Joined Sessions</Title>
         <Group pl={50} pr={50}>
           {study_sessions_joined.map((session) => (
-            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.topic}>
-              <Group p={5} pl={10} pr={10} miw={350} mih={250}>
+            <Paper shadow="md" radius="xl" p="xl" style={{ borderColor: '#800000', borderWidth: '3px' }} withBorder key={session.id}>
+              <Group p={5} pl={10} pr={10} miw={350} mih={100}>
                 <Stack>
                   <Avatar size={100} src={session.host_avatar_url} />
                 </Stack>
@@ -160,7 +177,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
                   </Stack>
                   <Group>
                     <Modalview current={session} />
-                    <Button color="red" radius="xl" onClick={() => leaveHandler(session)}>Leave</Button>
+                    <Button color="red" radius="xl" disabled={disabled} onClick={() => leaveHandler(session)}>Leave</Button>
                   </Group>
                 </Stack>
               </Group>
@@ -168,6 +185,22 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
           ))}
         </Group>
       </ScrollArea>
+      <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Left Group!</Text>
+                <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+
+                <Text ta="center">View open groups on the Study Group page</Text>
+                
+                </stack>
+      </Modal>
     </MantineProvider>
   );
 }

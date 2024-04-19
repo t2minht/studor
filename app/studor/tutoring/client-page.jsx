@@ -14,6 +14,7 @@ import {
   ScrollArea,
   Rating,
   Paper,
+  Modal
 } from "@mantine/core";
 import {
   IconXboxX,
@@ -30,11 +31,16 @@ import Calendar from "@/app/ui/calendar";
 import { joinSession } from "@/app/backend/tutoring-backend";
 import Modaltutor from "@/app/ui/modaltutor";
 import TutorFilter from "@/app/studor/tutoring/tutorFilter"
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function ClientPage(data) {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [opened, handlers] = useDisclosure(false);
   const { height, width } = useViewportSize();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
+
+  const [disabled, setDisabled] = useState(false)
+
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
   function handleDataFromChild(filtered_posts) {
@@ -44,7 +50,8 @@ export default function ClientPage(data) {
   const [all_tutoring, setAllTutoring] = useState(data.all_tutoring);
   const [calendarKey, setCalendarKey] = useState(0);
 
-  const joinHandler = async (session) => {
+  const joinHandler = async (session, handlers) => {
+    setDisabled(true);
     const joined = await joinSession(data = { session });
     if (!joined) {
       alert("Tutoring Session is full, sorry")
@@ -53,7 +60,14 @@ export default function ClientPage(data) {
       setTutorSessions(updatedSessions);
       const updatedAllTutoring = [...all_tutoring, session];
       setAllTutoring(updatedAllTutoring);
+      handlers.open();
+      // open modal if a user has not joined a session before, using localStorage, so it doesn't open every time, check if localStorage item exists or just open
+      // if (!localStorage.getItem('joinedTutorSession') || localStorage.getItem('joinedTutorSession') === 'false') {
+      //     handlers.open();
+      //     localStorage.setItem('joinedTutorSession', 'true');
+      // }
     }
+    setDisabled(false)
 
   }
   function convertTo12HourFormat(timeString) {
@@ -88,6 +102,10 @@ export default function ClientPage(data) {
     // Update the calendar when the tutoring sessions change
     setCalendarKey(calendarKey + 1);
   }, [all_tutoring])
+
+  useEffect(() => {
+    localStorage.setItem('checked', checked)
+  }, [checked])
 
   if (data.tutor_sessions === null) {
     return (
@@ -126,12 +144,12 @@ export default function ClientPage(data) {
               New Tutor Post
             </Button>
             <Button
-                variant="filled"
-                component="a"
-                href="/studor/faqs"
-                color="#800000"
+              variant="filled"
+              component="a"
+              href="/studor/faqs"
+              color="#800000"
             >
-                FAQs
+              FAQs
             </Button>
           </Stack>
         </Grid.Col>
@@ -181,7 +199,8 @@ export default function ClientPage(data) {
                                 size="sm"
                                 color="#009020"
                                 radius="xl"
-                                onClick={() => joinHandler(session)}
+                                disabled={disabled}
+                                onClick={() => joinHandler(session, handlers)}
                               >
                                 Join
                               </Button>
@@ -198,10 +217,26 @@ export default function ClientPage(data) {
 
         {checked && (
           <Grid.Col span={6} order={{ base: 2 }} mt={30} maw={600} miw={600}>
-            <Calendar key={calendarKey} events={data.events} colors = {data.colors} study_sessions={data.all_study_sessions} tutoring={all_tutoring} />
+            <Calendar key={calendarKey} events={data.events} colors={data.colors} study_sessions={data.all_study_sessions} tutoring={all_tutoring} />
           </Grid.Col>
         )}
       </Grid>
+      <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
+                <stack>
+                <Text ta="center">Joined Session!</Text>
+                <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                </Center>
+
+                <Text ta="center">View joined sessions on the home page</Text>
+                
+                </stack>
+        </Modal>
     </MantineProvider>
   );
 }

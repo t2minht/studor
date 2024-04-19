@@ -10,6 +10,8 @@ import Modaldelete from "../updatestudygroupposting/modalfordelete";
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import Image from 'next/image';
+import logo from '@/app/ui/floaty_logo_m.gif';
 
 let formValues = {};
 
@@ -337,6 +339,7 @@ export default function Page(data) {
                 label="Date"
                 description="Select Date"
                 minDate={new Date()}
+                firstDayOfWeek={0}
                 required
                 {...form.getInputProps('date')}
 
@@ -412,20 +415,26 @@ export default function Page(data) {
             <Stack align="center" mt={20}>
               <Group mt='md'>
                 <Modaldelete id={searchParams.get('id')} />
+                <Modal opened={opened} onClose={close} withCloseButton={false} centered>
+                  <stack>
+                    <Text ta="center">Session has been updated! </Text>
+                  <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                  </Center>
+                  <Text ta="center">Redirecting to home page...</Text>
+                  </stack>
+                </Modal>
                 <Button
                   type='submit'
                   variant="filled"
                   color='blue'
                   radius="xl"
-                  onClick={() => {
-                    notifications.show({
-                      withBorder: true,
-                      color: "green",
-                      radius: "md",
-                      icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-                      title: 'Session Updated!',
-                    });
-                  }}
+                  onClick={open}
                 >
                   Update Session
                 </Button>
