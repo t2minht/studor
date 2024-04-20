@@ -22,6 +22,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 import { insertRatings } from "../backend/tutoring-backend";
+import { useRouter } from "next/navigation";
+import heartbeat_logo from '@/app/ui/heartbeat_logo.gif';
+import Image from "next/image";
+
 
 export default function Modaltutor(session) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -31,6 +35,8 @@ export default function Modaltutor(session) {
     getParticipants();
   }, []);
   const [rating, setRating] = useState();
+  const [openRatingModal, setOpenRatingModal] = useState(false);
+  const router = useRouter();
 
   // console.log('CURRENTcurrent', session.current.tutor_user_id);
   // console.log('auth', supabase.auth.getUser());
@@ -69,7 +75,15 @@ export default function Modaltutor(session) {
   }
   function handleRatingSubmit(rating) {
     insertRatings(session.userID, session.current.tutor_user_id, session.current.id, rating);
-    alert("Rating submitted! Refresh the page to see the effect")
+    setOpenRatingModal(true);
+    router.refresh();
+    setTimeout(() => {
+      setOpenRatingModal(false);
+    }
+      , 2000);
+
+    router.refresh();
+
   }
 
   function formatDate(inputDate) {
@@ -161,6 +175,20 @@ export default function Modaltutor(session) {
             <Group ml={25}>
               <Button variant="filled" size="sm" color="#009020" radius="xl" onClick={() => { handleRatingSubmit(rating) }}>Submit</Button>
             </Group>
+            <Modal opened={openRatingModal} onClose={() => setOpenRatingModal(false)} withCloseButton={false} centered>
+              <stack>
+                <Text ta="center">Rating Submitted!</Text>
+                <Center>
+                  <Image
+                    src={heartbeat_logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                  />
+                </Center>
+                <Text ta="center">Thank you for your feedback! Your rating should be updated shortly!</Text>
+              </stack>
+            </Modal>
 
           </Stack>}
 
