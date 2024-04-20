@@ -2,13 +2,14 @@ import { ActionIcon, useMantineColorScheme, useComputedColorScheme } from '@mant
 import { IconSun, IconMoon } from '@tabler/icons-react';
 import cx from 'clsx';
 import classes from './lightordarkmode.module.css';
+import classes2 from './navbar.module.css';
 
 export default function LightOrDarkMode() {
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
   return (
-    <ActionIcon
+    <ActionIcon className={classes2.element}
       onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
       variant="subtle"
       size="lg"
