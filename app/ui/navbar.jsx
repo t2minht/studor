@@ -38,7 +38,7 @@ export default function Navbar({ user }) {
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <Link href='/'>
+          <a href='/'>
             <Image
               src={logo}
               alt='studor logo'
@@ -46,7 +46,7 @@ export default function Navbar({ user }) {
               height={50}
               style={{ marginTop: '5px' }}
             />
-          </Link>
+          </a>
 
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="/" className={classes.link} style={{ color: 'white' }}>
@@ -98,22 +98,22 @@ export default function Navbar({ user }) {
           </a>
 
           <Divider my="sm" color="rgba(255, 255, 255, 1)" />
-            <Stack align='center' justify='center'>
-              <Group justify="center" grow pb="xl" color="rgba(255, 255, 255, 1)" px="md">
-                <LogoutButtonClient />
-              </Group>
+          <Stack align='center' justify='center'>
+            <Group justify="center" grow pb="xl" color="rgba(255, 255, 255, 1)" px="md">
+              <LogoutButtonClient />
+            </Group>
 
-              <Group justify="center" grow pb="xl" px="md">
-                <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
-                  <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
-                </ActionIcon>
+            <Group justify="center" grow pb="xl" px="md">
+              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
+                <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
+              </ActionIcon>
 
-                <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl"aria-label="FAQs"onClick={() => window.location.href = '/studor/faqs'}>
-                  <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
-                </ActionIcon>
-                <LightOrDarkMode />
-              </Group>
-            </Stack>
+              <ActionIcon variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="FAQs" onClick={() => window.location.href = '/studor/faqs'}>
+                <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
+              </ActionIcon>
+              <LightOrDarkMode />
+            </Group>
+          </Stack>
         </ScrollArea>
       </Drawer>
     </Box>

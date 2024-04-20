@@ -1,6 +1,6 @@
 'use client'
 
-import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, Select, NativeSelect } from '@mantine/core'
+import { Center, Group, MantineProvider, Stack, TextInput, Autocomplete, NumberInput, Button, Textarea, Space, rem, Select, NativeSelect, Modal, Text } from '@mantine/core'
 import { DatePickerInput, TimeInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX, IconClock } from '@tabler/icons-react';
@@ -8,7 +8,9 @@ import { useForm } from '@mantine/form';
 import { getCourseNumbersForDepartment, submitTutoringSession } from '../../backend/tutoring-backend';
 import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useViewportSize } from "@mantine/hooks";
+import { useDisclosure, useViewportSize } from "@mantine/hooks";
+import Image from 'next/image';
+import logo from '@/app/ui/zoom_logo.gif';
 
 let formValues = {};
 
@@ -20,6 +22,7 @@ export default function ClientPage(data) {
   const [selectedCourseSection, setSelectedCourseSection] = useState('');
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
+  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -198,8 +201,6 @@ export default function ClientPage(data) {
       message: "Now redirecting to Landing Page",
     });
 
-    alert('Tutor session created.')
-
     // Redirect to the new page after a short delay
     setTimeout(() => {
       window.location.href = '/';
@@ -308,12 +309,27 @@ export default function ClientPage(data) {
               />
             </Group>
             <Stack align="center" mt={20}>
+            <Modal opened={opened} onClose={close} withCloseButton={false} centered>
+                  <stack>
+                    <Text ta="center">Session has been created! </Text>
+                  <Center>
+                    <Image
+                    src={logo}
+                    alt='studor logo'
+                    width={200}
+                    height={200}
+                    />
+                  </Center>
+                  <Text ta="center">Redirecting to home page...</Text>
+                  </stack>
+                </Modal>
               <Button
                 type='submit'
                 mt="md"
                 variant="filled"
                 color='#800000'
                 radius="xl"
+                onClick={open}
               >
                 Post Session
               </Button>
