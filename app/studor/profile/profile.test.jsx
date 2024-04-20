@@ -8,6 +8,14 @@ class ResizeObserver {
     unobserve() { }
 }
 
+jest.mock("next/navigation", () => ({
+    useRouter() {
+        return {
+            prefetch: () => null
+        };
+    }
+}));
+
 describe("Profile", () => {
     window.ResizeObserver = ResizeObserver;
 
