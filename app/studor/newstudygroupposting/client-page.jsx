@@ -52,7 +52,9 @@ export default function ClientPage(data) {
             const { data: returned_data, error } = await supabase.from("course_catalog")
                 .select('SectionNum',)
                 .eq('Department', selectedDepartment)
-                .eq('CourseNum', courseNumber);
+                .eq('CourseNum', courseNumber)
+                .order('SectionNum', { ascending: true });
+
 
             if (error) {
                 console.error("Error fetching course sections:", error);
@@ -74,7 +76,8 @@ export default function ClientPage(data) {
         try {
             const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
                 .select('CourseNum',)
-                .eq('Department', department);
+                .eq('Department', department)
+                .order('CourseNum', { ascending: true });
 
             if (error1) {
                 console.error('Error fetching course numbers:', error1);
@@ -355,15 +358,15 @@ export default function ClientPage(data) {
                             <Modal opened={opened} onClose={close} withCloseButton={false} centered>
                                 <stack>
                                     <Text ta="center">Session has been created! </Text>
-                                <Center>
-                                    <Image
-                                    src={logo}
-                                    alt='studor logo'
-                                    width={200}
-                                    height={200}
-                                    />
-                                </Center>
-                                <Text ta="center">Redirecting to home page...</Text>
+                                    <Center>
+                                        <Image
+                                            src={logo}
+                                            alt='studor logo'
+                                            width={200}
+                                            height={200}
+                                        />
+                                    </Center>
+                                    <Text ta="center">Redirecting to home page...</Text>
                                 </stack>
                             </Modal>
                             <Button

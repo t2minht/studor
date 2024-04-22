@@ -49,26 +49,22 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
     const getWed = (date) =>{
         const currDate = date.getDay();
-        // console.log(currDate);
         var diff = 3 - currDate;
         if (diff < 0) {
           diff += 7;
         }
         const wedDate = new Date(date);
         wedDate.setDate(date.getDate() + diff);
-        // console.log(wedDate);
         setWed(wedDate);
     }
     const getSun = (date) =>{
         const currDate = date.getDay();
-        // console.log(currDate);
         var diff = 0 - currDate;
         // if (diff < 0) {
         //   diff += 7;
         // }
         const sunDate = new Date(date);
         sunDate.setDate(date.getDate() - currDate);
-        // console.log(wedDate);
         setSun(sunDate);
     }
 
@@ -106,17 +102,12 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
     function addSession(eventsList, sessions, id, event_tag, color){
         let textColor = '#FFFFFF';
-        // console.log(color);
         let lightColors = ['#FFFFFF', '#FFFF00', '#00FF00', '#00FFFF','#CCCCCC', '#F9CB9C', '#FFE599', '#D5A6BD'];
-        // console.log(lightColors.includes(color));
         
         if(lightColors.includes(color)){
-            // console.log("changing color");
             textColor = "#000000";
         }
         sessions.map((session) =>{
-            // console.log(session.date + "T" + session.start_time);
-            // console.log(session.date + "T" + session.end_time);
             let dateString = session.date + "T" + session.end_time;
             let eventDate = new Date(dateString);
             
@@ -127,21 +118,16 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                 title = session.topic;
             }
 
-            // if( startDate < eventDate && eventDate < newStartDate ){
-                eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time, tags: event_tag, backColor: color, fontColor: textColor, bubbleHtml:"Click for more Information"});
-            // }
+            eventsList.push({id: id++, text: title, start: session.date + "T" + session.start_time, end: session.date + "T" + session.end_time, tags: event_tag, backColor: color, fontColor: textColor, bubbleHtml:"Click for more Information"});
         });
         return eventsList, id;
     }
 
     const [calendarEvents, setCalendar] = useState([]);
-    // const [id, setID] = useState(0);
 
     useEffect(() => {                               // displays events
-        // console.log("events");
         let parser = JSON.parse(isoEvents);
         let id = 1;
-        // console.log(parser);
 
         let eventsList = [];
         if (events.events != '[{}]' && events.events != null){
@@ -208,34 +194,12 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
         // eventsList, id = addSession(eventsList, study_sessions, id);
         // eventsList, id = addSession(eventsList, tutoring, id);
         */
-        // console.log("colors");
-        // console.log(colors);
         eventsList, id = addSession(eventsList, study_sessions, id, "Study Session", colors.study_session_color); // "#339af0"
         eventsList, id = addSession(eventsList, tutoring, id, "Tutoring", colors.tutor_session_color); // "#078787"
-        // console.log(eventsList);
         getSun(startDate);
         getWed(startDate);
         setCalendar(eventsList);
     }, [startDate, isoEvents]);
-
-
-    /*
-    useEffect(async() => {
-        // Fetch events from an API or database
-        // let events = retrieveUserEvents();
-        // console.log(events);
-        // setCalendar(retrieveUserEvents());
-        const fetchedEvents = await retrieveUserEvents();
-        console.log(fetchedEvents);
-        // const fetchedEvents = [
-        // { id: 1, text: 'Event 1', start: '2024-03-20T10:00:00', end: '2024-03-20T12:00:00' },
-        // { id: 2, text: 'Event 2', start: '2024-03-21T14:00:00', end: '2024-03-21T16:00:00' },
-        // ];
-
-        // setCalendar(fetchedEvents);
-    }, []);
-
-    */
 
     const [event, setEvent] = useState({event:"", id: 0});
 
@@ -261,7 +225,7 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
             }else{
                 classHandler.close();
                 handlers.open();
-                console.log(args.e.data);
+                // console.log(args.e.data);
                 setEvent({event: args.e.data.tags, id: args.e.data.id,text: args.e.data.text, start: args.e.data.start.value, end: args.e.data.end.value});
             }
         },
@@ -288,37 +252,25 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
 
     function colorChoice(color){
         let textColor = '#FFFFFF';
-        console.log(color);
         let lightColors = ['#FFFFFF', '#FFFF00', '#00FF00', '#00FFFF','#CCCCCC', '#F9CB9C', '#FFE599', '#D5A6BD'];
-        // console.log(lightColors.includes(color));
         
         if(lightColors.includes(color)){
-            // console.log("changing color");
             textColor = "#000000";
         }
-        // console.log(calendarEvents);
-        // console.log("isoEvents")
-        // console.log(JSON.parse(isoEvents));
         let parser = JSON.parse(isoEvents);
         for(let i = 0; i < parser.length; i++){
             if(parser[i].text == event.text){
                 parser[i].backColor = color;
                 parser[i].fontColor = textColor;
-                // calendarEvents[i].backColor = color;
-                // calendarEvents[i].fontColor = textColor;
             }
         }
         for(let i = 0; i < calendarEvents.length; i++){
             if(calendarEvents[i].text == event.text){
                 calendarEvents[i].backColor = color;
                 calendarEvents[i].fontColor = textColor;
-                // calendarEvents[i].backColor = color;
-                // calendarEvents[i].fontColor = textColor;
             }
         }
         console.log(calendarEvents);
-        // console.log("parser")
-        // console.log(parser)
         calendarRef.current.control.update({startDate, events: calendarEvents});
         setEvents(JSON.stringify(parser));
         sendEvents(JSON.stringify(parser));
@@ -347,8 +299,6 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                             {">"}
                         </Button>
                     </Group>
-                    {/* <Text fw={700} size='xl'>{monthNames[(new Date(wed)).getMonth()] + " " + (new Date(wed)).getFullYear()}</Text> */}
-                    {/* <Text fw={700} size='xl'>{monthNames[(new Date(sun)).getMonth()] + " " + (new Date(sun)).getDate() + " " + (new Date(wed)).getFullYear()}</Text> */}
                     <Text fw={700} size='xl'>{getWeek()}</Text>
                     <Button
                         type='submit'
@@ -368,9 +318,6 @@ const Calendar = ({events, study_sessions, tutoring, colors}) => {
                             <br/>
                             End Time: {new Date(event.end).toLocaleTimeString().substring(0, new Date(event.end).toLocaleTimeString().indexOf(" ") -3) + new Date(event.end).toLocaleTimeString().substr(-3)}
                         </Text>
-                        {/* <Text>{event.text}</Text>
-                        <Text>Start Time: {new Date(event.start).toLocaleTimeString()}</Text>
-                        <Text>End Time: {new Date(event.end).toLocaleTimeString()}</Text> */}
                         {isClass && (
                             <Text>Select a color</Text>
                         )}
