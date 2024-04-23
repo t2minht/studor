@@ -1,6 +1,7 @@
-const { render } = require("@testing-library/react");
-const { default: Calendar } = require("./calendar");
-const { MantineProvider } = require("@mantine/core");
+import { act, render, screen } from '@testing-library/react';
+import Calendar from './calendar';
+import { MantineProvider } from '@mantine/core';
+import userEvent from '@testing-library/user-event';
 
 const mockEvents = {
     events: '[{"start":"2024-01-16T08:00:00","end":"2024-01-16T…33","backColor":"#FFE599","fontColor":"#000000"}]'
@@ -95,3 +96,61 @@ describe("Calendar", () => {
         )
     })
 })
+
+
+
+describe('handleNextWeek function', () => {
+    it('should update the start date correctly', () => {
+        const { getByText, getByTestId } = render(
+            <MantineProvider>
+                <Calendar events={mockEvents} study_sessions={mockStudySessions} tutoring={mockTutoring} colors={mockColors} />
+            </MantineProvider>
+        );
+
+        // console.log(container.innerHTML);
+
+        // Get the initial start date
+        const initialStartDateText = getByTestId('start-date');
+        const initialStartDate = new Date(initialStartDateText.textContent);
+
+        // Call handleNextWeek function directly
+        act(() => {
+            getByText('>').click();
+        });
+
+        // Get the updated start date
+        const updatedStartDateText = getByTestId('start-date');
+        const updatedStartDate = new Date(updatedStartDateText.textContent);
+        expect(updatedStartDate.getDate()).toEqual(initialStartDate.getDate() + 7);
+
+    });
+});
+
+
+
+describe('handlePreviousWeek function', () => {
+    it('should update the start date correctly', () => {
+        const { getByText, getByTestId } = render(
+            <MantineProvider>
+                <Calendar events={mockEvents} study_sessions={mockStudySessions} tutoring={mockTutoring} colors={mockColors} />
+            </MantineProvider>
+        );
+
+        // console.log(container.innerHTML);
+
+        // Get the initial start date
+        const initialStartDateText = getByTestId('start-date');
+        const initialStartDate = new Date(initialStartDateText.textContent);
+
+        // Call handleNextWeek function directly
+        act(() => {
+            getByText('<').click();
+        });
+
+        // Get the updated start date
+        const updatedStartDateText = getByTestId('start-date');
+        const updatedStartDate = new Date(updatedStartDateText.textContent);
+        expect(updatedStartDate.getDate()).toEqual(initialStartDate.getDate() - 7);
+
+    });
+});
