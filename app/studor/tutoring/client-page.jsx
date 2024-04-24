@@ -181,7 +181,7 @@ export default function ClientPage(data) {
                               <Text mt={-15}>Location: {session.location}</Text>
                               <Text mt={-15}>Date: {formatDate(session.date)}</Text>
                               <Text mt={-15}>Time: {convertTo12HourFormat(session.start_time)} - {convertTo12HourFormat(session.end_time)}</Text>
-                              <Text mt={-15}>Remaining: {(session.max_group_size - 1) - session.current_group_size} / {session.max_group_size - 1}</Text>
+                              <Text mt={-15}>Remaining: {(session.max_group_size) - session.current_group_size} / {session.max_group_size - 1}</Text>
                               <Group mt={-15}>
                                 <Text>Tutor: {session.users.full_name}</Text>
                                 {session.verified && <IconDiscountCheckFilled style={{ color: "#228be6", marginLeft: "-10" }} />}
@@ -222,21 +222,21 @@ export default function ClientPage(data) {
         )}
       </Grid>
       <Modal opened={opened} onClose={handlers.close} withCloseButton={false} closeOnClickOutside={true} closeOnEscape={true} >
-                <stack>
-                <Text ta="center">Joined Session!</Text>
-                <Center>
-                    <Image
-                    src={logo}
-                    alt='studor logo'
-                    width={200}
-                    height={200}
-                    />
-                </Center>
+        <stack>
+          <Text ta="center">Joined Session!</Text>
+          <Center>
+            <Image
+              src={logo}
+              alt='studor logo'
+              width={200}
+              height={200}
+            />
+          </Center>
 
-                <Text ta="center">View joined sessions on the home page</Text>
-                
-                </stack>
-        </Modal>
+          <Text ta="center">View joined sessions on the home page</Text>
+
+        </stack>
+      </Modal>
     </MantineProvider>
   );
 }
