@@ -147,7 +147,7 @@ export default function ClientPage(data) {
               variant="filled"
               component="a"
               href="/studor/faqs"
-              color="#800000"
+              color="#EC407A"
             >
               FAQs
             </Button>

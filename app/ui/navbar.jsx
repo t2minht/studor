@@ -62,7 +62,7 @@ export default function Navbar({ user }) {
 
           <Group visibleFrom="sm">
             <LogoutButtonClient />
-            <ActionIcon className={classes.element} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
+            <ActionIcon className={classes.element} p={25} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
               <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
             </ActionIcon>
             <ActionIcon className={classes.element} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="FAQs"onClick={() => window.location.href = '/studor/faqs'}>

@@ -106,7 +106,6 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         let reader = new FileReader();
         reader.readAsText(icsString);
         reader.onload = function () {
-            console.log(reader.result);
             const lines = reader.result.split("\n");
             const events = [];
             let event;
@@ -143,10 +142,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                     }
                 }
             });
-            console.log(events);
             let results = JSON.stringify(events);
-            console.log("results");
-            console.log(results);
             sendEvents(results);
             handlersSchedule.open();
             setVisible(false);
@@ -273,10 +269,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const uploadSchedule = (event) => {
 
         const file = schedule;
-        console.log("sending file");
 
         let eve = parseICS(file);
-        // console.log(eve);
 
         clearSchedule();
     };
