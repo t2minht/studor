@@ -3,7 +3,7 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
-export function setDifference(setA, setB) {
+function setDifference(setA, setB) {
     const difference = new Set(setA);
     for (const item of setB) {
         difference.delete(item);
@@ -14,7 +14,7 @@ export function setDifference(setA, setB) {
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-export function convertTo12HourFormat(timeString) {
+function convertTo12HourFormat(timeString) {
     // Split the string into hours and minutes
     var parts = timeString.split(":");
     var hours = parseInt(parts[0]);
@@ -30,7 +30,7 @@ export function convertTo12HourFormat(timeString) {
 
     return formattedTime;
 }
-export function formatDate(inputDate) {
+function formatDate(inputDate) {
     // Create a new Date object from the input string
     var dateObj = new Date(inputDate);
     dateObj.setDate(dateObj.getDate() + 1);
@@ -41,7 +41,7 @@ export function formatDate(inputDate) {
     return formattedDate;
 }
 
-export function sendEmailOnUpdate(participantEmail, sessionInfo) {
+function sendEmailOnUpdate(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
         from: 'studorcapstone@gmail.com',
@@ -69,7 +69,7 @@ export function sendEmailOnUpdate(participantEmail, sessionInfo) {
         })
 }
 
-export function sendEmailOnDelete(participantEmail, sessionInfo) {
+function sendEmailOnDelete(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
         from: 'studorcapstone@gmail.com',
@@ -95,6 +95,16 @@ export function sendEmailOnDelete(participantEmail, sessionInfo) {
         .catch((error) => {
             console.error(error.response.body.errors)
         })
+}
+
+if (process.env.NODE_ENV === 'TEST') {
+    module.exports = {
+        setDifference,
+        convertTo12HourFormat,
+        formatDate,
+        sendEmailOnUpdate,
+        sendEmailOnDelete
+    };
 }
 
 export async function insertRatings(studentId, tutorId, sessionId, rating) {

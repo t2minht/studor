@@ -1,59 +1,60 @@
-import { convertTo12HourFormat, formatDate, setDifference, sendEmailOnUpdate, sendEmailOnDelete } from './tutoring-backend';
+process.env.NODE_ENV = 'TEST';
+
+const tutoring = require('./tutoring-backend');
 
 describe('convertTo12HourFormat', () => {
     test('Converts morning times (AM)', () => {
-        expect(convertTo12HourFormat('08:30')).toBe('8:30 AM');
+        expect(tutoring.convertTo12HourFormat('08:30')).toBe('8:30 AM');
     });
 
     test('Converts afternoon times (PM)', () => {
-        expect(convertTo12HourFormat('15:45')).toBe('3:45 PM');
+        expect(tutoring.convertTo12HourFormat('15:45')).toBe('3:45 PM');
     });
 
     test('Converts midnight (12:00 AM)', () => {
-        expect(convertTo12HourFormat('00:00')).toBe('12:00 AM');
+        expect(tutoring.convertTo12HourFormat('00:00')).toBe('12:00 AM');
     });
 
     test('Converts noon (12:00 PM)', () => {
-        expect(convertTo12HourFormat('12:00')).toBe('12:00 PM');
+        expect(tutoring.convertTo12HourFormat('12:00')).toBe('12:00 PM');
     });
 
     test('Converts times with single-digit minutes', () => {
-        expect(convertTo12HourFormat('09:05')).toBe('9:05 AM');
+        expect(tutoring.convertTo12HourFormat('09:05')).toBe('9:05 AM');
     });
 
     test('Converts times with leading zeros in hours', () => {
-        expect(convertTo12HourFormat('03:20')).toBe('3:20 AM');
+        expect(tutoring.convertTo12HourFormat('03:20')).toBe('3:20 AM');
     });
 
     test('Converts times with leading zeros in minutes', () => {
-        expect(convertTo12HourFormat('14:09')).toBe('2:09 PM');
+        expect(tutoring.convertTo12HourFormat('14:09')).toBe('2:09 PM');
     });
-
 });
 
 describe('formatDate', () => {
     test('Formats a standard date', () => {
-        expect(formatDate('2024-04-25')).toBe('April 25, 2024');
+        expect(tutoring.formatDate('2024-04-25')).toBe('April 25, 2024');
     });
 
     test('Formats a date with leading zeros in the day or month', () => {
-        expect(formatDate('2024-04-05')).toBe('April 05, 2024');
+        expect(tutoring.formatDate('2024-04-05')).toBe('April 05, 2024');
     });
 
     test('Formats a date with different locales', () => {
         // Example of how you might test with a different locale
-        const formattedDate = formatDate('2024-04-25');
+        const formattedDate = tutoring.formatDate('2024-04-25');
         expect(formattedDate).toBe('April 25, 2024');
     });
 
     test('Formats a date at the end of the month', () => {
         // Example of testing a date at the end of the month
-        expect(formatDate('2024-04-30')).toBe('April 30, 2024');
+        expect(tutoring.formatDate('2024-04-30')).toBe('April 30, 2024');
     });
 
     test('Formats a date at the end of the year', () => {
         // Example of testing a date at the end of the year
-        expect(formatDate('2024-12-31')).toBe('December 31, 2024');
+        expect(tutoring.formatDate('2024-12-31')).toBe('December 31, 2024');
     });
 });
 
@@ -61,31 +62,31 @@ describe('setDifference', () => {
     test('Difference between sets with different elements', () => {
         const setA = new Set([1, 2, 3]);
         const setB = new Set([4, 5, 6]);
-        expect(setDifference(setA, setB)).toEqual(new Set([1, 2, 3]));
+        expect(tutoring.setDifference(setA, setB)).toEqual(new Set([1, 2, 3]));
     });
 
     test('Difference between sets with some overlapping elements', () => {
         const setA = new Set([1, 2, 3, 4]);
         const setB = new Set([3, 4, 5, 6]);
-        expect(setDifference(setA, setB)).toEqual(new Set([1, 2]));
+        expect(tutoring.setDifference(setA, setB)).toEqual(new Set([1, 2]));
     });
 
     test('Difference between sets where one set is a subset of the other', () => {
         const setA = new Set([1, 2, 3]);
         const setB = new Set([2]);
-        expect(setDifference(setA, setB)).toEqual(new Set([1, 3]));
+        expect(tutoring.setDifference(setA, setB)).toEqual(new Set([1, 3]));
     });
 
     test('Difference between two empty sets', () => {
         const setA = new Set();
         const setB = new Set();
-        expect(setDifference(setA, setB)).toEqual(new Set());
+        expect(tutoring.setDifference(setA, setB)).toEqual(new Set());
     });
 
     test('Difference between a non-empty set and an empty set', () => {
         const setA = new Set([1, 2, 3]);
         const setB = new Set();
-        expect(setDifference(setA, setB)).toEqual(new Set([1, 2, 3]));
+        expect(tutoring.setDifference(setA, setB)).toEqual(new Set([1, 2, 3]));
     });
 
     test('Difference between two sets with non-primitive elements', () => {
@@ -94,7 +95,7 @@ describe('setDifference', () => {
         const obj3 = { id: 3 };
         const setA = new Set([obj1, obj2, obj3]);
         const setB = new Set([obj2]);
-        expect(setDifference(setA, setB)).toEqual(new Set([obj1, obj3]));
+        expect(tutoring.setDifference(setA, setB)).toEqual(new Set([obj1, obj3]));
     });
 
 });
@@ -114,8 +115,6 @@ beforeEach(() => {
 afterEach(() => {
     jest.clearAllMocks();
 });
-
-
 
 describe('sendEmailOnUpdate', () => {
     test('Sends email with correct session info', () => {
@@ -140,7 +139,7 @@ describe('sendEmailOnUpdate', () => {
         convertTo12HourFormat.mockReturnValue('9:00 AM');
 
         // Call the function
-        sendEmailOnUpdate('participant@example.com', sessionInfo);
+        tutoring.sendEmailOnUpdate('participant@example.com', sessionInfo);
 
         // Verify that sgMail.send was called with the correct parameters
         expect(sgMail.send).toHaveBeenCalledWith({
@@ -151,7 +150,6 @@ describe('sendEmailOnUpdate', () => {
         });
     });
 });
-
 
 describe('sendEmailOnDelete', () => {
     test('Sends email on delete - Success', async () => {
@@ -170,7 +168,7 @@ describe('sendEmailOnDelete', () => {
         };
 
         // Call the function and await its result
-        await sendEmailOnDelete('participant@example.com', sessionInfo);
+        await tutoring.sendEmailOnDelete('participant@example.com', sessionInfo);
 
         // Verify that sgMail.send was called with the correct parameters
         expect(sgMail.send).toHaveBeenCalledWith(expect.objectContaining({
@@ -179,4 +177,25 @@ describe('sendEmailOnDelete', () => {
             subject: 'One Of Your Tutoring Sessions Has Been Deleted!',
         }));
     });
+});
+
+jest.mock("@supabase/auth-helpers-nextjs");
+jest.mock("next/headers")
+
+describe("retrieveProfileTutoringSessions", () => {
+    const createServerActionClient = jest.fn()
+    // test("Retrieves tutoring sessions for a user", async () => {
+    //     const user = { id: '123' };
+    //     const mockGetUser = jest.fn().mockResolvedValue({ data: { user } });
+    //     const mockSelect = jest.fn().mockReturnThis(); // Mock for chaining methods
+    //     const mockEq = jest.fn().mockReturnThis(); // Mock for chaining methods
+    //     const mockIn = jest.fn().mockReturnThis(); // Mock for chaining methods
+    //     const mockOrder = jest.fn().mockReturnThis(); // Mock for chaining methods
+    //     const mockQuery = jest.fn().mockResolvedValue({ data: [] });
+
+
+    //     const result = await retrieveProfileTutoringSessions();
+    // });
+
+
 });
