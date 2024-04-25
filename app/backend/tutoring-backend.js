@@ -3,7 +3,7 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
-function setDifference(setA, setB) {
+export function setDifference(setA, setB) {
     const difference = new Set(setA);
     for (const item of setB) {
         difference.delete(item);
@@ -14,7 +14,7 @@ function setDifference(setA, setB) {
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-function convertTo12HourFormat(timeString) {
+export function convertTo12HourFormat(timeString) {
     // Split the string into hours and minutes
     var parts = timeString.split(":");
     var hours = parseInt(parts[0]);
@@ -30,7 +30,7 @@ function convertTo12HourFormat(timeString) {
 
     return formattedTime;
 }
-function formatDate(inputDate) {
+export function formatDate(inputDate) {
     // Create a new Date object from the input string
     var dateObj = new Date(inputDate);
     dateObj.setDate(dateObj.getDate() + 1);
@@ -41,7 +41,7 @@ function formatDate(inputDate) {
     return formattedDate;
 }
 
-function sendEmailOnUpdate(participantEmail, sessionInfo) {
+export function sendEmailOnUpdate(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
         from: 'studorcapstone@gmail.com',
@@ -69,7 +69,7 @@ function sendEmailOnUpdate(participantEmail, sessionInfo) {
         })
 }
 
-function sendEmailOnDelete(participantEmail, sessionInfo) {
+export function sendEmailOnDelete(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
         from: 'studorcapstone@gmail.com',
