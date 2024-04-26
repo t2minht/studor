@@ -100,6 +100,17 @@ function setDifference(setA, setB) {
   return difference;
 }
 
+if (process.env.NODE_ENV === 'TEST') {
+  module.exports = {
+    setDifference,
+    convertTo12HourFormat,
+    formatDate,
+    sendEmailOnUpdate,
+    sendEmailOnDelete
+  };
+}
+
+
 
 export async function retrieveProfileStudySession() {
   const supabase = createServerActionClient({ cookies });

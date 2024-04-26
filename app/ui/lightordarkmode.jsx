@@ -17,8 +17,8 @@ export default function LightOrDarkMode() {
       color="rgba(255, 255, 255, 1)"
       aria-label="Toggle color scheme"
     >
-      <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
-      <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
+      <IconSun data-testid="Sun icon" className={cx(classes.icon, classes.light)} stroke={1.5} />
+      <IconMoon data-testid="Moon icon" className={cx(classes.icon, classes.dark)} stroke={1.5} />
     </ActionIcon>
   );
 }

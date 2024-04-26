@@ -1,7 +1,6 @@
 process.env.NODE_ENV = 'TEST';
 
 const tutoring = require('./tutoring-backend');
-
 describe('convertTo12HourFormat', () => {
     test('Converts morning times (AM)', () => {
         expect(tutoring.convertTo12HourFormat('08:30')).toBe('8:30 AM');
@@ -179,23 +178,3 @@ describe('sendEmailOnDelete', () => {
     });
 });
 
-jest.mock("@supabase/auth-helpers-nextjs");
-jest.mock("next/headers")
-
-describe("retrieveProfileTutoringSessions", () => {
-    const createServerActionClient = jest.fn()
-    // test("Retrieves tutoring sessions for a user", async () => {
-    //     const user = { id: '123' };
-    //     const mockGetUser = jest.fn().mockResolvedValue({ data: { user } });
-    //     const mockSelect = jest.fn().mockReturnThis(); // Mock for chaining methods
-    //     const mockEq = jest.fn().mockReturnThis(); // Mock for chaining methods
-    //     const mockIn = jest.fn().mockReturnThis(); // Mock for chaining methods
-    //     const mockOrder = jest.fn().mockReturnThis(); // Mock for chaining methods
-    //     const mockQuery = jest.fn().mockResolvedValue({ data: [] });
-
-
-    //     const result = await retrieveProfileTutoringSessions();
-    // });
-
-
-});
