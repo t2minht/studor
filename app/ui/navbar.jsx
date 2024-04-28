@@ -28,16 +28,19 @@ import logo from '@/app/ui/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// creates the navbar that is seen across all pages
 export default function Navbar({ user }) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
 
-
+  // UI components to render on the navbar using Mantine library
+  // Purpose is easy routing for users to differing pages such as profile, faqs, landing, study group, tutoring, etc.
   return (
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
+          {/* Logo that reroutes to the home page */}
           <a href='/'>
             <Image
               src={logo}
@@ -48,6 +51,7 @@ export default function Navbar({ user }) {
             />
           </a>
 
+          {/* Navlinks to differing pages */}
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="/" className={classes.link} style={{ color: 'white' }}>
               Home
@@ -60,6 +64,7 @@ export default function Navbar({ user }) {
             </a>
           </Group>
 
+          {/* Navlinks to the faqs, profile, and light or dark mode */}
           <Group visibleFrom="sm">
             <LogoutButtonClient />
             <ActionIcon className={classes.element} p={25} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
@@ -75,6 +80,7 @@ export default function Navbar({ user }) {
         </Group>
       </header>
 
+      {/* Is the navbar for when the page is too small (hamburger menu) */}
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}

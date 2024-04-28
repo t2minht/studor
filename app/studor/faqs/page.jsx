@@ -10,6 +10,7 @@ import uploadNonverifiedTutorImage from './images/nonverifiedTutor.png'
 import uploadTutorRatingsImage from './images/tutorRatings.png'
 import NextImage from 'next/image';
 
+// responses to frequently asked questions
 const uploadSchedule =
   "Go to your Profile page and select the button 'Import Schedule (*.ics)'. This takes in only *.ics files which can be downloaded from Howdy or any other calendar.";
 
@@ -46,6 +47,7 @@ const tutorRatings =
 const browserIssue =
   "From our knowledge, creating and editing a session doesn't work on Firefox browsers. This may be the issue why some features aren't working for you. Please switch to another browser. It should work on Google Chrome, Brave, and Safari.";
 
+// opens small accordion housing all frequently asked questions and their answers
 export default function FaqSimple() {
   return (
     <>
