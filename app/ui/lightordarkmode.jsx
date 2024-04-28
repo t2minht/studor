@@ -4,6 +4,7 @@ import cx from 'clsx';
 import classes from './lightordarkmode.module.css';
 import classes2 from './navbar.module.css';
 
+// Mantine component that allows for toggling between light and dark mode for all pages
 export default function LightOrDarkMode() {
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });

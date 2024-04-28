@@ -24,6 +24,8 @@ export default function ClientPage(data) {
   const [courseSections, setCourseSections] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
 
+
+  // when the page loads, updates the departments with the list of departments in the database
   useEffect(() => {
     const fetchData = async () => {
       const numbers = await getCourseNumbers(selectedDepartment);
@@ -36,17 +38,21 @@ export default function ClientPage(data) {
     form.values.department = selectedDepartment;
   }, [selectedDepartment]);
 
+  // helper to update possible course numbers when the department is selected
   useEffect(() => {
   }, [courseNumbers]);
 
+  // updates form value when the course number is selected
   useEffect(() => {
     form.values.courseNumber = selectedCourseNumber;
   }, [selectedCourseNumber]);
 
+  // updates the course section in the form when the user selects one
   useEffect(() => {
     form.values.courseSection = selectedCourseSection;
   }, [selectedCourseSection]);
 
+  // client-side database call that retrieves the possible section numbers for a selected class 
   const getSectionNumbers = async (courseNumber) => {
     try {
       const { data: returned_data, error } = await supabase.from("course_catalog")
@@ -71,7 +77,7 @@ export default function ClientPage(data) {
 
   }
 
-
+  // client-side database call that retrieves the possible course numbers when a department is selected 
   const getCourseNumbers = async (department) => {
     try {
       const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
@@ -94,6 +100,7 @@ export default function ClientPage(data) {
     }
   }
 
+  // when a new department is selected, this pulls the possible course numbers from the database and updates the state variable
   const handleDepartmentChange = async (selectedDepartment) => {
     try {
       const numbers = await getCourseNumbers(selectedDepartment);
@@ -103,6 +110,7 @@ export default function ClientPage(data) {
     }
   }
 
+  // when a new course number is selected, this pulls the possible course sections from the database and updates the state variable
   const handleCourseNumberChange = async (selectedCourseNumber) => {
     try {
       const sections = await getSectionNumbers(selectedCourseNumber);
@@ -113,20 +121,12 @@ export default function ClientPage(data) {
     }
   }
 
-
-
-  const courseNumberData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
-
-  const courseSectionData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
-
+  // Form validation for input fields
   const form = useForm({
     validateInputOnChange: true,
     initialValues: { title: '', description: '', department: '', courseNumber: '', courseSection: '', location: '', groupSize: 2, date: new Date(), startTime: '', endTime: '' },
 
+    // Below are the rules/parameters the input fields need to follow before being submitted
     validate: {
       title: (value) => ((value.length < 2 || value.length > 40) ? 'Must be between 2-40 characters' : null),
       description: (value, allValues) => (
@@ -168,9 +168,11 @@ export default function ClientPage(data) {
     },
   });
 
+  // Submits all of the data properly formatted to the backend
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
+    // refuses to submit form if inputs are invalid
     if (!form.isValid()) {
       console.error(form.values)
       console.error('Form is invalid');
@@ -186,6 +188,7 @@ export default function ClientPage(data) {
       return;
     }
 
+    // properly formats dates and time before submitting to backend
     form.values.date = form.values.date.toJSON().substring(0, 10);
     form.values.startTime = form.values.startTime + ':00';
     form.values.endTime = form.values.endTime + ':00';
@@ -209,6 +212,9 @@ export default function ClientPage(data) {
     }, 1000);
   };
 
+  // UI components to render on the page using Mantine library
+  // Purpose is form submission to create a new tutor session
+  // Input fields include: Title, Description, Department, Course #, Course Section, Location, Group Size, Date, Start Time, and End Time
   return (
     <MantineProvider>
       <Center pl={50} pr={50}>

@@ -5,6 +5,7 @@ import { IconCircleCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { deleteSession } from "@/app/backend/tutoring-backend";
 
+// pop up modal confirming if the tutor session should be deleted
 export default function Modaldelete(data) {
   const [opened, { open, close }] = useDisclosure(false);
 

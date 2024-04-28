@@ -30,6 +30,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 
+// pop up modal that showcases all details of the study group session including other participants
 export default function Modalview(session) {
   const supabase = createClientComponentClient();
   const [opened, { open, close }] = useDisclosure(false);
@@ -41,6 +42,7 @@ export default function Modalview(session) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // gets participants for a given study session
   const getParticipants = async () => {
     var { data: result, error } =
       await supabase
@@ -78,6 +80,7 @@ export default function Modalview(session) {
     return formattedDate;
   }
 
+  // Mantine UI components for the Modal
   return (
     <MantineProvider>
       <Modal
