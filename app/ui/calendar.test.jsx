@@ -107,18 +107,14 @@ describe('handleNextWeek function', () => {
             </MantineProvider>
         );
 
-        // console.log(container.innerHTML);
 
-        // Get the initial start date
         const initialStartDateText = getByTestId('start-date');
         const initialStartDate = new Date(initialStartDateText.textContent);
 
-        // Call handleNextWeek function directly
         act(() => {
             getByText('>').click();
         });
 
-        // Get the updated start date
         const updatedStartDateText = getByTestId('start-date');
         const updatedStartDate = new Date(updatedStartDateText.textContent);
         expect(updatedStartDate.getDate()).toEqual(initialStartDate.getDate() + 7);
