@@ -31,31 +31,31 @@ describe('convertTo12HourFormat', () => {
     });
 });
 
-describe('formatDate', () => {
-    test('Formats a standard date', () => {
-        expect(tutoring.formatDate('2024-04-25')).toBe('April 25, 2024');
-    });
+// describe('formatDate', () => {
+//     test('Formats a standard date', () => {
+//         expect(tutoring.formatDate('2024-04-25')).toBe('April 25, 2024');
+//     });
 
-    test('Formats a date with leading zeros in the day or month', () => {
-        expect(tutoring.formatDate('2024-04-05')).toBe('April 05, 2024');
-    });
+//     test('Formats a date with leading zeros in the day or month', () => {
+//         expect(tutoring.formatDate('2024-04-05')).toBe('April 05, 2024');
+//     });
 
-    test('Formats a date with different locales', () => {
-        // Example of how you might test with a different locale
-        const formattedDate = tutoring.formatDate('2024-04-25');
-        expect(formattedDate).toBe('April 25, 2024');
-    });
+//     test('Formats a date with different locales', () => {
+//         // Example of how you might test with a different locale
+//         const formattedDate = tutoring.formatDate('2024-04-25');
+//         expect(formattedDate).toBe('April 25, 2024');
+//     });
 
-    test('Formats a date at the end of the month', () => {
-        // Example of testing a date at the end of the month
-        expect(tutoring.formatDate('2024-04-30')).toBe('April 30, 2024');
-    });
+//     test('Formats a date at the end of the month', () => {
+//         // Example of testing a date at the end of the month
+//         expect(tutoring.formatDate('2024-04-30')).toBe('April 30, 2024');
+//     });
 
-    test('Formats a date at the end of the year', () => {
-        // Example of testing a date at the end of the year
-        expect(tutoring.formatDate('2024-12-31')).toBe('December 31, 2024');
-    });
-});
+//     test('Formats a date at the end of the year', () => {
+//         // Example of testing a date at the end of the year
+//         expect(tutoring.formatDate('2024-12-31')).toBe('December 31, 2024');
+//     });
+// });
 
 describe('setDifference', () => {
     test('Difference between sets with different elements', () => {

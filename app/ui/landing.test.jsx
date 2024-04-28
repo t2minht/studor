@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import Landing from './Landing';
+import Landing from './landing';
 import '@testing-library/jest-dom';
 
 
