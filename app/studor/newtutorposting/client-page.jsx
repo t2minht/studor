@@ -219,6 +219,7 @@ export default function ClientPage(data) {
         <Stack miw={(width > 754) ? 680 : null}>
           <form onSubmit={handleSubmit} >
             <TextInput
+              data-testid="Title"
               label="Title"
               description="Limit of 40 characters"
               placeholder="Title of Session"
@@ -234,6 +235,7 @@ export default function ClientPage(data) {
             />
             <Group grow mt={15}>
               <NativeSelect
+                data-testid="department-select"
                 label="Department"
                 placeholder="Select a Department"
                 data={data.departments.map((department) => ({ value: department, label: department }))}
@@ -243,6 +245,7 @@ export default function ClientPage(data) {
                 onChange={(event) => { handleDepartmentChange(event.currentTarget.value); setSelectedDepartment(event.currentTarget.value) }}
               />
               <NativeSelect
+                data-testid="course-number-select"
                 label="Course #"
                 placeholder="Enter Three Numbers"
                 data={courseNumbers.map((courseNumber) => ({ value: courseNumber, label: courseNumber }))}
@@ -254,6 +257,7 @@ export default function ClientPage(data) {
                 value={selectedCourseNumber}
               />
               <NativeSelect
+                data-testid="course-section-select"
                 label="Course Section"
                 placeholder="Enter Three Numbers"
                 data={courseSections.map((courseSection) => ({ value: courseSection, label: courseSection }))}
@@ -263,6 +267,7 @@ export default function ClientPage(data) {
               />
             </Group>
             <TextInput
+              data-testid="Location"
               label="Location"
               description="Limit of 40 characters"
               placeholder="Location of Session"
@@ -272,6 +277,7 @@ export default function ClientPage(data) {
             />
             <Group grow mt={15}>
               <NumberInput
+                data-testid="group-size"
                 label="Group Size"
                 placeholder="Enter a Value 2-20"
                 description="Include yourself"
@@ -281,6 +287,7 @@ export default function ClientPage(data) {
                 {...form.getInputProps('groupSize')}
               />
               <DatePickerInput
+                data-testid="Date"
                 allowDeselect
                 valueFormat="YYYY MMM DD"
                 label="Date"
@@ -294,6 +301,7 @@ export default function ClientPage(data) {
             </Group >
             <Group grow mt={15}>
               <TimeInput
+                data-testid="start-time"
                 leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
                 label="Start Time"
                 withAsterisk
@@ -302,6 +310,7 @@ export default function ClientPage(data) {
                 {...form.getInputProps('startTime')}
               />
               <TimeInput
+                data-testid="end-time"
                 leftSection={<IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
                 label="End Time"
                 withAsterisk
@@ -326,6 +335,7 @@ export default function ClientPage(data) {
                 </stack>
               </Modal>
               <Button
+                data-testid="Submit"
                 type='submit'
                 mt="md"
                 variant="filled"
