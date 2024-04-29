@@ -41,7 +41,7 @@ npm run build
 ```
 
 **Transcript Parsing**  
-This is done in Python, which can be seen at the following GitHub link: [https://github.com/smmathen/studor-transcript](https://github.com/smmathen/studor-transcript)  
+This is done in Python, which can be seen at the following GitHub link: [https://github.com/smmathen/studor-transcript](https://github.com/smmathen/studor-transcript).  
   To run locally, run the following commands in the terminal:
 
 ```
@@ -51,7 +51,7 @@ python3 transcript_flask.py
 ```
 
 Alternatively, the endpoint is publicly hosted on Pythonanwhere, providing the following endpoint that can be hit:
-[https://smmathen.pythonanywhere.com/upload_file](https://smmathen.pythonanywhere.com/upload_file)  
+[https://smmathen.pythonanywhere.com/upload_file](https://smmathen.pythonanywhere.com/upload_file).  
 - This is a POST endpoint that receives the transcript and the name of the student.
 - The endpoint first checks if a PDF and name are both received
 If so, the transcript is parsed via the pypdf Python package, checking validity of the transcript.
