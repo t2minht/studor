@@ -84,9 +84,9 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
     const [visible, setVisible] = useState(false);
-    const [openedTranscript, handlersTranscript] = useDisclosure(false);
+    const [openedTranscript, handlersTranscript] = useDisclosure(false); // handlers to open modal upon transcript upload
     const [openedTranscriptF, handlersTranscriptF] = useDisclosure(false);
-    const [openedSchedule, handlersSchedule] = useDisclosure(false);
+    const [openedSchedule, handlersSchedule] = useDisclosure(false); // handlers to open modal upon schedule upload
     const [openedScheduleF, handlersScheduleF] = useDisclosure(false);
 
     // parces ics files for relavent information and stores it into supabase

@@ -46,7 +46,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
 
   const [opened, handlers] = useDisclosure(false);
 
-
+  // placeholder if study sessions are not there
   if (study_sessions === null) {
     return (
       <Group>
@@ -55,6 +55,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
     );
   }
 
+  // leaving study group post
   const leaveHandler = async (session) => {
     setDisabled(true);
     await leaveSession(session);
@@ -94,6 +95,7 @@ export default function Landingsg({ study_sessions, sendDataToParent }) {
     return formattedDate;
   }
 
+  // UI components for all joined study group post and your own study group posts
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>
