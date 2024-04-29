@@ -267,7 +267,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
     }
 
     for (let i = 0; i < filtered_posts.length; i++) {
-      console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
+      // console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
 
@@ -291,7 +291,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
 
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
-      console.log(coursesList)
+      // console.log(coursesList)
       //form.reset();
     }
     else {

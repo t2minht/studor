@@ -174,8 +174,8 @@ export default function ClientPage(data) {
         // refuses to submit form if inputs are invalid
         if (!form.isValid()) {
 
-            console.log(form.values)
-            console.log('Form is invalid');
+            // console.log(form.values)
+            // console.log('Form is invalid');
             notifications.show({
                 withBorder: true,
                 color: "red",

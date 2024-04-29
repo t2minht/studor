@@ -28,7 +28,7 @@ export default function Modaldelete(data) {
                 message: "Now redirecting to Landing Page",
               });
 
-              console.log(data)
+              // console.log(data)
               deleteSession(data.id)
 
               // Redirect to the new page after a short delay
