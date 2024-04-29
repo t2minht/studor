@@ -89,6 +89,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const [openedSchedule, handlersSchedule] = useDisclosure(false);
     const [openedScheduleF, handlersScheduleF] = useDisclosure(false);
 
+    // parces ics files for relavent information and stores it into supabase
     function parseICS(icsString) {
         setVisible(true);
         let reader = new FileReader();
@@ -99,9 +100,11 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             let event;
             lines.map((line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
                 line = line.trim();
+                // if begin, event starts a new, if end, add default colors and push to array
                 if (line === 'BEGIN:VEVENT') { event = {}; }
                 else if (line === 'END:VEVENT') { event["backColor"] = "#CCCCCC"; event["fontColor"] = "#000000"; events.push(event); }
                 else if (event) {
+                    // checks for relavent information and stores it as a key-value pair in a JS Object
                     if (line.includes("SUMMARY")) {
                         event["text"] = line.split("SUMMARY:")[1];
                     } else if (line.toLowerCase().includes("dtstart")) {
@@ -130,6 +133,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                     }
                 }
             });
+            // turm events to JSON, send to Supabase, reset schedule submissions buttons
             let results = JSON.stringify(events);
             sendEvents(results);
             handlersSchedule.open();
@@ -224,6 +228,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         resetTranscript.current?.();
     };
 
+
     const [schedule, setSchedule] = useState(null);
     const resetSchedule = useRef(null);
 
@@ -268,217 +273,6 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
 
         clearSchedule();
     };
-
-    // Attempt to do manual course adding
-    // const form = useForm({
-    //     validateInputOnChange: true,
-    //     initialValues: { department: '', courseNumber: '', courseSection: '' },
-
-    //     validate: {
-    //         department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-    //         courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
-    //         courseSection: (value, allValues) => (
-    //             allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
-    //         ),
-
-    //     },
-    // });
-
-    // const handleSubmit = (event) => {
-    //     event.preventDefault(); // Prevent default form submission
-
-    //     if (!form.isValid()) {
-
-    //         console.log(form.values)
-    //         console.log('Form is invalid');
-    //         notifications.show({
-    //             withBorder: true,
-    //             color: "red",
-    //             radius: "md",
-    //             icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-    //             title: "Incorrect Inputs",
-    //             message: "Please make sure all inputs are correctly filled and formatted",
-    //         });
-    //         return;
-    //     }
-
-    //     const newCourse = {
-    //         department: form.values.department,
-    //         courseNumber: form.values.courseNumber,
-    //         section: form.values.courseSection,
-    //     };
-
-    //     // Check if the new course already exists in the data list
-    //     const exists = data.some(course => (
-    //         course.department === newCourse.department &&
-    //         course.courseNumber === newCourse.courseNumber &&
-    //         course.section === newCourse.section
-    //     ));
-
-    //     if (exists) {
-    //         notifications.show({
-    //             withBorder: true,
-    //             color: "red",
-    //             radius: "md",
-    //             icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-    //             title: "Course Already Exists",
-    //             message: "This course has already been added.",
-    //         });
-    //         return;
-    //     }
-                                                                                
-    //     const newCourseWithId = {
-    //         ...newCourse,
-    //         id: (data.length + 1).toString(), // Generate new ID for the course
-    //     };
-
-    //     setData([...data, newCourseWithId]); // Update data with the new course
-    //     sendManualClasses(data);
-
-    //     form.reset(); // Reset form fields
-    //     setSelectedDepartment('');
-    //     setSelectedCourseNumber('');
-    //     setSelectedCourseSection('');
-
-    //     notifications.show({
-    //         withBorder: true,
-    //         color: "green",
-    //         radius: "md",
-    //         icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-    //         title: 'New Course Added!',
-    //         message: "The table should now include your recent added course",
-    //     });
-
-    // };
-
-    // const handleDelete = (event) => {
-    //     event.preventDefault(); // Prevent default form submission
-
-    //     const newData = data.filter((item) => !selection.includes(item.id));
-    //     setData(newData);
-    //     setSelection([]); // Clear selection
-
-    //     notifications.show({
-    //         withBorder: true,
-    //         color: "green",
-    //         radius: "md",
-    //         icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-    //         title: 'Course(s) Deleted!',
-    //         message: "The table should now reflect the changes",
-    //     });
-
-    // };
-
-    // const supabase = createClientComponentClient();
-    // const [selectedDepartment, setSelectedDepartment] = useState('');
-    // const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
-    // const [selectedCourseSection, setSelectedCourseSection] = useState('');
-    // const [courseNumbers, setCourseNumbers] = useState([]);
-    // const [courseSections, setCourseSections] = useState([]);
-
-
-    // // course sections are retrieved on page load
-    // useEffect(() => {
-    //     const getSectionsInitial = async () => {
-    //         const sections = await getSectionNumbers(selectedCourseNumber);
-    //         setCourseSections(sections);
-    //     }
-    //     getSectionsInitial();
-    // }, []);
-
-    // form value updated whenever a new department is selected 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const numbers = await getCourseNumbers(selectedDepartment);
-    //         const allNumbers = [''].concat(numbers);
-    //         setCourseNumbers(allNumbers);
-    //     };
-
-    //     fetchData();
-
-    //     form.values.department = selectedDepartment;
-    // }, [selectedDepartment]);
-
-    // // helper to get course numbers for a given department
-    // useEffect(() => {
-    // }, [courseNumbers]);
-
-    // // form value updated whenever a new course number is selected
-    // useEffect(() => {
-    //     form.values.courseNumber = selectedCourseNumber;
-    // }, [selectedCourseNumber]);
-
-    // // form value updated whenever a new section number is selected
-    // useEffect(() => {
-    //     form.values.courseSection = selectedCourseSection;
-    // }, [selectedCourseSection]);
-
-    // // database call to get section numbers based on the user's input for course number
-    // const getSectionNumbers = async (courseNumber) => {
-    //     try {
-    //         const { data: returned_data, error } = await supabase.from("course_catalog")
-    //             .select('SectionNum',)
-    //             .eq('Department', selectedDepartment)
-    //             .eq('CourseNum', courseNumber);
-
-    //         if (error) {
-    //             console.error("Error fetching course sections:", error);
-    //             return [];
-    //         }
-
-    //         const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
-    //         const sectionNums = Array.from(sectionNumSet);
-    //         return sectionNums;
-
-    //     } catch (error) {
-    //         console.error('Error fetching course sections:', error);
-    //         return [];
-    //     }
-
-    // }
-
-    // // database call to get course numbers based on department
-    // const getCourseNumbers = async (department) => {
-    //     try {
-    //         const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
-    //             .select('CourseNum',)
-    //             .eq('Department', department);
-
-    //         if (error1) {
-    //             console.error('Error fetching course numbers:', error1);
-    //             return [];
-    //         }
-
-    //         const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
-    //         const courseNums = Array.from(courseNumSet);
-    //         return courseNums;
-
-    //     } catch (error) {
-    //         console.error('Error fetching course numbers:', error);
-    //         return [];
-    //     }
-    // }
-
-    // // gets course section based on changing department names
-    // const handleDepartmentChange = async (selectedDepartment) => {
-    //     try {
-    //         const numbers = await getCourseNumbers(selectedDepartment);
-    //         setCourseNumbers(numbers);
-    //     } catch (error) {
-    //         console.error('Error updating course numbers:', error);
-    //     }
-    // }
-
-    // // gets course sections based on changing course number
-    // const handleCourseNumberChange = async (selectedCourseNumber) => {
-    //     try {
-    //         const sections = await getSectionNumbers(selectedCourseNumber);
-    //         const allSections = [''].concat(sections);
-    //         setCourseSections(allSections);
-    //     } catch (error) {
-    //         console.error('Error updating course sections:', error);
-    //     }
-    // }
 
     // UI components to render on the page using Mantine library
     // Purpose is to have possibilities of uploading transcript/schedule, and seeing previous sessions joined (study group or tutor)
