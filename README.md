@@ -24,7 +24,7 @@ SENDGRID_API_KEY=
 ```
 
 **Dependencies/Versions**  
-npm 10.4.0
+npm 10.4.0  
 node v20.5.1
 
 **Database**  
@@ -40,9 +40,8 @@ The website is hosted on Vercel, due to its compatibility with Next.js. After se
 npm run build
 ```
 
-**Transcript Parsing**
-
-This is done in Python, which can be seen at the following GitHub link: [https://github.com/smmathen/studor-transcript](https://github.com/smmathen/studor-transcript)  
+**Transcript Parsing**  
+This is done in Python, which can be seen at the following GitHub link: [https://github.com/smmathen/studor-transcript](https://github.com/smmathen/studor-transcript).  
   To run locally, run the following commands in the terminal:
 
 ```
@@ -52,11 +51,11 @@ python3 transcript_flask.py
 ```
 
 Alternatively, the endpoint is publicly hosted on Pythonanwhere, providing the following endpoint that can be hit:
-[https://smmathen.pythonanywhere.com/upload_file](https://smmathen.pythonanywhere.com/upload_file)  
-- This is a POST endpoint that receives the transcript and the name of the student.
+[https://smmathen.pythonanywhere.com/upload_file](https://smmathen.pythonanywhere.com/upload_file).  
+- This is a POST endpoint that receives the transcript and the name of the student
 - The endpoint first checks if a PDF and name are both received
-If so, the transcript is parsed via the pypdf Python package, checking validity of the transcript.
-- If the transcript is valid, every line is parsed for the class and the grade. If the grade is an A or an S, the class is then stored in a dictionary.
+- If so, the transcript is parsed via the pypdf Python package, checking validity of the transcript
+- If the transcript is valid, every line is parsed for the class and the grade. If the grade is an A or an S, the class is then stored in a dictionary
 This dictionary is returned to the caller, which can be used as needed
 
 ## Credits
