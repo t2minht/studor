@@ -59,11 +59,11 @@ This dictionary is returned to the caller, which can be used as needed
 
 ## Credits
 
-Developers:
-Front-end Lead - Sana Marediya     
-Front-end Support - Sarah Eilene Sotelo
-Back-end Lead - Shawn Mathen
-Back-end Support  - Ethan Novicio
+### Developers:  
+Front-end Lead - Sana Marediya  
+Front-end Support - Sarah Eilene Sotelo  
+Back-end Lead - Shawn Mathen  
+Back-end Support  - Ethan Novicio  
 Full-stack Support - Tuong Tran
 
 Special Thanks to our Capstone professor, Dr. Shawna Thomas, and our class teaching assistant Yijin Fang
