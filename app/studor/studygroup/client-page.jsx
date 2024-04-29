@@ -29,22 +29,22 @@ import Image from 'next/image';
 import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function ClientPage(data) {
-    const [opened, handlers] = useDisclosure(false);
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(() => {
         const storedValue = localStorage.getItem('checked');
         return storedValue === null ? true : storedValue === 'true';
     });
-
-
+    
+    
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
     const [update_events, setUpdateEvents] = useState(false);
     const [dataFromChild, setDataFromChild] = useState(data.study_sessions);
-
+    
     const [calendarKey, setCalendarKey] = useState(0);
     const [all_study_sessions, setAllStudySessions] = useState(data.all_study_sessions);
-
-    const [disabled, setDisabled] = useState(false);
+    
+    const [opened, handlers] = useDisclosure(false); // handlers to open and close modal when joining session
+    const [disabled, setDisabled] = useState(false); // handler to disable and enable join button when joining session
 
 
     // list of filtered posts

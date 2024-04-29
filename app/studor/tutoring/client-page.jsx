@@ -35,11 +35,11 @@ import Image from 'next/image';
 import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function ClientPage(data) {
-  const [opened, handlers] = useDisclosure(false);
   const { height, width } = useViewportSize();
   const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
-
-  const [disabled, setDisabled] = useState(false)
+  
+  const [opened, handlers] = useDisclosure(false); // handlers to open and close modal when joining session
+  const [disabled, setDisabled] = useState(false) // handler to disable join button 
 
 
   const [tutor_sessions, setTutorSessions] = useState(data.tutor_sessions);
