@@ -3,6 +3,7 @@
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers'
 
+// helper function to find the difference between two sets to show only the sessions that the user has not joined
 function setDifference(setA, setB) {
     const difference = new Set(setA);
     for (const item of setB) {
@@ -14,6 +15,7 @@ function setDifference(setA, setB) {
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+// Function to convert time to 12-hour format
 function convertTo12HourFormat(timeString) {
     // Split the string into hours and minutes
     var parts = timeString.split(":");
@@ -30,6 +32,8 @@ function convertTo12HourFormat(timeString) {
 
     return formattedTime;
 }
+
+// Function to format date
 function formatDate(inputDate) {
     // Create a new Date object from the input string
     var dateObj = new Date(inputDate);
@@ -41,6 +45,7 @@ function formatDate(inputDate) {
     return formattedDate;
 }
 
+// Function to send email to all participants when a session has been updated by the creator
 function sendEmailOnUpdate(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
@@ -69,6 +74,7 @@ function sendEmailOnUpdate(participantEmail, sessionInfo) {
         })
 }
 
+// Function to send email to all participants when a session has been deleted by the creator
 function sendEmailOnDelete(participantEmail, sessionInfo) {
     const msg = {
         to: participantEmail,
@@ -97,6 +103,17 @@ function sendEmailOnDelete(participantEmail, sessionInfo) {
         })
 }
 
+if (process.env.NODE_ENV === 'TEST') {
+    module.exports = {
+        setDifference,
+        convertTo12HourFormat,
+        formatDate,
+        sendEmailOnUpdate,
+        sendEmailOnDelete
+    };
+}
+
+// Function that allows a student to rate a tutor after a tutoring session
 export async function insertRatings(studentId, tutorId, sessionId, rating) {
 
     const supabase = createServerActionClient({ cookies });
@@ -155,6 +172,7 @@ export async function insertRatings(studentId, tutorId, sessionId, rating) {
     }
 }
 
+// Function that adds verified classes for a tutor based on transcript upload
 export async function addTutorCourses(classes) {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -206,6 +224,7 @@ export async function addTutorCourses(classes) {
 
 }
 
+// Function that gets all tutoring sessions a user has participated in for the profile page
 export async function retrieveProfileTutoringSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -238,6 +257,7 @@ export async function retrieveProfileTutoringSessions() {
     }
 }
 
+// Function that submits a new tutoring session to the database
 export async function submitTutoringSession(data) {
 
     const supabase = createServerActionClient({ cookies });
@@ -292,6 +312,7 @@ export async function submitTutoringSession(data) {
 
 }
 
+// Function that retrieves all future hosted tutoring sessions for the home page
 export async function retrieveFutureHostedSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -329,6 +350,7 @@ export async function retrieveFutureHostedSessions() {
     }
 }
 
+// Function that retrieves all future joined tutoring sessions for the home page
 export async function retrieveExistingJoinedSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -380,6 +402,7 @@ export async function retrieveExistingJoinedSessions() {
     }
 }
 
+// Function that allows a user to join a session
 export async function joinSession(data) {
 
 
@@ -418,6 +441,7 @@ export async function joinSession(data) {
 
 }
 
+// Function that allows a user to see available sessions in the future
 export async function getExistingNotJoinedSessions() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -480,6 +504,7 @@ export async function getExistingNotJoinedSessions() {
     }
 }
 
+// Function that allows a host to delete a tutoring session
 export async function deleteSession(id) {
     const supabase = createServerActionClient({ cookies });
 
@@ -500,6 +525,7 @@ export async function deleteSession(id) {
         .eq('id', id)
 }
 
+// Function that allows a participant to leave a tutoring session
 export async function leaveSession(data) {
 
 
@@ -517,6 +543,7 @@ export async function leaveSession(data) {
         .eq('id', data.id)
 }
 
+// Function that allows a tutor to update their session
 export async function updateTutoringSessionData(data) {
 
     const supabase = createServerActionClient({ cookies })
@@ -556,7 +583,7 @@ export async function updateTutoringSessionData(data) {
 }
 
 
-// get all courses that a tutor can tutor in
+// Get all courses that a tutor can tutor in
 export async function getTutorCourses() {
     const supabase = createServerActionClient({ cookies });
     const { data: { user } } = await supabase.auth.getUser();
@@ -569,6 +596,7 @@ export async function getTutorCourses() {
     return returned_data; // returns an array of format [{tutor_course_catalog: {CourseNum: 'XXX', Department: 'XXX'}}]
 }
 
+// Get all Departments availanle in a semester
 export async function getDepartmentNames() {
     const supabase = createServerActionClient({ cookies });
     const { data: returned_data, error: error1 } = await supabase.from("tutor_course_catalog")

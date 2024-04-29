@@ -22,6 +22,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 
+// pop up modal that showcases all details of the tutoring session including other participants
 export default function Modaltutor(session) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
@@ -30,7 +31,8 @@ export default function Modaltutor(session) {
   useEffect(() => {
     getParticipants();
   }, []);
-
+ 
+  // gets participants for a given tutoring session
   const getParticipants = async () => {
     var { data: result, error } =
       await supabase
@@ -70,6 +72,7 @@ export default function Modaltutor(session) {
     return formattedDate;
   }
 
+  // Mantine UI components for the Modal
   return (
     <MantineProvider>
       <Modal opened={opened} onClose={close} withCloseButton={false}>

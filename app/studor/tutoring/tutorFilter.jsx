@@ -6,18 +6,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IconCircleCheck, IconCircleX, IconClock, IconFilter, IconVolume, IconVolume2, IconVolumeOff, IconX, IconXboxX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-const departmentData = Array(100)
-  .fill(0)
-  .map((_, index) => `Option ${index}`);
-
-const courseNumberData = Array(100)
-  .fill(0)
-  .map((_, index) => `Option ${index}`);
-
-const courseSectionData = Array(100)
-  .fill(0)
-  .map((_, index) => `Option ${index}`);
-
+// Filters sessions in the tutoring page
 export default function TutorFilter({ departments, study_sessions, sendDataToParent }) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
@@ -29,7 +18,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
   const [coursesList, setCoursesList] = useState([]);
   const [checked, setChecked] = useState(() => { return localStorage.getItem('checked') === 'true' });
 
-
+  // when the page loads, updates the departments with the list of departments in the database
   useEffect(() => {
     const fetchData = async () => {
       const numbers = await getCourseNumbers(selectedDepartment);
@@ -42,17 +31,21 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     form.values.department = selectedDepartment;
   }, [selectedDepartment]);
 
+  // helper to update possible course numbers when the department is selected
   useEffect(() => {
   }, [courseNumbers]);
 
+  // updates form value when the course number is selected
   useEffect(() => {
     form.values.courseNumber = selectedCourseNumber;
   }, [selectedCourseNumber]);
 
+  // updates the course section in the form when the user selects one
   useEffect(() => {
     form.values.courseSection = selectedCourseSection;
   }, [selectedCourseSection]);
 
+  // client-side database call that retrieves the possible section numbers for a selected class 
   const getSectionNumbers = async (courseNumber) => {
     try {
       const { data: returned_data, error } = await supabase.from("course_catalog")
@@ -76,6 +69,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
   }
 
+  // client-side database call that retrieves the possible course numbers when a department is selected
   const getCourseNumbers = async (department) => {
     try {
       const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
@@ -97,6 +91,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     }
   }
 
+  // when a new department is selected, this pulls the possible course numbers from the database and updates the state variable
   const handleDepartmentChange = async (selectedDepartment) => {
     try {
       const numbers = await getCourseNumbers(selectedDepartment);
@@ -106,6 +101,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     }
   }
 
+  // when a new course number is selected, this pulls the possible course sections from the database and updates the state variable
   const handleCourseNumberChange = async (selectedCourseNumber) => {
     try {
       const sections = await getSectionNumbers(selectedCourseNumber);
@@ -120,10 +116,12 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
   var currentDay = currentDate.getDate();
   currentDate.setDate(currentDay + 31);
 
+  // Form validation for input fields to add new courses to be filtered by
   const form = useForm({
     validateInputOnChange: true,
     initialValues: { department: '', courseNumber: '', courseSection: '', minGroupSize: null, maxGroupSize: null, startDate: new Date(), endDate: currentDate, startTime: '', endTime: '', tutorRating: 0, tutorVerified: false },
 
+    // Below are the rules/parameters the input fields need to follow before being submitted
     validate: {
       department: (value, allValues) => allValues.department && ((allValues.department.length !== 4 || !(/^[a-zA-Z]+$/.test(allValues.department))) ? 'Invalid Department' : null),
       courseNumber: (value, allValues) => allValues.courseNumber && ((allValues.courseNumber.length !== 3 || !(/^\d{3}$/.test(Number(allValues.courseNumber)))) ? 'Invalid Course Number' : null),
@@ -159,13 +157,14 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     },
   });
 
+  // actual filtering based on input
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
     let filtered_posts = [];
     let fit_filter = false;
 
-    console.log(study_sessions);
+    // console.log(study_sessions);
 
     for (let i = 0; i < study_sessions.length; i++) {
       // courses filter
@@ -263,9 +262,9 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
       }
 
       // verified tutor filter
-      console.log(form.values.tutorVerified);
-      console.log(study_sessions[i].verified);
-      console.log("----")
+      // console.log(form.values.tutorVerified);
+      // console.log(study_sessions[i].verified);
+      // console.log("----")
       if (!form.values.tutorVerified || (form.values.tutorVerified && study_sessions[i].verified)) {
         fit_filter = true;
       }
@@ -282,13 +281,17 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     }
 
     for (let i = 0; i < filtered_posts.length; i++) {
-      console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
+      // console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
+
+    // send filtered list to tutor page
     sendDataToParent(filtered_posts);
     close();
   };
 
+  // Adds course to be filtered by
+  // Checks if course already exists
   const handleAddCourse = (event) => {
     event.preventDefault();
 
@@ -302,7 +305,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
-      console.log(coursesList)
+      // console.log(coursesList)
       //form.reset();
     }
     else {
@@ -310,6 +313,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     }
   }
 
+  // Removes course from filtering 
   const handleRemoveCourse = (event, index) => {
     event.preventDefault();
 
@@ -317,6 +321,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     setCoursesList(updatedCoursesList);
   }
 
+  // resets all fields to their initial defaulted values
   const handleReset = (event) => {
     event.preventDefault();
 
@@ -339,6 +344,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     setSelectedCourseSection('');
   }
 
+  // this will pop up on the side for users to filter sessions on the tutoring page to better find what they need
   return (
     <>
       <Drawer

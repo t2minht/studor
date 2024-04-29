@@ -40,18 +40,6 @@ import heartbeat_logo from '@/app/ui/heartbeat_logo.gif';
 
 let formValues = {};
 
-const departmentData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
-
-const courseNumberData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
-
-const courseSectionData = Array(100)
-    .fill(0)
-    .map((_, index) => `Option ${index}`);
-
 /*
 // function parseICS(icsString) {
 //     let reader = new FileReader();
@@ -91,16 +79,17 @@ const courseSectionData = Array(100)
 // };
 */
 
-
+// Renders all components on the profile page
 export default function ClientPage({ sessions, user, tutor_sessions, departments, colorPrefs }) {
     const { height, width } = useViewportSize();
     const [data, setData] = useState([]);
     const [visible, setVisible] = useState(false);
-    const [openedTranscript, handlersTranscript] = useDisclosure(false);
+    const [openedTranscript, handlersTranscript] = useDisclosure(false); // handlers to open modal upon transcript upload
     const [openedTranscriptF, handlersTranscriptF] = useDisclosure(false);
-    const [openedSchedule, handlersSchedule] = useDisclosure(false);
+    const [openedSchedule, handlersSchedule] = useDisclosure(false); // handlers to open modal upon schedule upload
     const [openedScheduleF, handlersScheduleF] = useDisclosure(false);
 
+    // parces ics files for relavent information and stores it into supabase
     function parseICS(icsString) {
         setVisible(true);
         let reader = new FileReader();
@@ -111,9 +100,11 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             let event;
             lines.map((line) => {  // eventsList.push({id: id++, text: parser[i].SUMMARY, start: DoWday + dtstart, end: DoWday + dtend});
                 line = line.trim();
+                // if begin, event starts a new, if end, add default colors and push to array
                 if (line === 'BEGIN:VEVENT') { event = {}; }
                 else if (line === 'END:VEVENT') { event["backColor"] = "#CCCCCC"; event["fontColor"] = "#000000"; events.push(event); }
                 else if (event) {
+                    // checks for relavent information and stores it as a key-value pair in a JS Object
                     if (line.includes("SUMMARY")) {
                         event["text"] = line.split("SUMMARY:")[1];
                     } else if (line.toLowerCase().includes("dtstart")) {
@@ -142,13 +133,14 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                     }
                 }
             });
+            // turm events to JSON, send to Supabase, reset schedule submissions buttons
             let results = JSON.stringify(events);
             sendEvents(results);
             handlersSchedule.open();
             setVisible(false);
         };
         reader.onerror = function () {
-            console.log(reader.error);
+            // console.log(reader.error);
             handlersScheduleF.open();
             setVisible(false);
         };
@@ -159,6 +151,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const [opened, handlers] = useDisclosure(false); 
     const [value, onChange] = useState(colorPrefs.study_session_color);
 
+    // sets color of study sessions for calendar based on user input
     function colorChoice(color){
         onChange(color);
         setStudySessionColor(color);
@@ -169,6 +162,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const [opened2, handlers2] = useDisclosure(false); 
     const [value2, onChange2] = useState(colorPrefs.tutor_session_color);
 
+    // sets color of tutoring sessions for calendar based on user input
     function colorChoice2(color2){
         onChange2(color2);
         setTutorSessionColor(color2);
@@ -187,6 +181,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
     const [studySessions, setStudySessions] = useState(sessions);
     const [userData, setUserData] = useState(user);
 
+    // study group session history table
     const sessionHistoryRows = studySessions.map((session) => (
         <Table.Tr key={session.id}>
             <Table.Td>{session.topic}</Table.Td>
@@ -196,6 +191,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         </Table.Tr>
     ));
 
+    // tutor session history table
     const tutoringHistoryRows = tutor_sessions.map((session) => {
         session.averageRating = session.users.tutor_rating;
         return (
@@ -232,6 +228,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         resetTranscript.current?.();
     };
 
+
     const [schedule, setSchedule] = useState(null);
     const resetSchedule = useRef(null);
 
@@ -240,6 +237,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         resetSchedule.current?.();
     };
 
+    // when PDF for transcript is uploaded, it is sent to Flask endpoint to retrieve verified courses and then updates the database
     const uploadTranscript = async (event) => {
         setVisible(true);
         const first_name = userData.name.split(' ')[0];
@@ -254,6 +252,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             if (!response.ok) {
                 throw new Error('Failed to fetch data from Flask server');
             }
+            // sets verified classes for tutor in the database
             const classes = await response.json();
             addTutorCourses(classes);
             clearTranscript();
@@ -275,207 +274,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
         clearSchedule();
     };
 
-    const form = useForm({
-        validateInputOnChange: true,
-        initialValues: { department: '', courseNumber: '', courseSection: '' },
-
-        validate: {
-            department: (value) => ((value.length !== 4 || !(/^[a-zA-Z]+$/.test(value))) ? 'Invalid Department' : null),
-            courseNumber: (value) => ((value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Number' : null),
-            courseSection: (value, allValues) => (
-                allValues.courseSection && (value.length !== 3 || !(/^\d{3}$/.test(Number(value)))) ? 'Invalid Course Section' : null
-            ),
-
-        },
-    });
-
-    const handleSubmit = (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        if (!form.isValid()) {
-
-            console.log(form.values)
-            console.log('Form is invalid');
-            notifications.show({
-                withBorder: true,
-                color: "red",
-                radius: "md",
-                icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-                title: "Incorrect Inputs",
-                message: "Please make sure all inputs are correctly filled and formatted",
-            });
-            return;
-        }
-
-        const newCourse = {
-            department: form.values.department,
-            courseNumber: form.values.courseNumber,
-            section: form.values.courseSection,
-        };
-
-        // Check if the new course already exists in the data list
-        const exists = data.some(course => (
-            course.department === newCourse.department &&
-            course.courseNumber === newCourse.courseNumber &&
-            course.section === newCourse.section
-        ));
-
-        if (exists) {
-            notifications.show({
-                withBorder: true,
-                color: "red",
-                radius: "md",
-                icon: <IconCircleX style={{ width: rem(18), height: rem(18) }} />,
-                title: "Course Already Exists",
-                message: "This course has already been added.",
-            });
-            return;
-        }
-                                                                                
-        const newCourseWithId = {
-            ...newCourse,
-            id: (data.length + 1).toString(), // Generate new ID for the course
-        };
-
-        setData([...data, newCourseWithId]); // Update data with the new course
-        sendManualClasses(data);
-
-        form.reset(); // Reset form fields
-        setSelectedDepartment('');
-        setSelectedCourseNumber('');
-        setSelectedCourseSection('');
-
-        notifications.show({
-            withBorder: true,
-            color: "green",
-            radius: "md",
-            icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-            title: 'New Course Added!',
-            message: "The table should now include your recent added course",
-        });
-
-    };
-
-    const handleDelete = (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        const newData = data.filter((item) => !selection.includes(item.id));
-        setData(newData);
-        setSelection([]); // Clear selection
-
-        notifications.show({
-            withBorder: true,
-            color: "green",
-            radius: "md",
-            icon: <IconCircleCheck style={{ width: rem(18), height: rem(18) }} />,
-            title: 'Course(s) Deleted!',
-            message: "The table should now reflect the changes",
-        });
-
-    };
-
-    const supabase = createClientComponentClient();
-    const [selectedDepartment, setSelectedDepartment] = useState('');
-    const [selectedCourseNumber, setSelectedCourseNumber] = useState('');
-    const [selectedCourseSection, setSelectedCourseSection] = useState('');
-    const [courseNumbers, setCourseNumbers] = useState([]);
-    const [courseSections, setCourseSections] = useState([]);
-
-
-    useEffect(() => {
-        const getSectionsInitial = async () => {
-            const sections = await getSectionNumbers(selectedCourseNumber);
-            setCourseSections(sections);
-        }
-        getSectionsInitial();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const numbers = await getCourseNumbers(selectedDepartment);
-            const allNumbers = [''].concat(numbers);
-            setCourseNumbers(allNumbers);
-        };
-
-        fetchData();
-
-        form.values.department = selectedDepartment;
-    }, [selectedDepartment]);
-
-    useEffect(() => {
-    }, [courseNumbers]);
-
-    useEffect(() => {
-        form.values.courseNumber = selectedCourseNumber;
-    }, [selectedCourseNumber]);
-
-    useEffect(() => {
-        form.values.courseSection = selectedCourseSection;
-    }, [selectedCourseSection]);
-
-    const getSectionNumbers = async (courseNumber) => {
-        try {
-            const { data: returned_data, error } = await supabase.from("course_catalog")
-                .select('SectionNum',)
-                .eq('Department', selectedDepartment)
-                .eq('CourseNum', courseNumber);
-
-            if (error) {
-                console.error("Error fetching course sections:", error);
-                return [];
-            }
-
-            const sectionNumSet = new Set(returned_data.map(entry => entry.SectionNum));
-            const sectionNums = Array.from(sectionNumSet);
-            return sectionNums;
-
-        } catch (error) {
-            console.error('Error fetching course sections:', error);
-            return [];
-        }
-
-    }
-
-    const getCourseNumbers = async (department) => {
-        try {
-            const { data: returned_data, error: error1 } = await supabase.from("course_catalog")
-                .select('CourseNum',)
-                .eq('Department', department);
-
-            if (error1) {
-                console.error('Error fetching course numbers:', error1);
-                return [];
-            }
-
-            const courseNumSet = new Set(returned_data.map(entry => entry.CourseNum));
-            const courseNums = Array.from(courseNumSet);
-            return courseNums;
-
-        } catch (error) {
-            console.error('Error fetching course numbers:', error);
-            return [];
-        }
-    }
-
-    const handleDepartmentChange = async (selectedDepartment) => {
-        try {
-            const numbers = await getCourseNumbers(selectedDepartment);
-            setCourseNumbers(numbers);
-        } catch (error) {
-            console.error('Error updating course numbers:', error);
-        }
-    }
-
-    const handleCourseNumberChange = async (selectedCourseNumber) => {
-        try {
-            const sections = await getSectionNumbers(selectedCourseNumber);
-            const allSections = [''].concat(sections);
-            setCourseSections(allSections);
-        } catch (error) {
-            console.error('Error updating course sections:', error);
-        }
-    }
-
+    // UI components to render on the page using Mantine library
+    // Purpose is to have possibilities of uploading transcript/schedule, and seeing previous sessions joined (study group or tutor)
     return (
         <>
             <MantineProvider>
@@ -631,7 +431,8 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
                         </Stack>
                     </Group>
                 </Center>
-                {/* <Stack mt={60} mx={50}>
+                {/* Attempt to add manual course adding
+                    <Stack mt={60} mx={50}>
                     <Text ta="center" size="lg" fw={700}>My Courses</Text>
                     <form onSubmit={handleSubmit}>
                         {width > 720 ?

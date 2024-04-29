@@ -4,6 +4,7 @@ import cx from 'clsx';
 import classes from './lightordarkmode.module.css';
 import classes2 from './navbar.module.css';
 
+// Mantine component that allows for toggling between light and dark mode for all pages
 export default function LightOrDarkMode() {
   const { setColorScheme } = useMantineColorScheme();
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -17,8 +18,8 @@ export default function LightOrDarkMode() {
       color="rgba(255, 255, 255, 1)"
       aria-label="Toggle color scheme"
     >
-      <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
-      <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
+      <IconSun data-testid="Sun icon" className={cx(classes.icon, classes.light)} stroke={1.5} />
+      <IconMoon data-testid="Moon icon" className={cx(classes.icon, classes.dark)} stroke={1.5} />
     </ActionIcon>
   );
 }

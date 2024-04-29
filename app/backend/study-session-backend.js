@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+// Function to convert time to 12-hour format
 function convertTo12HourFormat(timeString) {
   // Split the string into hours and minutes
   var parts = timeString.split(":");
@@ -21,6 +22,7 @@ function convertTo12HourFormat(timeString) {
 
   return formattedTime;
 }
+// Function to format date
 function formatDate(inputDate) {
   // Create a new Date object from the input string
   var dateObj = new Date(inputDate);
@@ -31,8 +33,7 @@ function formatDate(inputDate) {
 
   return formattedDate;
 }
-
-
+// Function to send email to all participants when a session has been updated by the creator
 function sendEmailOnUpdate(participantEmail, sessionInfo) {
   const msg = {
     to: participantEmail,
@@ -63,6 +64,7 @@ function sendEmailOnUpdate(participantEmail, sessionInfo) {
     })
 }
 
+// Function to send email to all participants when a session has been deleted by the creator
 function sendEmailOnDelete(participantEmail, sessionInfo) {
   const msg = {
     to: participantEmail,
@@ -90,8 +92,7 @@ function sendEmailOnDelete(participantEmail, sessionInfo) {
       console.error(error.response.body.errors)
     })
 }
-
-
+// helper function to find the difference between two sets to show only the sessions that the user has not joined
 function setDifference(setA, setB) {
   const difference = new Set(setA);
   for (const item of setB) {
@@ -99,8 +100,19 @@ function setDifference(setA, setB) {
   }
   return difference;
 }
+// code that allows for exporting certain functions when running tests
+if (process.env.NODE_ENV === 'TEST') {
+  module.exports = {
+    setDifference,
+    convertTo12HourFormat,
+    formatDate,
+    sendEmailOnUpdate,
+    sendEmailOnDelete
+  };
+}
 
 
+// Function to retrieve all study sessions that the user has participated in
 export async function retrieveProfileStudySession() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
@@ -135,6 +147,7 @@ export async function retrieveProfileStudySession() {
   }
 }
 
+// Function to retrieve metadata of the user to display on the profile page
 export async function retrieveUserProfileInfo() {
   const supabase = createServerActionClient({ cookies })
   const {
@@ -146,6 +159,7 @@ export async function retrieveUserProfileInfo() {
   return metadata
 }
 
+// Function to submit a new study session to the database
 export async function submitStudyGroupSessionData(data) {
 
   const supabase = createServerActionClient({ cookies })
@@ -173,7 +187,7 @@ export async function submitStudyGroupSessionData(data) {
     ])
     .select();
 
-
+  // adds the user to the participants table for that session
   const { data: returned_participant, data: error2 } = await supabase.from('participants_in_study_session')
     .insert([
       {
@@ -183,6 +197,7 @@ export async function submitStudyGroupSessionData(data) {
     ])
 }
 
+// Function to update a study session in the database
 export async function updateStudyGroupSessionData(data) {
 
   const supabase = createServerActionClient({ cookies })
@@ -210,7 +225,7 @@ export async function updateStudyGroupSessionData(data) {
     .eq('id', data.id)
     .select();
 
-  // i need to go to the participants table, get all the participants in the session, get their email from users table, and then send email to all of them
+  // sends an email to all participants in the session
   const { data: participantsData, error: participantsError } = await supabase
     .from('participants_in_study_session')
     .select('users(email)')
@@ -231,6 +246,7 @@ then I should be redirected to the landing page
 then I should see the updated session called "Updated Session"
 */
 
+// Function to retrieve all future study sessions that the user has not joined
 export async function retrieveExistingNotJoinedSessions() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
@@ -290,6 +306,7 @@ export async function retrieveExistingNotJoinedSessions() {
   }
 }
 
+// Function to retrieve all future study sessions that the user has joined
 export async function retrieveExistingJoinedSessions() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
@@ -342,6 +359,7 @@ export async function retrieveExistingJoinedSessions() {
   }
 }
 
+// Function to delete a study session from the database
 export async function deleteSession(id) {
   const supabase = createServerActionClient({ cookies });
 
@@ -367,6 +385,7 @@ then click "Yes"
 then the session will be removed from the landing page
 */
 
+// Function to allow  auser to join a session in the database
 export async function joinSession(data) {
 
   const supabase = createServerActionClient({ cookies })
@@ -398,8 +417,8 @@ export async function joinSession(data) {
   return true
 }
 
+// Function to allow a user to leave a session in the database
 export async function leaveSession(data) {
-  console.log(data)
 
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();
@@ -422,6 +441,7 @@ then participant is removed from the database
 then session reappears on the study session page
 */
 
+// Function to retrieve all future study sessions that the user has hosted for the landing page
 export async function retrieveFutureHostedSessions() {
   const supabase = createServerActionClient({ cookies });
   const { data: { user } } = await supabase.auth.getUser();
@@ -461,7 +481,7 @@ export async function retrieveFutureHostedSessions() {
   }
 }
 
-
+// Helper function to get all participants in a session, used to send emails on update or delete
 export async function getParticipantsInSession(sessionId) {
 
   const supabase = createServerActionClient({ cookies });
@@ -483,6 +503,7 @@ export async function getParticipantsInSession(sessionId) {
 
 }
 
+// Fuction that gets all participants in all sessions
 export async function getParticipantsInAllSessions() {
 
   const supabase = createServerActionClient({ cookies });

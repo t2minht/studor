@@ -4,7 +4,7 @@ on:
   pull_request: 
   workflow_dispatch: 
   push:
-    branches: [testing, main]
+    branches: [testing, main, jest-test]
 
 jobs:
   unit-tests:
@@ -17,3 +17,4 @@ jobs:
           node-version: '20.x'
       - run: npm install
       - run: npm test
+      - run: npm run test-coverage

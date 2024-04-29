@@ -28,16 +28,19 @@ import logo from '@/app/ui/logo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// creates the navbar that is seen across all pages
 export default function Navbar({ user }) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
 
-
+  // UI components to render on the navbar using Mantine library
+  // Purpose is easy routing for users to differing pages such as profile, faqs, landing, study group, tutoring, etc.
   return (
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
+          {/* Logo that reroutes to the home page */}
           <a href='/'>
             <Image
               src={logo}
@@ -48,25 +51,27 @@ export default function Navbar({ user }) {
             />
           </a>
 
+          {/* Navlinks to differing pages */}
           <Group h="100%" gap={0} visibleFrom="sm">
-            <a href="/" className={classes.link} style={{ color: 'white' }}>
+            <a data-testid="Home" href="/" className={classes.link} style={{ color: 'white' }}>
               Home
             </a>
-            <a href="/studor/studygroup" className={classes.link} style={{ color: 'white' }}>
+            <a data-testid="StudyGroup" href="/studor/studygroup" className={classes.link} style={{ color: 'white' }}>
               Study Group
             </a>
-            <a href="/studor/tutoring" className={classes.link} style={{ color: 'white' }}>
+            <a data-testid="Tutoring" href="/studor/tutoring" className={classes.link} style={{ color: 'white' }}>
               Tutoring
             </a>
           </Group>
 
+          {/* Navlinks to the faqs, profile, and light or dark mode */}
           <Group visibleFrom="sm">
             <LogoutButtonClient />
             <ActionIcon className={classes.element} p={25} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="Profile" onClick={() => window.location.href = '/studor/profile'}>
-              <Avatar src={user.avatar_url} variant='transparent' alt="Profile" color="rgba(255, 255, 255, 1)" />
+              <Avatar src={user.avatar_url} variant='transparent' data-testid="Profile" alt="Profile" color="rgba(255, 255, 255, 1)" />
             </ActionIcon>
-            <ActionIcon className={classes.element} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="FAQs"onClick={() => window.location.href = '/studor/faqs'}>
-              <IconQuestionMark variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
+            <ActionIcon className={classes.element} variant="subtle" size="lg" color="rgba(255, 255, 255, 1)" radius="xl" aria-label="FAQs" onClick={() => window.location.href = '/studor/faqs'}>
+              <IconQuestionMark data-testid="FAQs" variant='transparent' alt="FAQs" color="rgba(255, 255, 255, 1)" />
             </ActionIcon>
             <LightOrDarkMode />
           </Group>
@@ -75,6 +80,7 @@ export default function Navbar({ user }) {
         </Group>
       </header>
 
+      {/* Is the navbar for when the page is too small (hamburger menu) */}
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
@@ -87,13 +93,13 @@ export default function Navbar({ user }) {
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md" bg={'#800000'}>
           <Divider my="sm" color="rgba(255, 255, 255, 1)" />
 
-          <a href="/" className={classes.link}>
+          <a data-testid="Home-closed" href="/" className={classes.link}>
             Home
           </a>
-          <a href="/studor/studygroup" className={classes.link}>
+          <a data-testid="Study-group-closed" href="/studor/studygroup" className={classes.link}>
             Study Group
           </a>
-          <a href="/studor/tutoring" className={classes.link}>
+          <a data-testid="Tutoring-closed" href="/studor/tutoring" className={classes.link}>
             Tutoring
           </a>
 

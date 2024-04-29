@@ -5,10 +5,11 @@ import { IconCircleCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { deleteSession } from "@/app/backend/study-session-backend";
 
+// pop up modal confirming if the study group session should be deleted
 export default function Modaldelete(data) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  console.log(data)
+  // console.log(data)
   return (
     <MantineProvider>
       <Modal opened={opened} onClose={close} withCloseButton={true} centered> 

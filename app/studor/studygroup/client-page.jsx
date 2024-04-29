@@ -29,29 +29,30 @@ import Image from 'next/image';
 import logo from '@/app/ui/floaty_logo_m.gif';
 
 export default function ClientPage(data) {
-    const [opened, handlers] = useDisclosure(false);
     const { height, width } = useViewportSize();
     const [checked, setChecked] = useState(() => {
         const storedValue = localStorage.getItem('checked');
         return storedValue === null ? true : storedValue === 'true';
     });
-
-
+    
+    
     const [study_sessions, setStudySessions] = useState(data.study_sessions);
     const [update_events, setUpdateEvents] = useState(false);
     const [dataFromChild, setDataFromChild] = useState(data.study_sessions);
-
+    
     const [calendarKey, setCalendarKey] = useState(0);
     const [all_study_sessions, setAllStudySessions] = useState(data.all_study_sessions);
+    
+    const [opened, handlers] = useDisclosure(false); // handlers to open and close modal when joining session
+    const [disabled, setDisabled] = useState(false); // handler to disable and enable join button when joining session
 
-    const [disabled, setDisabled] = useState(false);
 
-
-
+    // list of filtered posts
     function handleDataFromChild(filtered_posts) {
         setDataFromChild(filtered_posts);
     }
 
+    // joining study group post
     const joinHandler = async (session, handlers) => {
         setDisabled(true);
         setUpdateEvents(true);
@@ -60,7 +61,7 @@ export default function ClientPage(data) {
             alert("Study session is currently full, sorry!")
         } else {
             const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-            console.log('updatedSessions')
+            // console.log('updatedSessions')
             setStudySessions(updatedSessions);
             setDataFromChild(updatedSessions);
 
@@ -95,10 +96,12 @@ export default function ClientPage(data) {
         setCalendarKey(calendarKey + 1);
     }, [all_study_sessions]);
 
+    // used for toggling calendar on and off
     useEffect(() => {
         localStorage.setItem('checked', checked)
     }, [checked])
 
+    // placeholder if study sessions are not there
     if (study_sessions === null) {
         return (
 
@@ -138,7 +141,7 @@ export default function ClientPage(data) {
         return formattedDate;
     }
 
-
+    // UI components for the study group page such as filtering, calendar, and posts
     return (
         <MantineProvider>
             <Center pl={50} pr={50}>

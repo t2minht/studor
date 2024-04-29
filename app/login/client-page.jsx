@@ -6,6 +6,7 @@ import { IconCircleCheck } from '@tabler/icons-react';
 import { Notifications, notifications } from '@mantine/notifications';
 import LoginButtonClient from '../ui/login-button-client';
 
+// UI for the login page
 export default function ClientPage() {
 
     return (

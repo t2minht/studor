@@ -44,7 +44,7 @@ export default function Landing(data) {
   function handleStudySessionsFromChild(data) {
     setCalendarKey(calendarKey + 1);
     const updatedAllStudySessions = allStudySessions.filter((item) => item.id !== data);
-    console.log("Updated all study sessions: ", updatedAllStudySessions);
+    // console.log("Updated all study sessions: ", updatedAllStudySessions);
     setAllStudySessions(updatedAllStudySessions);
   }
 
@@ -60,13 +60,13 @@ export default function Landing(data) {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
+  // used for toggling calendar on and off
   useEffect(() => {
     localStorage.setItem('checked', checked)
 
   }, [checked])
 
-  // console.log("landing");
-  // console.log(data.events);
+  // UI components for the landing page such as the buttons, calendar, and section for your posts
   return (
     <MantineProvider>
       <Grid overflow="hidden">
