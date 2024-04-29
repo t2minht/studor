@@ -164,7 +164,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     let filtered_posts = [];
     let fit_filter = false;
 
-    console.log(study_sessions);
+    // console.log(study_sessions);
 
     for (let i = 0; i < study_sessions.length; i++) {
       // courses filter
@@ -262,9 +262,9 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
       }
 
       // verified tutor filter
-      console.log(form.values.tutorVerified);
-      console.log(study_sessions[i].verified);
-      console.log("----")
+      // console.log(form.values.tutorVerified);
+      // console.log(study_sessions[i].verified);
+      // console.log("----")
       if (!form.values.tutorVerified || (form.values.tutorVerified && study_sessions[i].verified)) {
         fit_filter = true;
       }
@@ -281,7 +281,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     }
 
     for (let i = 0; i < filtered_posts.length; i++) {
-      console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
+      // console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
 
@@ -305,7 +305,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
 
     if (!coursesList.includes(newItem)) {
       setCoursesList([...coursesList, newItem]);
-      console.log(coursesList)
+      // console.log(coursesList)
       //form.reset();
     }
     else {

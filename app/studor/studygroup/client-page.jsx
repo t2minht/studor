@@ -61,7 +61,7 @@ export default function ClientPage(data) {
             alert("Study session is currently full, sorry!")
         } else {
             const updatedSessions = study_sessions.filter((item) => item.id !== session.id);
-            console.log('updatedSessions')
+            // console.log('updatedSessions')
             setStudySessions(updatedSessions);
             setDataFromChild(updatedSessions);
 

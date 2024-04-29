@@ -27,7 +27,7 @@ export default function Page(data) {
   const [selectedCourseSection, setSelectedCourseSection] = useState(fix_section);
   const [courseNumbers, setCourseNumbers] = useState([]);
   const [courseSections, setCourseSections] = useState([]);
-  console.log(searchParams.get('date'));
+  // console.log(searchParams.get('date'));
 
   // gets sections for existing department on page load
   useEffect(() => {
@@ -140,10 +140,6 @@ export default function Page(data) {
     },
   });
 
-  const handleDelete = () => {
-    { console.log(1) }
-  }
-
   // Submits all of the data properly formatted to the backend
   const handleSubmit = (event) => {
     // Prevent default form submission
@@ -152,8 +148,8 @@ export default function Page(data) {
     // refuses to submit form if inputs are invalid
     if (!form.isValid()) {
 
-      console.log(form.values)
-      console.log('Form is invalid');
+      // console.log(form.values)
+      // console.log('Form is invalid');
       notifications.show({
         withBorder: true,
         color: "red",
@@ -171,7 +167,7 @@ export default function Page(data) {
     form.values.endTime = form.values.endTime + ':00';
 
     formValues = form.values;
-    console.log(form.values);
+    // console.log(form.values);
     updateStudyGroupSessionData(formValues);
 
     notifications.show({

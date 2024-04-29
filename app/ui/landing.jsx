@@ -44,7 +44,7 @@ export default function Landing(data) {
   function handleStudySessionsFromChild(data) {
     setCalendarKey(calendarKey + 1);
     const updatedAllStudySessions = allStudySessions.filter((item) => item.id !== data);
-    console.log("Updated all study sessions: ", updatedAllStudySessions);
+    // console.log("Updated all study sessions: ", updatedAllStudySessions);
     setAllStudySessions(updatedAllStudySessions);
   }
 

@@ -419,7 +419,6 @@ export async function joinSession(data) {
 
 // Function to allow a user to leave a session in the database
 export async function leaveSession(data) {
-  console.log(data)
 
   const supabase = createServerActionClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser();

@@ -140,7 +140,7 @@ export default function ClientPage({ sessions, user, tutor_sessions, departments
             setVisible(false);
         };
         reader.onerror = function () {
-            console.log(reader.error);
+            // console.log(reader.error);
             handlersScheduleF.open();
             setVisible(false);
         };

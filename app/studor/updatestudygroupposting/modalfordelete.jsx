@@ -9,7 +9,7 @@ import { deleteSession } from "@/app/backend/study-session-backend";
 export default function Modaldelete(data) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  console.log(data)
+  // console.log(data)
   return (
     <MantineProvider>
       <Modal opened={opened} onClose={close} withCloseButton={true} centered> 
