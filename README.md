@@ -52,10 +52,10 @@ python3 transcript_flask.py
 
 Alternatively, the endpoint is publicly hosted on Pythonanwhere, providing the following endpoint that can be hit:
 [https://smmathen.pythonanywhere.com/upload_file](https://smmathen.pythonanywhere.com/upload_file).  
-- This is a POST endpoint that receives the transcript and the name of the student.
+- This is a POST endpoint that receives the transcript and the name of the student
 - The endpoint first checks if a PDF and name are both received
-If so, the transcript is parsed via the pypdf Python package, checking validity of the transcript.
-- If the transcript is valid, every line is parsed for the class and the grade. If the grade is an A or an S, the class is then stored in a dictionary.
+- If so, the transcript is parsed via the pypdf Python package, checking validity of the transcript
+- If the transcript is valid, every line is parsed for the class and the grade. If the grade is an A or an S, the class is then stored in a dictionary
 This dictionary is returned to the caller, which can be used as needed
 
 ## Credits
