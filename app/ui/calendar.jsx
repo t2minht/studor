@@ -279,7 +279,7 @@ const Calendar = ({ events, study_sessions, tutoring, colors }) => {
                 calendarEvents[i].fontColor = textColor;
             }
         }
-        console.log(calendarEvents);
+        // console.log(calendarEvents);
         calendarRef.current.control.update({ startDate, events: calendarEvents });
         setEvents(JSON.stringify(parser));
         sendEvents(JSON.stringify(parser));
