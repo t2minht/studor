@@ -24,7 +24,7 @@ SENDGRID_API_KEY=
 ```
 
 **Dependencies/Versions**  
-npm 10.4.0
+npm 10.4.0  
 node v20.5.1
 
 **Database**  
@@ -40,8 +40,7 @@ The website is hosted on Vercel, due to its compatibility with Next.js. After se
 npm run build
 ```
 
-**Transcript Parsing**
-
+**Transcript Parsing**  
 This is done in Python, which can be seen at the following GitHub link: [https://github.com/smmathen/studor-transcript](https://github.com/smmathen/studor-transcript)  
   To run locally, run the following commands in the terminal:
 
