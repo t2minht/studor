@@ -31,10 +31,10 @@ node v20.5.1
 The database is set up through Supabase. When the project is set up, Supabase will provide a Supabase URL and an anon key. Store these two values in the NEXT_PUBLIC_SUPABASE_URL and  NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables, respectively. This process can be aided using the following documentation from Supabase: [Supabase URL](https://supabase.com/docs/guides/api) and [Anon Key](https://supabase.com/docs/guides/api/api-keys).
 
 **Twilio SendGrid**
-Create an a Twilio SendGrid account and generate an API key. This needs to be stored in the SENDGRID_API_KEY in the .env.local file. This process can be aided using the following documentation from SendGrid: [Here](https://docs.sendgrid.com/ui/account-and-settings/api-keys)
+Create a Twilio SendGrid account and generate an API key. This needs to be stored in the SENDGRID_API_KEY in the .env.local file. This process can be aided using the following documentation from SendGrid: [Here](https://docs.sendgrid.com/ui/account-and-settings/api-keys)
 
 ****Website Hosting****
-The website is hosted on Vercel, due to its compatibily with Next.js. After setting up the project and env variables, create a Vercel account and create a new project. Next, add your GitHub link and upload your .env file. You will also need to change the Build Command to 
+The website is hosted on Vercel, due to its compatibility with Next.js. After setting up the project and env variables, create a Vercel account and create a new project. Next, add your GitHub link and upload your .env file. You will also need to change the Build Command to
 
 ``npm run build``
 
@@ -60,7 +60,7 @@ This dictionary is returned to the caller, which can be used as needed
 ## Credits
 
 Developers:
-Front-end Lead - Sana Marediya
+Front-end Lead - Sana Marediya     
 Front-end Support - Sarah Eilene Sotelo
 Back-end Lead - Shawn Mathen
 Back-end Support  - Ethan Novicio
