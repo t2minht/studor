@@ -48,7 +48,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
 
   const [opened, handlers] = useDisclosure(false);
 
-
+  // placeholder if tutoring sessions are not there
   if (tutoring === null) {
     return (
       <Group>
@@ -56,7 +56,8 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
       </Group>
     );
   }
-
+  
+  // leaving tutoring post
   const leaveHandler = async (session) => {
     setDisabled(true);
     await leaveSession(session);
@@ -96,7 +97,7 @@ export default function Landingsg({ tutoring, sendDataToParent }) {
     return formattedDate;
   }
 
-
+  // UI components for all joined tutoring post and your own tutoring posts
   return (
     <MantineProvider>
       <ScrollArea h={height - 120}>

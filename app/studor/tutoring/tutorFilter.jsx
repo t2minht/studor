@@ -159,6 +159,7 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
     },
   });
 
+  // actual filtering based on input
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
@@ -285,6 +286,8 @@ export default function TutorFilter({ departments, study_sessions, sendDataToPar
       console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
+
+    // send filtered list to tutor page
     sendDataToParent(filtered_posts);
     close();
   };

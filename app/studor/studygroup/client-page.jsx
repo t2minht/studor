@@ -47,11 +47,12 @@ export default function ClientPage(data) {
     const [disabled, setDisabled] = useState(false);
 
 
-
+    // list of filtered posts
     function handleDataFromChild(filtered_posts) {
         setDataFromChild(filtered_posts);
     }
 
+    // joining study group post
     const joinHandler = async (session, handlers) => {
         setDisabled(true);
         setUpdateEvents(true);
@@ -95,10 +96,12 @@ export default function ClientPage(data) {
         setCalendarKey(calendarKey + 1);
     }, [all_study_sessions]);
 
+    // used for toggling calendar on and off
     useEffect(() => {
         localStorage.setItem('checked', checked)
     }, [checked])
 
+    // placeholder if study sessions are not there
     if (study_sessions === null) {
         return (
 
@@ -138,7 +141,7 @@ export default function ClientPage(data) {
         return formattedDate;
     }
 
-
+    // UI components for the study group page such as filtering, calendar, and posts
     return (
         <MantineProvider>
             <Center pl={50} pr={50}>

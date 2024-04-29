@@ -159,6 +159,7 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
     },
   });
 
+  // actual filtering based on input
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent default form submission
 
@@ -270,6 +271,8 @@ export default function Filter({ departments, study_sessions, sendDataToParent }
       console.log(filtered_posts[i].department + " " + filtered_posts[i].course_number + " " + filtered_posts[i].section);
 
     }
+
+    // send filtered list to study group page
     sendDataToParent(filtered_posts);
     close();
   };

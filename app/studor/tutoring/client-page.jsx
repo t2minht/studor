@@ -50,6 +50,7 @@ export default function ClientPage(data) {
   const [all_tutoring, setAllTutoring] = useState(data.all_tutoring);
   const [calendarKey, setCalendarKey] = useState(0);
 
+  // joining study group post
   const joinHandler = async (session, handlers) => {
     setDisabled(true);
     const joined = await joinSession(data = { session });
@@ -103,10 +104,12 @@ export default function ClientPage(data) {
     setCalendarKey(calendarKey + 1);
   }, [all_tutoring])
 
+  // used for toggling calendar on and off
   useEffect(() => {
     localStorage.setItem('checked', checked)
   }, [checked])
 
+  // placeholder if tutoring sessions are not there
   if (data.tutor_sessions === null) {
     return (
       <Group>
@@ -116,7 +119,7 @@ export default function ClientPage(data) {
   }
 
 
-
+  // UI components for the tutoring page such as filtering, calendar, and posts
   return (
     <MantineProvider>
       <Center pl={50} pr={50}>

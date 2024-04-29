@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import heartbeat_logo from '@/app/ui/heartbeat_logo.gif';
 import Image from "next/image";
 
-
+// pop up modal that showcases all details of the tutoring session including other participants and a place for rating tutors
 export default function Modaltutor(session) {
   const [opened, { open, close }] = useDisclosure(false);
   const supabase = createClientComponentClient();
@@ -46,6 +46,7 @@ export default function Modaltutor(session) {
   //     .from('users')
   //     .select('id')
 
+  // gets participants for a given tutoring session
   const getParticipants = async () => {
     var { data: result, error } =
       await supabase
@@ -73,6 +74,7 @@ export default function Modaltutor(session) {
 
     return formattedTime;
   }
+  // submit rating for tutor in that session
   function handleRatingSubmit(rating) {
     insertRatings(session.userID, session.current.tutor_user_id, session.current.id, rating);
     setOpenRatingModal(true);
@@ -97,6 +99,7 @@ export default function Modaltutor(session) {
     return formattedDate;
   }
 
+  // Mantine UI components for the Modal
   return (
     <MantineProvider>
       <Modal opened={opened} onClose={close} withCloseButton={false}>
